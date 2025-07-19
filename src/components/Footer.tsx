@@ -1,0 +1,125 @@
+import { Link } from "react-router-dom";
+import { Twitter, Linkedin, Mail } from "lucide-react";
+
+const Footer = () => {
+  return (
+    <footer className="bg-card border-t border-primary/20">
+      <div className="container mx-auto px-4 py-12">
+        <div className="grid md:grid-cols-4 gap-8">
+          {/* Brand */}
+          <div className="space-y-4">
+            <Link to="/" className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
+                <span className="text-primary-foreground font-bold text-lg">O</span>
+              </div>
+              <span className="text-xl font-bold text-foreground">OutreachAI</span>
+            </Link>
+            <p className="text-muted-foreground">
+              The #1 AI Twitter outreach platform. Automate your social media engagement and grow your audience.
+            </p>
+            <div className="flex items-center gap-4">
+              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                <Twitter className="w-5 h-5" />
+              </a>
+              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                <Linkedin className="w-5 h-5" />
+              </a>
+              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                <Mail className="w-5 h-5" />
+              </a>
+            </div>
+          </div>
+
+          {/* Product */}
+          <div>
+            <h3 className="font-semibold text-foreground mb-4">Product</h3>
+            <ul className="space-y-2">
+              <li>
+                <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">
+                  Features
+                </a>
+              </li>
+              <li>
+                <a href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors">
+                  Pricing
+                </a>
+              </li>
+              <li>
+                <a href="#how-it-works" className="text-muted-foreground hover:text-foreground transition-colors">
+                  How it Works
+                </a>
+              </li>
+              <li>
+                <a href="/dashboard" className="text-muted-foreground hover:text-foreground transition-colors">
+                  Dashboard
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Company */}
+          <div>
+            <h3 className="font-semibold text-foreground mb-4">Company</h3>
+            <ul className="space-y-2">
+              <li>
+                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+                  About
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+                  Blog
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+                  Careers
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+                  Contact
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Support */}
+          <div>
+            <h3 className="font-semibold text-foreground mb-4">Support</h3>
+            <ul className="space-y-2">
+              <li>
+                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+                  Help Center
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+                  Documentation
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+                  API
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+                  Status
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="border-t border-primary/20 mt-12 pt-8 text-center">
+          <p className="text-muted-foreground">
+            © 2025 OutreachAI. All rights reserved.
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+export default Footer;
