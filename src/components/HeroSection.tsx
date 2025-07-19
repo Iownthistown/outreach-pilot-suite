@@ -1,16 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Star, Twitter, Users, TrendingUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
 const HeroSection = () => {
   const navigate = useNavigate();
-
   const handleGetStarted = () => {
     navigate("/dashboard");
   };
-
-  return (
-    <section className="relative min-h-screen flex items-center justify-center bg-gradient-hero overflow-hidden">
+  return <section className="relative min-h-screen flex items-center justify-center bg-gradient-hero overflow-hidden">
       {/* Background decorations */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--primary)_0%,_transparent_50%)] opacity-10"></div>
       <div className="absolute top-20 left-10 w-72 h-72 bg-primary/20 rounded-full blur-3xl"></div>
@@ -31,9 +27,7 @@ const HeroSection = () => {
               <div className="space-y-4">
                 <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground leading-tight">
                   Smart Replies For{" "}
-                  <span className="text-transparent bg-clip-text bg-gradient-primary animate-glow">
-                    Twitter & LinkedIn
-                  </span>
+                  <span className="text-transparent bg-clip-text bg-gradient-primary animate-glow">Twitter </span>
                 </h1>
                 <p className="text-xl text-muted-foreground max-w-lg">
                   AI-powered responses that sound human, stay relevant, and keep your audience engaged. Perfect for Twitter & LinkedIn.
@@ -134,8 +128,6 @@ const HeroSection = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default HeroSection;
