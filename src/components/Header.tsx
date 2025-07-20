@@ -8,13 +8,11 @@ const Header = () => {
   const navigate = useNavigate();
 
   const handleLogin = () => {
-    // For now, redirect to onboarding - will be replaced with auth
-    navigate("/onboarding");
+    navigate("/login");
   };
 
   const handleSignup = () => {
-    // For now, redirect to onboarding - will be replaced with auth
-    navigate("/onboarding");
+    navigate("/signup");
   };
 
   return (
