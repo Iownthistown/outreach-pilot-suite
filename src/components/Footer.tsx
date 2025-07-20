@@ -10,12 +10,12 @@ const Footer = () => {
           <div className="space-y-4">
             <Link to="/" className="flex items-center gap-2">
               <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-lg">O</span>
+                <span className="text-primary-foreground font-bold text-lg">C</span>
               </div>
-              <span className="text-xl font-bold text-foreground">OutreachAI</span>
+              <span className="text-xl font-bold text-foreground">COSTRAS</span>
             </Link>
             <p className="text-muted-foreground">
-              The #1 AI Twitter outreach platform. Automate your social media engagement and grow your audience.
+              Leading AI social media automation platform. Streamline your digital engagement and expand your reach.
             </p>
             <div className="flex items-center gap-4">
               <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
@@ -114,7 +114,7 @@ const Footer = () => {
 
         <div className="border-t border-primary/20 mt-12 pt-8 text-center">
           <p className="text-muted-foreground">
-            © 2025 OutreachAI. All rights reserved.
+            © 2025 COSTRAS. All rights reserved.
           </p>
         </div>
       </div>

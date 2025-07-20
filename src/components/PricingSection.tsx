@@ -7,83 +7,48 @@ const PricingSection = () => {
 
   const plans = [
     {
-      name: "Lite",
+      name: "Starter",
       price: "$29",
       period: "/month",
       description: "Perfect for getting started",
       features: [
-        "Manage 1 project",
-        "100 credits per month (~3 replies/day)",
-        "Auto-Post on profile",
-        "Auto-Reply with your account",
-        "User Mention your product",
-        "Auto-reply to customer complaints",
-        "5 Workflows",
-        "Analytics",
-        "Email Reports",
-        "Support"
+        "1 account",
+        "30 replies per day",
+        "Auto likes",
+        "Basic analytics",
+        "Email support"
       ],
-      additionalCredits: "$0.20 each",
+      additionalCredits: "",
       popular: false
     },
     {
-      name: "Essential",
+      name: "Pro",
       price: "$99",
       period: "/month",
       description: "Most popular choice",
       features: [
-        "Manage 1 project",
-        "500 credits per month (~17 replies/day)",
-        "Auto-Post on profile",
-        "Auto-Reply with your account",
-        "User Mention your product",
-        "Auto-reply to customer complaints",
-        "Unlimited Workflows",
-        "Analytics",
-        "Email Reports",
-        "Support"
+        "1 account",
+        "70 replies per day",
+        "Auto likes",
+        "Advanced analytics",
+        "Priority support"
       ],
-      additionalCredits: "$0.20 each",
+      additionalCredits: "",
       popular: true
     },
     {
-      name: "Pro",
-      price: "$199",
-      period: "/month",
-      description: "For growing businesses",
+      name: "Custom",
+      price: "Coming Soon",
+      period: "",
+      description: "Enterprise solutions",
       features: [
-        "Manage 3 projects",
-        "1,500 credits per month (~50 replies/day)",
-        "Auto-Post on profile",
-        "Auto-Reply with your account",
-        "User Mention your product",
-        "Auto-reply to customer complaints",
-        "Unlimited Workflows",
-        "Analytics",
-        "Email Reports",
-        "Priority Support"
+        "Custom account limits",
+        "Unlimited replies",
+        "Premium features",
+        "Dedicated support",
+        "Custom integrations"
       ],
-      additionalCredits: "$0.13 each",
-      popular: false
-    },
-    {
-      name: "Agency",
-      price: "$499",
-      period: "/month",
-      description: "For agencies and enterprises",
-      features: [
-        "Manage 10 projects",
-        "5,000 credits per month (~160 replies/day)",
-        "Auto-Post on profile",
-        "Auto-Reply with your account",
-        "User Mention your product",
-        "Auto-reply to customer complaints",
-        "Unlimited Workflows",
-        "Analytics",
-        "Email Reports",
-        "Priority Support"
-      ],
-      additionalCredits: "$0.10 each",
+      additionalCredits: "",
       popular: false
     }
   ];
@@ -124,7 +89,7 @@ const PricingSection = () => {
                   <span className="text-muted-foreground">{plan.period}</span>
                 </div>
                 <p className="text-muted-foreground">{plan.description}</p>
-                <p className="text-sm text-muted-foreground mt-2">Additional Credits: {plan.additionalCredits}</p>
+                {plan.additionalCredits && <p className="text-sm text-muted-foreground mt-2">Additional Credits: {plan.additionalCredits}</p>}
               </div>
 
               <ul className="space-y-3 mb-8">
@@ -140,8 +105,9 @@ const PricingSection = () => {
                 variant={plan.popular ? "hero" : "outline"} 
                 className="w-full"
                 onClick={() => handleGetStarted(plan.name)}
+                disabled={plan.name === "Custom"}
               >
-                Get Started
+                {plan.name === "Custom" ? "Coming Soon" : "Get Started"}
               </Button>
             </div>
           ))}
@@ -149,12 +115,12 @@ const PricingSection = () => {
 
         {/* Free Trial CTA */}
         <div className="text-center bg-card border border-primary/20 rounded-2xl p-8 shadow-card backdrop-blur-sm max-w-2xl mx-auto">
-          <h3 className="text-2xl font-bold text-foreground mb-4">Try It Free</h3>
+          <h3 className="text-2xl font-bold text-foreground mb-4">Start Your Journey</h3>
           <p className="text-muted-foreground mb-6">
-            Get 20 free credits to experience how OutreachAI can transform your social marketing.
+            Experience how COSTRAS can revolutionize your social media strategy with our starter plan.
           </p>
-          <Button variant="hero" size="lg" onClick={() => handleGetStarted("Free Trial")}>
-            Get Started for Free
+          <Button variant="hero" size="lg" onClick={() => handleGetStarted("Starter")}>
+            Begin with Starter Plan
           </Button>
         </div>
       </div>

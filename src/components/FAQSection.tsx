@@ -6,36 +6,32 @@ const FAQSection = () => {
 
   const faqs = [
     {
-      question: "How does OutreachAI work?",
-      answer: "OutreachAI scans Twitter conversations 24/7, identifies relevant opportunities based on your targeting criteria, and automatically generates human-like replies that engage potential customers. Our AI analyzes your brand voice and creates responses that sound natural and authentic."
+      question: "How does COSTRAS work?",
+      answer: "COSTRAS monitors social conversations continuously, identifies engagement opportunities based on your criteria, and automatically generates authentic responses that connect with your audience. Our AI understands your brand personality and creates replies that sound genuinely human."
     },
     {
-      question: "Will the replies sound spammy or robotic?",
-      answer: "No! Our AI is specifically trained to create human-like, engaging responses that fit naturally into conversations. We focus on providing value and building genuine connections rather than pushy sales pitches."
+      question: "Will the responses seem automated or unnatural?",
+      answer: "Absolutely not! Our AI specializes in crafting authentic, conversational responses that integrate seamlessly into discussions. We prioritize genuine value and relationship building over aggressive promotion."
     },
     {
-      question: "Can I customize the AI's voice and tone?",
-      answer: "Absolutely! You can customize personas, tone, and style to match your brand perfectly. Our AI learns from your website, social profiles, and custom instructions to ensure every reply sounds authentically like you."
+      question: "How quickly will I see results?",
+      answer: "Our automation begins immediately after configuration. You'll see activity on day one, with potential leads following shortly after. Most users observe substantial engagement improvements within 7-14 days."
     },
     {
-      question: "How fast do results kick in?",
-      answer: "Our AI starts working immediately after setup. You can see replies going out on Day 1, with leads potentially coming in the same day. Most users see significant engagement boosts within 1-2 weeks."
+      question: "Which platforms does COSTRAS support?",
+      answer: "We primarily focus on Twitter (X) to ensure optimal performance. Support for LinkedIn and Reddit is currently in development!"
     },
     {
-      question: "What platforms do you support?",
-      answer: "We currently focus on Twitter (X) to deliver the best possible results. LinkedIn and Reddit support are in development and coming soon!"
+      question: "Can I cancel my subscription anytime?",
+      answer: "Absolutely! You maintain complete subscription control. Cancel, pause, or modify plans whenever necessary, directly through your dashboard."
     },
     {
-      question: "Can I cancel anytime?",
-      answer: "Yes! You have full control over your subscription. Cancel, pause, or switch plans whenever you need to, right from your dashboard."
+      question: "Is there a trial option available?",
+      answer: "Yes! New users receive credits to experience our AI capabilities and evaluate engagement quality before selecting a paid subscription."
     },
     {
-      question: "Do you offer a free trial?",
-      answer: "Yes! New users get 20 free credits to test our AI replies and see the quality and engagement they generate before committing to a paid plan."
-    },
-    {
-      question: "How does the setup process work?",
-      answer: "Setup is incredibly simple - just 2 minutes! Our AI analyzes your website and social profiles to understand your brand voice automatically. No lengthy onboarding required."
+      question: "How simple is the setup process?",
+      answer: "Setup takes under 2 minutes! Our AI automatically analyzes your digital presence to understand your communication style. No complex onboarding needed."
     }
   ];
 
@@ -88,7 +84,7 @@ const FAQSection = () => {
         <div className="text-center mt-12">
           <p className="text-muted-foreground mb-4">Still have questions?</p>
           <a 
-            href="mailto:support@outreachai.com" 
+            href="mailto:support@costras.com" 
             className="text-primary hover:text-primary-glow transition-colors font-semibold"
           >
             Contact our support team

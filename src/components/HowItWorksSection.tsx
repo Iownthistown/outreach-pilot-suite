@@ -9,23 +9,23 @@ const HowItWorksSection = () => {
     {
       number: "1",
       icon: Settings,
-      title: "Set Up Your Brand",
-      description: "Get started in 60s. We analyze your website & audience",
-      details: "Our AI will instantly analyze your website and social profiles to understand your brand voice, product features, and target audience. No lengthy onboarding needed."
+      title: "Configure Your Profile",
+      description: "Quick setup in under a minute. We learn your style & audience",
+      details: "Our intelligent system instantly analyzes your content and social presence to understand your unique voice, messaging style, and target demographics. Zero complex setup required."
     },
     {
       number: "2", 
       icon: Workflow,
-      title: "Create Workflows",
-      description: "Choose templates & launch",
-      details: "Choose from our pre-built templates or create custom workflows. Set your targeting criteria, response style, and let our AI handle the rest."
+      title: "Build Automation",
+      description: "Select templates & activate",
+      details: "Pick from proven automation templates or build custom flows. Define your engagement strategy, set response preferences, and let our AI execute your vision."
     },
     {
       number: "3",
       icon: BarChart,
-      title: "Watch Results",
-      description: "Grow your brand while you sleep",
-      details: "It's really a set-it-and-forget-it solution. Just 2 minutes of setup and you can forget about it while your brand grows automatically. Monitor your results and leads from anywhere."
+      title: "Monitor Growth",
+      description: "Scale your presence effortlessly",
+      details: "A true hands-off solution. Quick initial configuration enables continuous brand growth on autopilot. Track performance and engagement insights from your dashboard."
     }
   ];
 
@@ -39,10 +39,10 @@ const HowItWorksSection = () => {
         {/* Header */}
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
-            How OutreachAI Works
+            How COSTRAS Works
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Set it once, forget it, and skip the manual reply grind.
+            Configure once, automate forever, and eliminate repetitive social tasks.
           </p>
         </div>
 

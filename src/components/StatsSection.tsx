@@ -1,20 +1,20 @@
 const StatsSection = () => {
   const stats = [
     {
-      number: "50M+",
-      label: "Twitter Impressions",
+      number: "25M+",
+      label: "Social Interactions",
     },
     {
-      number: "100K+",
-      label: "Engaging Posts Created",
+      number: "75K+",
+      label: "Automated Responses",
     },
     {
-      number: "2K+",
-      label: "Marketers Growing",
+      number: "1.5K+",
+      label: "Active Users",
     },
     {
-      number: "100%",
-      label: "5 Star Rating",
+      number: "98%",
+      label: "Satisfaction Rate",
     },
   ];
 

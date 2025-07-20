@@ -20,17 +20,17 @@ const HeroSection = () => {
               {/* Badge */}
               <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-2 text-sm">
                 <Star className="w-4 h-4 text-primary fill-current" />
-                <span className="text-foreground font-medium">#1 AI Twitter Outreach Platform</span>
+                <span className="text-foreground font-medium">#1 AI Social Media Automation</span>
               </div>
 
               {/* Main heading */}
               <div className="space-y-4">
                 <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground leading-tight">
-                  Smart Replies For{" "}
-                  <span className="text-transparent bg-clip-text bg-gradient-primary animate-glow">Twitter </span>
+                  Automated Engagement For{" "}
+                  <span className="text-transparent bg-clip-text bg-gradient-primary animate-glow">Social Media </span>
                 </h1>
                 <p className="text-xl text-muted-foreground max-w-lg">
-                  AI-powered responses that sound human, stay relevant, and keep your audience engaged. Perfect for Twitter & LinkedIn.
+                  Intelligent automation that creates natural interactions, maintains consistency, and amplifies your social presence effortlessly.
                 </p>
               </div>
 
@@ -38,15 +38,15 @@ const HeroSection = () => {
               <div className="space-y-3">
                 <div className="flex items-center gap-3 text-foreground">
                   <TrendingUp className="w-5 h-5 text-success" />
-                  <span>Boost Engagement: Increase likes, retweets, and comments</span>
+                  <span>Amplify Reach: Maximize your social media impact</span>
                 </div>
                 <div className="flex items-center gap-3 text-foreground">
                   <Users className="w-5 h-5 text-success" />
-                  <span>Save Time: Generate content in seconds, not hours</span>
+                  <span>Effortless Management: Automate while you focus on growth</span>
                 </div>
                 <div className="flex items-center gap-3 text-foreground">
                   <Twitter className="w-5 h-5 text-success" />
-                  <span>Grow Your Audience: Reach more people on Twitter & LinkedIn</span>
+                  <span>Build Community: Connect authentically across platforms</span>
                 </div>
               </div>
 
@@ -91,8 +91,8 @@ const HeroSection = () => {
                       </div>
                       <div className="flex-1">
                         <p className="text-foreground mb-2">
-                          Great question! I'd recommend starting with content marketing and engaging with your target audience on Twitter. 
-                          I actually use an AI tool that helps me stay on top of conversations like this. Happy to share more!
+                          Excellent point! Building a community first is key. I've found that authentic engagement with your ideal customers works wonders. 
+                          There's a great automation tool I use that keeps me connected to these conversations. Would love to discuss further!
                         </p>
                         <div className="flex gap-4 text-sm text-muted-foreground">
                           <span className="hover:text-foreground cursor-pointer">💬 Reply</span>
@@ -113,15 +113,15 @@ const HeroSection = () => {
               {/* Floating stats */}
               <div className="absolute -top-6 -right-6 bg-card border border-primary/20 rounded-xl p-4 shadow-card backdrop-blur-sm">
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-foreground">50M+</p>
-                  <p className="text-sm text-muted-foreground">Twitter Impressions</p>
+                  <p className="text-2xl font-bold text-foreground">25M+</p>
+                  <p className="text-sm text-muted-foreground">Social Interactions</p>
                 </div>
               </div>
 
               <div className="absolute -bottom-6 -left-6 bg-card border border-primary/20 rounded-xl p-4 shadow-card backdrop-blur-sm">
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-foreground">100K+</p>
-                  <p className="text-sm text-muted-foreground">Engaging Posts Created</p>
+                  <p className="text-2xl font-bold text-foreground">75K+</p>
+                  <p className="text-sm text-muted-foreground">Automated Responses</p>
                 </div>
               </div>
             </div>

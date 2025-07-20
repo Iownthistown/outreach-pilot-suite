@@ -5,31 +5,31 @@ const FeaturesSection = () => {
     {
       icon: Users,
       title: "For Entrepreneurs",
-      subtitle: "Save time while growing your network",
+      subtitle: "Streamline networking while you scale",
       points: [
-        "Automate social engagement",
-        "Build authentic connections",
-        "Convert engagement into opportunities"
+        "Intelligent conversation management",
+        "Foster genuine relationships",
+        "Transform interactions into leads"
       ]
     },
     {
       icon: Building,
       title: "For Companies",
-      subtitle: "Scale your social media presence",
+      subtitle: "Enhance your digital footprint",
       points: [
-        "Maintain consistent brand voice",
-        "Increase team efficiency",
-        "Track engagement metrics"
+        "Preserve brand consistency",
+        "Optimize team productivity",
+        "Monitor engagement analytics"
       ]
     },
     {
       icon: TrendingUp,
       title: "For Marketers",
-      subtitle: "Amplify your content reach",
+      subtitle: "Expand your content influence",
       points: [
-        "Generate engaging responses",
-        "Boost organic visibility",
-        "Measure performance"
+        "Create compelling interactions",
+        "Increase organic reach",
+        "Analyze campaign performance"
       ]
     }
   ];
@@ -37,18 +37,18 @@ const FeaturesSection = () => {
   const mainFeatures = [
     {
       icon: Target,
-      title: "Expand Your Reach",
-      description: "Turn every interaction into an opportunity to grow your professional network"
+      title: "Maximize Your Influence",
+      description: "Transform casual interactions into meaningful connections that drive business growth"
     },
     {
       icon: Clock,
-      title: "AI-Powered Engagement",
-      description: "Let our smart algorithms craft perfect responses that resonate with your audience"
+      title: "Intelligent Automation",
+      description: "Advanced AI creates contextual responses that maintain your personal touch"
     },
     {
       icon: BarChart3,
-      title: "Boost Your Impact",
-      description: "Watch your influence grow as you consistently engage with your target audience"
+      title: "Amplify Your Presence",
+      description: "Build lasting engagement through consistent, strategic social media interactions"
     }
   ];
 
@@ -58,10 +58,10 @@ const FeaturesSection = () => {
         {/* Header */}
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
-            Time is precious, engagement is essential
+            Efficiency meets authenticity
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            OutreachAI helps you maintain meaningful social media presence without spending hours creating replies
+            COSTRAS enables consistent social media engagement while preserving your unique voice and authentic connections
           </p>
         </div>
 
@@ -90,22 +90,22 @@ const FeaturesSection = () => {
 
         {/* Trusted by section */}
         <div className="text-center mb-16">
-          <p className="text-muted-foreground mb-8">Trusted by growing businesses and content creators worldwide</p>
+          <p className="text-muted-foreground mb-8">Empowering creators and businesses across industries</p>
           <div className="flex justify-center items-center gap-8 opacity-60">
-            <div className="bg-muted/20 rounded-lg px-6 py-3">OBI Real Estate</div>
-            <div className="bg-muted/20 rounded-lg px-6 py-3">Producta</div>
-            <div className="bg-muted/20 rounded-lg px-6 py-3">SavvyCal</div>
-            <div className="bg-muted/20 rounded-lg px-6 py-3">Novasoft</div>
+            <div className="bg-muted/20 rounded-lg px-6 py-3">TechFlow Solutions</div>
+            <div className="bg-muted/20 rounded-lg px-6 py-3">Digital Pulse</div>
+            <div className="bg-muted/20 rounded-lg px-6 py-3">Growth Dynamics</div>
+            <div className="bg-muted/20 rounded-lg px-6 py-3">Social Edge</div>
           </div>
         </div>
 
         {/* Transform section */}
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
-            Transform Your Social Media Game
+            Revolutionize Your Digital Strategy
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-12">
-            Leverage AI to create meaningful connections and drive engagement across your social platforms
+            Harness intelligent automation to build authentic relationships and accelerate your online growth
           </p>
         </div>
 
