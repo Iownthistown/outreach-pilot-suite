@@ -71,7 +71,8 @@ const PricingSection = () => {
         </div>
 
         {/* Pricing Grid */}
-        <div className="grid lg:grid-cols-4 gap-8 mb-12">
+        <div className="flex justify-center">
+          <div className="grid lg:grid-cols-3 gap-8 mb-12 max-w-5xl">
           {plans.map((plan, index) => (
             <div key={index} className={`relative bg-card border rounded-2xl p-8 shadow-card backdrop-blur-sm ${plan.popular ? 'border-primary scale-105' : 'border-primary/20'}`}>
               {plan.popular && (
@@ -111,6 +112,7 @@ const PricingSection = () => {
               </Button>
             </div>
           ))}
+          </div>
         </div>
 
         {/* Free Trial CTA */}

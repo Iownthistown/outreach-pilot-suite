@@ -34,21 +34,21 @@ const HeroSection = () => {
                 </p>
               </div>
 
-              {/* Benefits */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-3 text-foreground">
-                  <TrendingUp className="w-5 h-5 text-success" />
-                  <span>Amplify Reach: Maximize your social media impact</span>
-                </div>
-                <div className="flex items-center gap-3 text-foreground">
-                  <Users className="w-5 h-5 text-success" />
-                  <span>Effortless Management: Automate while you focus on growth</span>
-                </div>
-                <div className="flex items-center gap-3 text-foreground">
-                  <Twitter className="w-5 h-5 text-success" />
-                  <span>Build Community: Connect authentically across platforms</span>
-                </div>
-              </div>
+               {/* Benefits */}
+               <div className="space-y-3">
+                 <div className="flex items-center gap-3 text-foreground">
+                   <TrendingUp className="w-5 h-5 text-success" />
+                   <span>Amplify Reach: Maximize your social media impact</span>
+                 </div>
+                 <div className="flex items-center gap-3 text-foreground">
+                   <Users className="w-5 h-5 text-success" />
+                   <span>Effortless Management: Automate while you focus on growth</span>
+                 </div>
+                 <div className="flex items-center gap-3 text-foreground">
+                   <Twitter className="w-5 h-5 text-success" />
+                   <span>Build Community: Connect authentically across platforms</span>
+                 </div>
+               </div>
 
               {/* CTA Buttons */}
               <div className="space-y-4">

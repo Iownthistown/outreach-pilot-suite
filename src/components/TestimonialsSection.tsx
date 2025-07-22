@@ -3,38 +3,38 @@ import { Star } from "lucide-react";
 const TestimonialsSection = () => {
   const testimonials = [
     {
-      name: "Sarah Chen",
-      role: "Content Creator & Influencer",
+      name: "Marcus Rodriguez",
+      role: "CEO at TechFlow Solutions",
       rating: 5,
       text: "Initially hesitant, but COSTRAS completely transformed my approach. Engagement increased 40% while reclaiming hours weekly. It's like having a digital twin managing my presence, only smarter. Absolutely remarkable."
     },
     {
-      name: "Alex Kim",
-      role: "Software Engineer",
+      name: "Jennifer Walsh",
+      role: "Marketing Director at InnovateCorp",
       rating: 5,
       text: "COSTRAS revolutionized my client communication strategy. Automated responses recovered countless hours daily."
     },
     {
-      name: "Emily Nguyen",
-      role: "Content Creator",
+      name: "David Thompson",
+      role: "Founder of CreativeHub",
       rating: 5,
       text: "Creating content without COSTRAS feels impossible now. It's like having an intelligent assistant who understands my audience intuitively. The automation capabilities are extraordinary."
     },
     {
-      name: "Michael Brown",
-      role: "Small Business Owner",
+      name: "Rachel Anderson",
+      role: "VP Marketing at NextGen Media",
       rating: 5,
       text: "COSTRAS transformed my customer relationships. The intelligent content generation established deeper connections with my audience."
     },
     {
-      name: "Sophia Lee",
-      role: "UX Designer",
+      name: "Kevin Liu",
+      role: "Head of Growth at StartupLab",
       rating: 5,
       text: "COSTRAS delivers incredible social media automation. Smart, compelling interactions that save significant time. Strongly recommended."
     },
     {
-      name: "Ethan Patel",
-      role: "Digital Marketer",
+      name: "Amanda Foster",
+      role: "Brand Manager at GlobalReach",
       rating: 5,
       text: "COSTRAS is essential for digital marketing professionals. Intuitive interface with measurable, impressive outcomes."
     }

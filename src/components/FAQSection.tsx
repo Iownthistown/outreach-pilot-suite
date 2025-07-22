@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const FAQSection = () => {
   const [openItems, setOpenItems] = useState<number[]>([]);
@@ -83,12 +84,12 @@ const FAQSection = () => {
         {/* Contact CTA */}
         <div className="text-center mt-12">
           <p className="text-muted-foreground mb-4">Still have questions?</p>
-          <a 
-            href="mailto:support@costras.com" 
+          <Link 
+            to="/contact" 
             className="text-primary hover:text-primary-glow transition-colors font-semibold"
           >
             Contact our support team
-          </a>
+          </Link>
         </div>
       </div>
     </section>
