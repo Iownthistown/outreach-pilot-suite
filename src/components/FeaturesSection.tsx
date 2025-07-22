@@ -88,17 +88,6 @@ const FeaturesSection = () => {
           ))}
         </div>
 
-        {/* Trusted by section */}
-        <div className="text-center mb-16">
-          <p className="text-muted-foreground mb-8">Empowering creators and businesses across industries</p>
-          <div className="flex justify-center items-center gap-8 opacity-60">
-            <div className="bg-muted/20 rounded-lg px-6 py-3">TechFlow Solutions</div>
-            <div className="bg-muted/20 rounded-lg px-6 py-3">Digital Pulse</div>
-            <div className="bg-muted/20 rounded-lg px-6 py-3">Growth Dynamics</div>
-            <div className="bg-muted/20 rounded-lg px-6 py-3">Social Edge</div>
-          </div>
-        </div>
-
         {/* Transform section */}
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
