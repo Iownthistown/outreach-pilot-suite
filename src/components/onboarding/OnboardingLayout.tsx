@@ -1,30 +1,85 @@
 import { ReactNode } from "react";
+import { CheckCircle, Clock, Circle } from "lucide-react";
 
 interface OnboardingLayoutProps {
   children: ReactNode;
   currentStep: number;
   totalSteps: number;
+  loading?: boolean;
 }
 
-const OnboardingLayout = ({ children, currentStep, totalSteps }: OnboardingLayoutProps) => {
+const OnboardingLayout = ({ children, currentStep, totalSteps, loading = false }: OnboardingLayoutProps) => {
+  const steps = [
+    { title: "Connect Twitter", description: "Link your Twitter account" },
+    { title: "Install Extension", description: "Add Chrome extension" },
+    { title: "Complete Setup", description: "Finish configuration" }
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-hero flex items-center justify-center p-4">
-      <div className="max-w-2xl w-full">
-        {/* Progress indicator */}
-        <div className="mb-8">
-          <div className="flex justify-center space-x-2">
-            {Array.from({ length: totalSteps }, (_, i) => (
+      <div className="max-w-3xl w-full">
+        {/* Enhanced Progress indicator */}
+        <div className="mb-12">
+          {/* Progress bar */}
+          <div className="relative mb-8">
+            <div className="flex justify-between items-center">
+              {steps.map((step, i) => (
+                <div key={i} className="flex flex-col items-center relative z-10">
+                  <div
+                    className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-500 ${
+                      i < currentStep
+                        ? "bg-primary border-primary text-primary-foreground"
+                        : i === currentStep
+                        ? loading
+                          ? "bg-primary/20 border-primary text-primary animate-pulse"
+                          : "bg-primary/10 border-primary text-primary"
+                        : "bg-muted border-muted-foreground/30 text-muted-foreground"
+                    }`}
+                  >
+                    {i < currentStep ? (
+                      <CheckCircle className="w-6 h-6" />
+                    ) : i === currentStep && loading ? (
+                      <Clock className="w-6 h-6 animate-spin" />
+                    ) : (
+                      <Circle className="w-6 h-6" />
+                    )}
+                  </div>
+                  <div className="mt-3 text-center">
+                    <div
+                      className={`text-sm font-semibold transition-colors duration-300 ${
+                        i <= currentStep ? "text-foreground" : "text-muted-foreground"
+                      }`}
+                    >
+                      {step.title}
+                    </div>
+                    <div
+                      className={`text-xs transition-colors duration-300 ${
+                        i <= currentStep ? "text-muted-foreground" : "text-muted-foreground/50"
+                      }`}
+                    >
+                      {step.description}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            {/* Connecting lines */}
+            <div className="absolute top-6 left-6 right-6 h-0.5 bg-gradient-to-r from-muted via-muted to-muted -z-10">
               <div
-                key={i}
-                className={`h-2 w-8 rounded-full transition-colors duration-300 ${
-                  i < currentStep 
-                    ? "bg-primary" 
-                    : i === currentStep 
-                    ? "bg-primary/60" 
-                    : "bg-muted/30"
-                }`}
+                className="h-full bg-gradient-to-r from-primary to-primary transition-all duration-700 ease-out"
+                style={{
+                  width: `${(currentStep / (totalSteps - 1)) * 100}%`
+                }}
               />
-            ))}
+            </div>
+          </div>
+          
+          {/* Progress percentage */}
+          <div className="text-center">
+            <div className="text-xs text-muted-foreground">
+              Step {currentStep + 1} of {totalSteps} • {Math.round(((currentStep + 1) / totalSteps) * 100)}% Complete
+            </div>
           </div>
         </div>
 

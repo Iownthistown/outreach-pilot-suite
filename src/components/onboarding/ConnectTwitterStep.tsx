@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { Twitter, Shield, Zap } from "lucide-react";
+import { Twitter, Shield, Zap, Loader2 } from "lucide-react";
 
 interface ConnectTwitterStepProps {
   onNext: () => void;
+  loading?: boolean;
 }
 
-const ConnectTwitterStep = ({ onNext }: ConnectTwitterStepProps) => {
+const ConnectTwitterStep = ({ onNext, loading = false }: ConnectTwitterStepProps) => {
   return (
     <div className="text-center space-y-8">
       {/* Header */}
@@ -56,12 +57,29 @@ const ConnectTwitterStep = ({ onNext }: ConnectTwitterStepProps) => {
       <div className="space-y-4">
         <Button
           onClick={onNext}
+          disabled={loading}
           size="lg"
-          className="w-full md:w-auto px-8 py-3 text-lg font-semibold bg-[#1DA1F2] hover:bg-[#1DA1F2]/90 text-white border-0"
+          className="w-full md:w-auto px-8 py-3 text-lg font-semibold bg-[#1DA1F2] hover:bg-[#1DA1F2]/90 text-white border-0 disabled:opacity-50 transition-all duration-300"
         >
-          <Twitter className="w-5 h-5 mr-2" />
-          Connect Twitter Account
+          {loading ? (
+            <>
+              <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+              Connecting...
+            </>
+          ) : (
+            <>
+              <Twitter className="w-5 h-5 mr-2" />
+              Connect Twitter Account
+            </>
+          )}
         </Button>
+        {loading && (
+          <div className="text-center">
+            <p className="text-sm text-muted-foreground animate-pulse">
+              Connecting to Twitter...
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

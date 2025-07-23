@@ -1,11 +1,27 @@
 import { Button } from "@/components/ui/button";
-import { Chrome, Download, Shield, Lock } from "lucide-react";
+import { Chrome, Shield, Lock, Loader2, CheckCircle } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface ChromeExtensionStepProps {
   onNext: () => void;
+  loading?: boolean;
+  extensionInstalled?: boolean;
+  onInstall?: () => void;
 }
 
-const ChromeExtensionStep = ({ onNext }: ChromeExtensionStepProps) => {
+const ChromeExtensionStep = ({ 
+  onNext, 
+  loading = false, 
+  extensionInstalled = false,
+  onInstall 
+}: ChromeExtensionStepProps) => {
+  const [showDetecting, setShowDetecting] = useState(false);
+
+  useEffect(() => {
+    if (loading) {
+      setShowDetecting(true);
+    }
+  }, [loading]);
   return (
     <div className="text-center space-y-8">
       {/* Header */}
@@ -64,22 +80,91 @@ const ChromeExtensionStep = ({ onNext }: ChromeExtensionStepProps) => {
         </div>
       </div>
 
+      {/* Extension Detection Status */}
+      {showDetecting && !extensionInstalled && (
+        <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-xl p-6 mb-6 animate-fade-in">
+          <div className="flex items-center justify-center space-x-3">
+            <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />
+            <div className="text-center">
+              <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                Detecting Chrome Extension...
+              </p>
+              <p className="text-xs text-blue-700 dark:text-blue-300 mt-1">
+                Install the extension and we'll automatically detect it
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Success State */}
+      {extensionInstalled && (
+        <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-xl p-6 mb-6 animate-fade-in">
+          <div className="flex items-center justify-center space-x-3">
+            <CheckCircle className="w-6 h-6 text-green-600" />
+            <div className="text-center">
+              <p className="text-sm font-medium text-green-900 dark:text-green-100">
+                Extension Detected Successfully!
+              </p>
+              <p className="text-xs text-green-700 dark:text-green-300 mt-1">
+                Proceeding to next step...
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* CTA */}
       <div className="space-y-4">
-        <Button
-          onClick={() => {
-            window.open('https://chromewebstore.google.com/detail/twitter-bot-connector/mnegdfmbhfmahjhhgibhpabkmobleikk', '_blank');
-            onNext();
-          }}
-          size="lg"
-          className="w-full md:w-auto px-8 py-3 text-lg font-semibold bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white border-0 rounded-xl"
-        >
-          <Chrome className="w-5 h-5 mr-2" />
-          Add to Chrome
-        </Button>
+        {!extensionInstalled ? (
+          <Button
+            onClick={onInstall || (() => {
+              window.open('https://chromewebstore.google.com/detail/twitter-bot-connector/mnegdfmbhfmahjhhgibhpabkmobleikk', '_blank');
+              setShowDetecting(true);
+            })}
+            disabled={loading}
+            size="lg"
+            className="w-full md:w-auto px-8 py-3 text-lg font-semibold bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white border-0 rounded-xl disabled:opacity-50 transition-all duration-300"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                Installing...
+              </>
+            ) : (
+              <>
+                <Chrome className="w-5 h-5 mr-2" />
+                Add to Chrome
+              </>
+            )}
+          </Button>
+        ) : (
+          <Button
+            onClick={onNext}
+            size="lg"
+            className="w-full md:w-auto px-8 py-3 text-lg font-semibold bg-green-600 hover:bg-green-700 text-white border-0 rounded-xl"
+          >
+            <CheckCircle className="w-5 h-5 mr-2" />
+            Continue to Dashboard
+          </Button>
+        )}
+        
         <p className="text-xs text-muted-foreground">
-          Free extension • No subscription required
+          Free extension • No subscription required • Auto-detected
         </p>
+        
+        {showDetecting && !extensionInstalled && (
+          <div className="text-center mt-4">
+            <p className="text-xs text-muted-foreground">
+              Having trouble? <button 
+                onClick={onNext}
+                className="text-primary hover:underline"
+              >
+                Skip this step
+              </button>
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
