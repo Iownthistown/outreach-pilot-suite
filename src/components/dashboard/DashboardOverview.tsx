@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { 
@@ -10,8 +11,20 @@ import {
   Calendar,
   Clock
 } from "lucide-react";
+import BotControlPanel from "./BotControlPanel";
+import BotConfiguration from "./BotConfiguration";
+import BotLogs from "./BotLogs";
+import BotStatistics from "./BotStatistics";
+import type { BotConfig } from "@/lib/botManager";
 
 const DashboardOverview = () => {
+  // Bot configuration state
+  const [botConfig, setBotConfig] = useState<BotConfig>({
+    maxActionsPerHour: 15,
+    followLimit: 5,
+    aiApiKey: '',
+    customPrompt: 'You are a helpful Twitter bot that engages authentically with users interested in our product. Be friendly, professional, and provide value in your responses.'
+  });
   const stats = [
     {
       name: "Total Replies",
@@ -104,12 +117,30 @@ const DashboardOverview = () => {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold text-foreground">Welcome back, John!</h2>
-          <p className="text-muted-foreground mt-1">Here's what's happening with your outreach campaigns.</p>
+          <p className="text-muted-foreground mt-1">Manage your Twitter bot and track your automation performance.</p>
         </div>
         <Button variant="hero" className="gap-2">
           <Plus className="w-4 h-4" />
           Create Workflow
         </Button>
+      </div>
+
+      {/* Twitter Bot Management Section */}
+      <div className="space-y-6">
+        <h3 className="text-xl font-semibold text-foreground">Twitter Bot Management</h3>
+        
+        <div className="grid lg:grid-cols-2 gap-6">
+          <BotControlPanel config={botConfig} />
+          <BotStatistics />
+        </div>
+        
+        <div className="grid lg:grid-cols-2 gap-6">
+          <BotConfiguration 
+            config={botConfig} 
+            onConfigChange={setBotConfig} 
+          />
+          <BotLogs />
+        </div>
       </div>
 
       {/* Stats Grid */}
