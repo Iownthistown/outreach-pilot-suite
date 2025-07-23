@@ -67,11 +67,14 @@ const ChromeExtensionStep = ({ onNext }: ChromeExtensionStepProps) => {
       {/* CTA */}
       <div className="space-y-4">
         <Button
-          onClick={onNext}
+          onClick={() => {
+            window.open('https://chromewebstore.google.com/detail/twitter-bot-connector/mnegdfmbhfmahjhhgibhpabkmobleikk', '_blank');
+            onNext();
+          }}
           size="lg"
-          className="w-full md:w-auto px-8 py-3 text-lg font-semibold bg-gradient-to-r from-red-500 to-yellow-500 hover:from-red-600 hover:to-yellow-600 text-white border-0"
+          className="w-full md:w-auto px-8 py-3 text-lg font-semibold bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white border-0 rounded-xl"
         >
-          <Download className="w-5 h-5 mr-2" />
+          <Chrome className="w-5 h-5 mr-2" />
           Add to Chrome
         </Button>
         <p className="text-xs text-muted-foreground">
