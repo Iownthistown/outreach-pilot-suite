@@ -56,7 +56,7 @@ const TestimonialsSection = () => {
         {/* Testimonials Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {testimonials.map((testimonial, index) => (
-            <div key={index} className="bg-card border border-primary/20 rounded-2xl p-6 shadow-card backdrop-blur-sm">
+            <div key={index} className="bg-card border border-primary/20 rounded-2xl p-6 shadow-card backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-primary/40 cursor-pointer group">
               {/* Rating */}
               <div className="flex items-center gap-1 mb-4">
                 {[...Array(testimonial.rating)].map((_, i) => (
@@ -71,7 +71,7 @@ const TestimonialsSection = () => {
 
               {/* Author */}
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center">
+                <div className="w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
                   <span className="text-primary-foreground font-semibold">
                     {testimonial.name.charAt(0)}
                   </span>
@@ -87,7 +87,7 @@ const TestimonialsSection = () => {
 
         {/* Bottom CTA */}
         <div className="text-center mt-16">
-          <div className="bg-gradient-card border border-primary/20 rounded-2xl p-8 shadow-card backdrop-blur-sm max-w-2xl mx-auto">
+          <div className="bg-gradient-card border border-primary/20 rounded-2xl p-8 shadow-card backdrop-blur-sm max-w-2xl mx-auto transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-primary/40 cursor-pointer">
             <h3 className="text-2xl font-bold text-foreground mb-4">
               Join the community of professionals scaling their digital presence
             </h3>

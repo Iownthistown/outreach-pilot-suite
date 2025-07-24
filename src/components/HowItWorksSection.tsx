@@ -64,9 +64,9 @@ const HowItWorksSection = () => {
 
               {/* Visual */}
               <div className={`${index % 2 === 1 ? 'lg:col-start-1 lg:row-start-1' : ''}`}>
-                <div className="bg-gradient-card border border-primary/20 rounded-2xl p-8 shadow-card">
+                <div className="bg-gradient-card border border-primary/20 rounded-2xl p-8 shadow-card transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-primary/40 cursor-pointer group">
                   <div className="flex items-center justify-center">
-                    <div className="w-24 h-24 bg-gradient-primary rounded-2xl flex items-center justify-center">
+                    <div className="w-24 h-24 bg-gradient-primary rounded-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
                       <step.icon className="w-12 h-12 text-primary-foreground" />
                     </div>
                   </div>

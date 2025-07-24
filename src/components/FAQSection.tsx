@@ -60,7 +60,7 @@ const FAQSection = () => {
         {/* FAQ Items */}
         <div className="max-w-3xl mx-auto space-y-4">
           {faqs.map((faq, index) => (
-            <div key={index} className="bg-card border border-primary/20 rounded-xl overflow-hidden">
+            <div key={index} className="bg-card border border-primary/20 rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-lg hover:border-primary/40">
               <button
                 onClick={() => toggleItem(index)}
                 className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-muted/20 transition-colors"
