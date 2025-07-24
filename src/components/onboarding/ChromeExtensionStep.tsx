@@ -33,7 +33,7 @@ const ChromeExtensionStep = ({
           Download the Chrome Extension
         </h1>
         <p className="text-muted-foreground text-lg max-w-md mx-auto">
-          The Qura Chrome extension is your gateway to AI-powered social media enhancement. It seamlessly integrates with your browser for instant access to all features.
+          The COSTRAS Chrome extension is your gateway to AI-powered Twitter/X enhancement. It seamlessly integrates with your browser for instant access to all features.
         </p>
       </div>
 

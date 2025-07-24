@@ -11,6 +11,8 @@ import Onboarding from "./pages/Onboarding";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Contact from "./pages/Contact";
+import About from "./pages/About";
+import Affiliates from "./pages/Affiliates";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +29,8 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/affiliates" element={<Affiliates />} />
             <Route path="/onboarding" element={
               <ProtectedRoute>
                 <Onboarding />

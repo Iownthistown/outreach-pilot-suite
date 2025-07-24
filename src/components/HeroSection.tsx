@@ -20,17 +20,17 @@ const HeroSection = () => {
               {/* Badge */}
               <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-2 text-sm">
                 <Star className="w-4 h-4 text-primary fill-current" />
-                <span className="text-foreground font-medium">#1 AI Social Media Automation</span>
+                <span className="text-foreground font-medium">#1 AI Twitter/X Automation</span>
               </div>
 
               {/* Main heading */}
               <div className="space-y-4">
                 <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground leading-tight">
                   Automated Engagement For{" "}
-                  <span className="text-transparent bg-clip-text bg-gradient-primary animate-glow">Social Media </span>
+                  <span className="text-transparent bg-clip-text bg-gradient-primary animate-glow">Twitter/X </span>
                 </h1>
                 <p className="text-xl text-muted-foreground max-w-lg">
-                  Intelligent automation that creates natural interactions, maintains consistency, and amplifies your social presence effortlessly.
+                  Intelligent automation that creates natural interactions, maintains consistency, and amplifies your Twitter/X presence effortlessly.
                 </p>
               </div>
 
@@ -38,7 +38,7 @@ const HeroSection = () => {
                <div className="space-y-3">
                  <div className="flex items-center gap-3 text-foreground">
                    <TrendingUp className="w-5 h-5 text-success" />
-                   <span>Amplify Reach: Maximize your social media impact</span>
+                   <span>Amplify Reach: Maximize your Twitter/X impact</span>
                  </div>
                  <div className="flex items-center gap-3 text-foreground">
                    <Users className="w-5 h-5 text-success" />

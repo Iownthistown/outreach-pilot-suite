@@ -30,7 +30,7 @@ const TestimonialsSection = () => {
       name: "Kevin Liu",
       role: "Head of Growth at StartupLab",
       rating: 5,
-      text: "COSTRAS delivers incredible social media automation. Smart, compelling interactions that save significant time. Strongly recommended."
+      text: "COSTRAS delivers incredible Twitter/X automation. Smart, compelling interactions that save significant time. Strongly recommended."
     },
     {
       name: "Amanda Foster",

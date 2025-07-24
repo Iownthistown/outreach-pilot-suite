@@ -119,7 +119,7 @@ const PricingSection = () => {
         <div className="text-center bg-card border border-primary/20 rounded-2xl p-8 shadow-card backdrop-blur-sm max-w-2xl mx-auto">
           <h3 className="text-2xl font-bold text-foreground mb-4">Start Your Journey</h3>
           <p className="text-muted-foreground mb-6">
-            Experience how COSTRAS can revolutionize your social media strategy with our starter plan.
+            Experience how COSTRAS can revolutionize your Twitter/X strategy with our starter plan.
           </p>
           <Button variant="hero" size="lg" onClick={() => handleGetStarted("Starter")}>
             Begin with Starter Plan

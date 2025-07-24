@@ -48,7 +48,7 @@ const FeaturesSection = () => {
     {
       icon: BarChart3,
       title: "Amplify Your Presence",
-      description: "Build lasting engagement through consistent, strategic social media interactions"
+      description: "Build lasting engagement through consistent, strategic Twitter/X interactions"
     }
   ];
 
@@ -61,7 +61,7 @@ const FeaturesSection = () => {
             Efficiency meets authenticity
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            COSTRAS enables consistent social media engagement while preserving your unique voice and authentic connections
+            COSTRAS enables consistent Twitter/X engagement while preserving your unique voice and authentic connections
           </p>
         </div>
 

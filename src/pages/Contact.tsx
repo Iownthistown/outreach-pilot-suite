@@ -46,7 +46,7 @@ const Contact = () => {
                 Get in Touch
               </h1>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Have questions about COSTRAS? We're here to help you get started with automated social media engagement.
+                Have questions about COSTRAS? We're here to help you get started with automated Twitter/X engagement.
               </p>
             </div>
 

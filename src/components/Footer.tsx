@@ -19,7 +19,7 @@ const Footer = () => {
               <span className="text-xl font-bold text-foreground">COSTRAS</span>
             </Link>
             <p className="text-muted-foreground">
-              Leading AI social media automation platform. Streamline your digital engagement and expand your reach.
+              Leading AI Twitter/X automation platform. Streamline your Twitter engagement and expand your reach.
             </p>
             <div className="flex items-center gap-4">
               <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
@@ -66,9 +66,9 @@ const Footer = () => {
             <h3 className="font-semibold text-foreground mb-4">Company</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+                <Link to="/about" className="text-muted-foreground hover:text-foreground transition-colors">
                   About
-                </a>
+                </Link>
               </li>
               <li>
                 <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
@@ -76,14 +76,14 @@ const Footer = () => {
                 </a>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Careers
-                </a>
+                <Link to="/affiliates" className="text-muted-foreground hover:text-foreground transition-colors">
+                  Affiliates
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+                <Link to="/contact" className="text-muted-foreground hover:text-foreground transition-colors">
                   Contact
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
