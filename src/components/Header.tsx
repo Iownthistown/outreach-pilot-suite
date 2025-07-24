@@ -21,11 +21,11 @@ const Header = () => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 flex items-center justify-center">
+            <div className="w-10 h-10 flex items-center justify-center">
               <img 
                 src="/lovable-uploads/1b627097-cca7-4da0-9dfb-92968194dc92.png" 
                 alt="COSTRAS Logo" 
-                className="w-6 h-6 object-contain"
+                className="w-8 h-8 object-contain"
               />
             </div>
             <span className="text-xl font-bold text-foreground">COSTRAS</span>
