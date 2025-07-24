@@ -6,10 +6,10 @@ const Privacy = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="container mx-auto px-4 py-12 max-w-4xl">
+      <main className="container mx-auto px-4 pt-24 pb-12 max-w-4xl">
         <div className="prose prose-lg max-w-none">
           <h1 className="text-4xl font-bold text-foreground mb-8">Privacy Policy</h1>
-          <p className="text-muted-foreground italic mb-8">Last updated: January 2025</p>
+          <p className="text-muted-foreground italic mb-8">Last updated: July 24, 2025</p>
 
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-foreground mb-4">1. Introduction</h2>
