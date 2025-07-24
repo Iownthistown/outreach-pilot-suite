@@ -2,6 +2,12 @@ import { Link } from "react-router-dom";
 import { Twitter, Linkedin, Mail } from "lucide-react";
 
 const Footer = () => {
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
   return (
     <footer className="bg-card border-t border-primary/20">
       <div className="container mx-auto px-4 py-12">
@@ -39,24 +45,24 @@ const Footer = () => {
             <h3 className="font-semibold text-foreground mb-4">Product</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">
+                <a href="#features" onClick={scrollToTop} className="text-muted-foreground hover:text-foreground transition-colors">
                   Features
                 </a>
               </li>
               <li>
-                <a href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors">
+                <a href="#pricing" onClick={scrollToTop} className="text-muted-foreground hover:text-foreground transition-colors">
                   Pricing
                 </a>
               </li>
               <li>
-                <a href="#how-it-works" className="text-muted-foreground hover:text-foreground transition-colors">
+                <a href="#how-it-works" onClick={scrollToTop} className="text-muted-foreground hover:text-foreground transition-colors">
                   How it Works
                 </a>
               </li>
               <li>
-                <a href="/dashboard" className="text-muted-foreground hover:text-foreground transition-colors">
+                <Link to="/dashboard" onClick={scrollToTop} className="text-muted-foreground hover:text-foreground transition-colors">
                   Dashboard
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -66,7 +72,7 @@ const Footer = () => {
             <h3 className="font-semibold text-foreground mb-4">Company</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/about" className="text-muted-foreground hover:text-foreground transition-colors">
+                <Link to="/about" onClick={scrollToTop} className="text-muted-foreground hover:text-foreground transition-colors">
                   About
                 </Link>
               </li>
@@ -76,12 +82,12 @@ const Footer = () => {
                 </a>
               </li>
               <li>
-                <Link to="/affiliates" className="text-muted-foreground hover:text-foreground transition-colors">
+                <Link to="/affiliates" onClick={scrollToTop} className="text-muted-foreground hover:text-foreground transition-colors">
                   Affiliates
                 </Link>
               </li>
               <li>
-                <Link to="/contact" className="text-muted-foreground hover:text-foreground transition-colors">
+                <Link to="/contact" onClick={scrollToTop} className="text-muted-foreground hover:text-foreground transition-colors">
                   Contact
                 </Link>
               </li>
@@ -113,7 +119,7 @@ const Footer = () => {
                 </a>
               </li>
               <li>
-                <Link to="/privacy" className="text-muted-foreground hover:text-foreground transition-colors">
+                <Link to="/privacy" onClick={scrollToTop} className="text-muted-foreground hover:text-foreground transition-colors">
                   Privacy Policy
                 </Link>
               </li>

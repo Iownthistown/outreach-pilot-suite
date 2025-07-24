@@ -23,10 +23,10 @@ const PasswordStrength: React.FC<PasswordStrengthProps> = ({ password, className
 
     score = checks.filter(Boolean).length;
 
-    if (score < 2) return { score: 16, label: 'Zwak', color: 'bg-destructive' };
-    if (score < 4) return { score: 40, label: 'Matig', color: 'bg-orange-500' };
-    if (score < 5) return { score: 70, label: 'Goed', color: 'bg-yellow-500' };
-    return { score: 100, label: 'Sterk', color: 'bg-green-500' };
+    if (score < 2) return { score: 16, label: 'Weak', color: 'bg-destructive' };
+    if (score < 4) return { score: 40, label: 'Fair', color: 'bg-orange-500' };
+    if (score < 5) return { score: 70, label: 'Good', color: 'bg-yellow-500' };
+    return { score: 100, label: 'Strong', color: 'bg-green-500' };
   };
 
   const { score, label, color } = calculateStrength(password);
@@ -36,7 +36,7 @@ const PasswordStrength: React.FC<PasswordStrengthProps> = ({ password, className
   return (
     <div className={cn("space-y-2", className)}>
       <div className="flex justify-between items-center text-sm">
-        <span className="text-muted-foreground">Wachtwoord sterkte</span>
+        <span className="text-muted-foreground">Password strength</span>
         <span className={cn("font-medium", {
           'text-destructive': score < 40,
           'text-orange-500': score >= 40 && score < 70,
@@ -57,13 +57,13 @@ const PasswordStrength: React.FC<PasswordStrengthProps> = ({ password, className
         <div className="text-xs text-muted-foreground space-y-1">
           <div className="flex flex-wrap gap-2">
             <span className={password.length >= 8 ? "text-green-600" : "text-muted-foreground"}>
-              ✓ 8+ karakters
+              ✓ 8+ characters
             </span>
             <span className={/[A-Z]/.test(password) ? "text-green-600" : "text-muted-foreground"}>
-              ✓ Hoofdletter
+              ✓ Uppercase
             </span>
             <span className={/[0-9]/.test(password) ? "text-green-600" : "text-muted-foreground"}>
-              ✓ Cijfer
+              ✓ Number
             </span>
           </div>
         </div>
