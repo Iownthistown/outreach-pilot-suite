@@ -1,4 +1,5 @@
 import { Building, Users, TrendingUp, Clock, Target, BarChart3 } from "lucide-react";
+import { ScrollAnimationWrapper } from "@/hooks/useScrollAnimation";
 
 const FeaturesSection = () => {
   const features = [
@@ -56,58 +57,66 @@ const FeaturesSection = () => {
     <section id="features" className="py-20 bg-gradient-hero">
       <div className="container mx-auto px-4">
         {/* Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
-            Efficiency meets authenticity
-          </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            COSTRAS enables consistent Twitter/X engagement while preserving your unique voice and authentic connections
-          </p>
-        </div>
+        <ScrollAnimationWrapper>
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
+              Efficiency meets authenticity
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              COSTRAS enables consistent Twitter/X engagement while preserving your unique voice and authentic connections
+            </p>
+          </div>
+        </ScrollAnimationWrapper>
 
         {/* Target Audience Features */}
         <div className="grid md:grid-cols-3 gap-8 mb-20">
           {features.map((feature, index) => (
-            <div key={index} className="bg-card border border-primary/20 rounded-2xl p-8 shadow-card backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-lg hover:border-primary/40 cursor-pointer group">
-              <div className="mb-6">
-                <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110">
-                  <feature.icon className="w-6 h-6 text-primary-foreground" />
+            <ScrollAnimationWrapper key={index} delay={index * 150}>
+              <div className="bg-card border border-primary/20 rounded-2xl p-8 shadow-card backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-lg hover:border-primary/40 cursor-pointer group">
+                <div className="mb-6">
+                  <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110">
+                    <feature.icon className="w-6 h-6 text-primary-foreground" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-foreground mb-2">{feature.title}</h3>
+                  <p className="text-muted-foreground mb-4">{feature.subtitle}</p>
                 </div>
-                <h3 className="text-xl font-semibold text-foreground mb-2">{feature.title}</h3>
-                <p className="text-muted-foreground mb-4">{feature.subtitle}</p>
+                <ul className="space-y-2">
+                  {feature.points.map((point, pointIndex) => (
+                    <li key={pointIndex} className="flex items-center gap-2 text-foreground">
+                      <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
+                      {point}
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <ul className="space-y-2">
-                {feature.points.map((point, pointIndex) => (
-                  <li key={pointIndex} className="flex items-center gap-2 text-foreground">
-                    <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
-                    {point}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            </ScrollAnimationWrapper>
           ))}
         </div>
 
         {/* Transform section */}
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
-            Revolutionize Your Digital Strategy
-          </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-12">
-            Harness intelligent automation to build authentic relationships and accelerate your online growth
-          </p>
-        </div>
+        <ScrollAnimationWrapper delay={500}>
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
+              Revolutionize Your Digital Strategy
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-12">
+              Harness intelligent automation to build authentic relationships and accelerate your online growth
+            </p>
+          </div>
+        </ScrollAnimationWrapper>
 
         {/* Main Features Grid */}
         <div className="grid md:grid-cols-3 gap-8">
           {mainFeatures.map((feature, index) => (
-            <div key={index} className="text-center transition-all duration-300 hover:scale-105 cursor-pointer group">
-              <div className="w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center mx-auto mb-6 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg">
-                <feature.icon className="w-8 h-8 text-primary-foreground" />
+            <ScrollAnimationWrapper key={index} delay={600 + index * 150}>
+              <div className="text-center transition-all duration-300 hover:scale-105 cursor-pointer group">
+                <div className="w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center mx-auto mb-6 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg">
+                  <feature.icon className="w-8 h-8 text-primary-foreground" />
+                </div>
+                <h3 className="text-xl font-semibold text-foreground mb-3">{feature.title}</h3>
+                <p className="text-muted-foreground">{feature.description}</p>
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-3">{feature.title}</h3>
-              <p className="text-muted-foreground">{feature.description}</p>
-            </div>
+            </ScrollAnimationWrapper>
           ))}
         </div>
       </div>

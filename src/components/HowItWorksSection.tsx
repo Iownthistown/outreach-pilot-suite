@@ -132,7 +132,7 @@ const HowItWorksSection = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </ScrollAnimationWrapper>
           ))}
         </div>
 
