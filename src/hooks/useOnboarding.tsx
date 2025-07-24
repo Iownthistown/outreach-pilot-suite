@@ -3,6 +3,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 
 interface OnboardingState {
+  welcomeCompleted: boolean;
+  accountSetup: boolean;
   twitterConnected: boolean;
   extensionInstalled: boolean;
   onboardingComplete: boolean;
@@ -12,6 +14,8 @@ interface OnboardingState {
 }
 
 interface OnboardingData {
+  welcome_completed: boolean;
+  account_setup: boolean;
   twitter_connected: boolean;
   extension_installed: boolean;
   onboarding_complete: boolean;
@@ -24,6 +28,8 @@ export const useOnboarding = () => {
   const { toast } = useToast();
   
   const [state, setState] = useState<OnboardingState>({
+    welcomeCompleted: false,
+    accountSetup: false,
     twitterConnected: false,
     extensionInstalled: false,
     onboardingComplete: false,
@@ -33,6 +39,65 @@ export const useOnboarding = () => {
   });
 
   const [extensionCheckInterval, setExtensionCheckInterval] = useState<NodeJS.Timeout | null>(null);
+
+  // Initialize onboarding state from localStorage
+  useEffect(() => {
+    const savedStep = localStorage.getItem('onboarding_step');
+    const welcomeCompleted = localStorage.getItem('onboarding_welcome_completed') === 'true';
+    const accountSetup = localStorage.getItem('onboarding_account_setup') === 'true';
+    const twitterConnected = localStorage.getItem('costras_twitter_connected') === 'true';
+    const extensionInstalled = localStorage.getItem('costras_extension_installed') === 'true';
+    const onboardingComplete = localStorage.getItem('onboarding_complete') === 'true';
+    
+    setState(prev => ({
+      ...prev,
+      currentStep: savedStep ? parseInt(savedStep) : 0,
+      welcomeCompleted,
+      accountSetup,
+      twitterConnected,
+      extensionInstalled,
+      onboardingComplete
+    }));
+  }, []);
+
+  // Store user ID in localStorage and window when user changes
+  useEffect(() => {
+    if (user?.id) {
+      localStorage.setItem('costras_user_id', user.id);
+      (window as any).costrasUserId = user.id;
+    }
+  }, [user]);
+
+  // Listen for extension events
+  useEffect(() => {
+    const handleExtensionInstalled = () => {
+      setState(prev => ({ ...prev, extensionInstalled: true }));
+      localStorage.setItem('costras_extension_installed', 'true');
+      toast({
+        title: "Success!",
+        description: "Chrome extension detected successfully!",
+      });
+    };
+
+    const handleTwitterConnected = () => {
+      setState(prev => ({ ...prev, twitterConnected: true }));
+      localStorage.setItem('costras_twitter_connected', 'true');
+      toast({
+        title: "Success!",
+        description: "Twitter account connected successfully!",
+      });
+    };
+
+    window.addEventListener('costrasExtensionInstalled', handleExtensionInstalled);
+    window.addEventListener('costrasTwitterConnected', handleTwitterConnected);
+    window.addEventListener('costrasConnectionSuccess', handleTwitterConnected);
+
+    return () => {
+      window.removeEventListener('costrasExtensionInstalled', handleExtensionInstalled);
+      window.removeEventListener('costrasTwitterConnected', handleTwitterConnected);
+      window.removeEventListener('costrasConnectionSuccess', handleTwitterConnected);
+    };
+  }, [toast]);
 
   // Backend API calls
   const trackOnboardingStep = useCallback(async (step: number, data: Partial<OnboardingData> = {}) => {
@@ -68,6 +133,8 @@ export const useOnboarding = () => {
           'Authorization': `Bearer ${user.id}`
         },
         body: JSON.stringify({
+          welcome_completed: data.welcome_completed || false,
+          account_setup: data.account_setup || false,
           twitter_connected: data.twitter_connected || false,
           extension_installed: data.extension_installed || false,
           onboarding_complete: data.onboarding_complete || false,
@@ -135,6 +202,7 @@ export const useOnboarding = () => {
       const installed = await checkExtensionInstalled();
       if (installed && !state.extensionInstalled) {
         setState(prev => ({ ...prev, extensionInstalled: true }));
+        localStorage.setItem('costras_extension_installed', 'true');
         await trackOnboardingStep(2, { extension_installed: true });
         toast({
           title: "Success!",
@@ -159,6 +227,7 @@ export const useOnboarding = () => {
   const nextStep = useCallback(async () => {
     const newStep = state.currentStep + 1;
     setState(prev => ({ ...prev, currentStep: newStep }));
+    localStorage.setItem('onboarding_step', newStep.toString());
     await trackOnboardingStep(newStep);
   }, [state.currentStep, trackOnboardingStep]);
 
@@ -170,35 +239,37 @@ export const useOnboarding = () => {
     setState(prev => ({ ...prev, error }));
   }, []);
 
-  // Twitter connection
-  const handleTwitterConnect = useCallback(async () => {
+  // Welcome step
+  const handleWelcomeComplete = useCallback(async () => {
     setLoading(true);
-    setError(null);
     
     try {
-      setState(prev => ({ ...prev, twitterConnected: true }));
-      await trackOnboardingStep(1, { twitter_connected: true });
-      await saveOnboardingData({ twitter_connected: true });
-      
-      toast({
-        title: "Success!",
-        description: "Twitter account connected successfully!",
-      });
-      
-      setTimeout(() => {
-        nextStep();
-      }, 1500);
+      setState(prev => ({ ...prev, welcomeCompleted: true }));
+      localStorage.setItem('onboarding_welcome_completed', 'true');
+      await trackOnboardingStep(0, { welcome_completed: true });
+      await nextStep();
     } catch (error) {
-      setError('Failed to connect Twitter account');
-      toast({
-        title: "Error",
-        description: "Failed to connect Twitter account. Please try again.",
-        variant: "destructive"
-      });
+      setError('Failed to complete welcome step');
     } finally {
       setLoading(false);
     }
-  }, [trackOnboardingStep, saveOnboardingData, toast, nextStep, setLoading, setError]);
+  }, [trackOnboardingStep, nextStep, setLoading, setError]);
+
+  // Account setup
+  const handleAccountSetup = useCallback(async () => {
+    setLoading(true);
+    
+    try {
+      setState(prev => ({ ...prev, accountSetup: true }));
+      localStorage.setItem('onboarding_account_setup', 'true');
+      await trackOnboardingStep(1, { account_setup: true });
+      await nextStep();
+    } catch (error) {
+      setError('Failed to complete account setup');
+    } finally {
+      setLoading(false);
+    }
+  }, [trackOnboardingStep, nextStep, setLoading, setError]);
 
   // Extension installation
   const handleExtensionInstall = useCallback(async () => {
@@ -228,13 +299,32 @@ export const useOnboarding = () => {
     }
   }, [startExtensionDetection, toast, setLoading, setError]);
 
+  // Twitter connection
+  const handleTwitterConnect = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      // The actual connection happens via the extension
+      // This just advances to the next step
+      await nextStep();
+    } catch (error) {
+      setError('Failed to proceed to Twitter connection');
+    } finally {
+      setLoading(false);
+    }
+  }, [nextStep, setLoading, setError]);
+
   // Complete onboarding
   const completeOnboarding = useCallback(async () => {
     setLoading(true);
     
     try {
       setState(prev => ({ ...prev, onboardingComplete: true }));
+      localStorage.setItem('onboarding_complete', 'true');
       await saveOnboardingData({
+        welcome_completed: state.welcomeCompleted,
+        account_setup: state.accountSetup,
         twitter_connected: state.twitterConnected,
         extension_installed: state.extensionInstalled,
         onboarding_complete: true
@@ -254,7 +344,7 @@ export const useOnboarding = () => {
     } finally {
       setLoading(false);
     }
-  }, [state.twitterConnected, state.extensionInstalled, saveOnboardingData, toast, setLoading, setError]);
+  }, [state, saveOnboardingData, toast, setLoading, setError]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -265,15 +355,26 @@ export const useOnboarding = () => {
 
   // Auto-advance when extension is detected
   useEffect(() => {
-    if (state.extensionInstalled && state.currentStep === 1) {
+    if (state.extensionInstalled && state.currentStep === 2) {
       setTimeout(() => {
         nextStep();
       }, 2000);
     }
   }, [state.extensionInstalled, state.currentStep, nextStep]);
 
+  // Auto-advance when Twitter is connected
+  useEffect(() => {
+    if (state.twitterConnected && state.currentStep === 3) {
+      setTimeout(() => {
+        nextStep();
+      }, 2000);
+    }
+  }, [state.twitterConnected, state.currentStep, nextStep]);
+
   return {
     ...state,
+    handleWelcomeComplete,
+    handleAccountSetup,
     handleTwitterConnect,
     handleExtensionInstall,
     completeOnboarding,

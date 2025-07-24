@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import OnboardingLayout from "@/components/onboarding/OnboardingLayout";
-import ConnectTwitterStep from "@/components/onboarding/ConnectTwitterStep";
+import WelcomeStep from "@/components/onboarding/WelcomeStep";
+import AccountSetupStep from "@/components/onboarding/AccountSetupStep";
 import ChromeExtensionStep from "@/components/onboarding/ChromeExtensionStep";
+import TwitterConnectStep from "@/components/onboarding/TwitterConnectStep";
 import SuccessStep from "@/components/onboarding/SuccessStep";
 import { useOnboarding } from "@/hooks/useOnboarding";
 import { useAuth } from "@/hooks/useAuth";
@@ -10,14 +12,17 @@ import { useAuth } from "@/hooks/useAuth";
 const Onboarding = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
-  const totalSteps = 3;
+  const totalSteps = 5;
   
   const {
     currentStep,
     loading,
     extensionInstalled,
-    handleTwitterConnect,
+    twitterConnected,
+    handleWelcomeComplete,
+    handleAccountSetup,
     handleExtensionInstall,
+    handleTwitterConnect,
     completeOnboarding,
     nextStep
   } = useOnboarding();
@@ -29,12 +34,12 @@ const Onboarding = () => {
     }
   }, [currentStep, totalSteps, navigate]);
 
-  // Redirect to login if not authenticated
+  // Redirect to login if not authenticated and past account setup
   useEffect(() => {
-    if (!authLoading && !user) {
+    if (!authLoading && !user && currentStep > 1) {
       navigate("/login");
     }
-  }, [authLoading, user, navigate]);
+  }, [authLoading, user, navigate, currentStep]);
 
   const handleComplete = async () => {
     await completeOnboarding();
@@ -47,12 +52,19 @@ const Onboarding = () => {
     switch (currentStep) {
       case 0:
         return (
-          <ConnectTwitterStep 
-            onNext={handleTwitterConnect} 
+          <WelcomeStep 
+            onNext={handleWelcomeComplete} 
             loading={loading}
           />
         );
       case 1:
+        return (
+          <AccountSetupStep 
+            onNext={handleAccountSetup} 
+            loading={loading}
+          />
+        );
+      case 2:
         return (
           <ChromeExtensionStep 
             onNext={nextStep}
@@ -61,12 +73,19 @@ const Onboarding = () => {
             onInstall={handleExtensionInstall}
           />
         );
-      case 2:
+      case 3:
+        return (
+          <TwitterConnectStep 
+            onNext={handleTwitterConnect} 
+            loading={loading}
+          />
+        );
+      case 4:
         return <SuccessStep onComplete={handleComplete} />;
       default:
         return (
-          <ConnectTwitterStep 
-            onNext={handleTwitterConnect} 
+          <WelcomeStep 
+            onNext={handleWelcomeComplete} 
             loading={loading}
           />
         );

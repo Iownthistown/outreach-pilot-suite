@@ -10,8 +10,10 @@ interface OnboardingLayoutProps {
 
 const OnboardingLayout = ({ children, currentStep, totalSteps, loading = false }: OnboardingLayoutProps) => {
   const steps = [
-    { title: "Connect Twitter", description: "Link your Twitter account" },
+    { title: "Welcome", description: "Get started with COSTRAS" },
+    { title: "Account Setup", description: "Create your account" },
     { title: "Install Extension", description: "Add Chrome extension" },
+    { title: "Connect Twitter", description: "Link your Twitter/X account" },
     { title: "Complete Setup", description: "Finish configuration" }
   ];
 
