@@ -50,7 +50,7 @@ const HowItWorksSection = () => {
         {/* Steps */}
         <div className="space-y-16">
           {steps.map((step, index) => (
-            <ScrollAnimationWrapper key={index} delay={index * 200}>
+            <ScrollAnimationWrapper key={index} delay={index * 150}>
               <div className={`grid lg:grid-cols-2 gap-12 items-center ${index % 2 === 1 ? 'lg:grid-flow-col-dense' : ''}`}>
               {/* Content */}
               <div className={`space-y-6 ${index % 2 === 1 ? 'lg:col-start-2' : ''}`}>

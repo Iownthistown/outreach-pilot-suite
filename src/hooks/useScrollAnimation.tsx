@@ -14,8 +14,8 @@ export const useScrollAnimation = (options = {}) => {
         }
       },
       {
-        threshold: 0.1,
-        rootMargin: '0px 0px -100px 0px',
+        threshold: 0.05,
+        rootMargin: '0px 0px -50px 0px',
         ...options,
       }
     );
@@ -38,7 +38,7 @@ export const ScrollAnimationWrapper = ({
   children, 
   className = '', 
   delay = 0,
-  duration = 600 
+  duration = 400 
 }: { 
   children: React.ReactNode; 
   className?: string; 
@@ -53,7 +53,7 @@ export const ScrollAnimationWrapper = ({
       className={`transition-all ease-out ${
         isVisible
           ? 'opacity-100 translate-y-0'
-          : 'opacity-0 translate-y-8'
+          : 'opacity-0 translate-y-4'
       } ${className}`}
       style={{
         transitionDuration: `${duration}ms`,
