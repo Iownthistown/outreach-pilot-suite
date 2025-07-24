@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Settings, Workflow, BarChart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { ScrollAnimationWrapper } from "@/hooks/useScrollAnimation";
 
 const HowItWorksSection = () => {
   const navigate = useNavigate();
@@ -49,7 +50,8 @@ const HowItWorksSection = () => {
         {/* Steps */}
         <div className="space-y-16">
           {steps.map((step, index) => (
-            <div key={index} className={`grid lg:grid-cols-2 gap-12 items-center ${index % 2 === 1 ? 'lg:grid-flow-col-dense' : ''}`}>
+            <ScrollAnimationWrapper key={index} delay={index * 200}>
+              <div className={`grid lg:grid-cols-2 gap-12 items-center ${index % 2 === 1 ? 'lg:grid-flow-col-dense' : ''}`}>
               {/* Content */}
               <div className={`space-y-6 ${index % 2 === 1 ? 'lg:col-start-2' : ''}`}>
                 <div className="flex items-center gap-4">
@@ -130,6 +132,7 @@ const HowItWorksSection = () => {
                       </div>
                     )}
                   </div>
+                </div>
                 </div>
               </div>
             </ScrollAnimationWrapper>
