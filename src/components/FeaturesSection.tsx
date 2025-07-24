@@ -71,7 +71,7 @@ const FeaturesSection = () => {
         {/* Target Audience Features */}
         <div className="grid md:grid-cols-3 gap-8 mb-20">
           {features.map((feature, index) => (
-            <ScrollAnimationWrapper key={index} delay={index * 100}>
+            <ScrollAnimationWrapper key={index} delay={index * 150}>
               <div className="bg-card border border-primary/20 rounded-2xl p-8 shadow-card backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-lg hover:border-primary/40 cursor-pointer group">
                 <div className="mb-6">
                   <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110">
@@ -94,7 +94,7 @@ const FeaturesSection = () => {
         </div>
 
         {/* Transform section */}
-        <ScrollAnimationWrapper delay={300}>
+        <ScrollAnimationWrapper delay={200}>
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
               Revolutionize Your Digital Strategy

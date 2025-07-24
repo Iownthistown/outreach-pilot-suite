@@ -8,13 +8,14 @@ export const useScrollAnimation = (options = {}) => {
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
+        // Only animate once when element comes into view
         if (entry.isIntersecting && !hasAnimated) {
           setIsVisible(true);
           setHasAnimated(true);
         }
       },
       {
-        threshold: 0.05,
+        threshold: 0.1,
         rootMargin: '0px 0px -50px 0px',
         ...options,
       }
@@ -38,7 +39,7 @@ export const ScrollAnimationWrapper = ({
   children, 
   className = '', 
   delay = 0,
-  duration = 400 
+  duration = 500 
 }: { 
   children: React.ReactNode; 
   className?: string; 
@@ -53,11 +54,12 @@ export const ScrollAnimationWrapper = ({
       className={`transition-all ease-out ${
         isVisible
           ? 'opacity-100 translate-y-0'
-          : 'opacity-0 translate-y-4'
+          : 'opacity-0 translate-y-6'
       } ${className}`}
       style={{
         transitionDuration: `${duration}ms`,
         transitionDelay: `${delay}ms`,
+        transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
       }}
     >
       {children}

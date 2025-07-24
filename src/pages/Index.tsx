@@ -14,22 +14,22 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Header />
       <HeroSection />
-      <ScrollAnimationWrapper delay={50}>
+      <ScrollAnimationWrapper>
         <StatsSection />
       </ScrollAnimationWrapper>
-      <ScrollAnimationWrapper delay={100}>
+      <ScrollAnimationWrapper>
         <FeaturesSection />
       </ScrollAnimationWrapper>
-      <ScrollAnimationWrapper delay={150}>
+      <ScrollAnimationWrapper>
         <HowItWorksSection />
       </ScrollAnimationWrapper>
-      <ScrollAnimationWrapper delay={200}>
+      <ScrollAnimationWrapper>
         <PricingSection />
       </ScrollAnimationWrapper>
-      <ScrollAnimationWrapper delay={250}>
+      <ScrollAnimationWrapper>
         <TestimonialsSection />
       </ScrollAnimationWrapper>
-      <ScrollAnimationWrapper delay={300}>
+      <ScrollAnimationWrapper>
         <FAQSection />
       </ScrollAnimationWrapper>
       <Footer />
