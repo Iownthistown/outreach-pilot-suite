@@ -112,6 +112,11 @@ const Footer = () => {
                   Status
                 </a>
               </li>
+              <li>
+                <Link to="/privacy" className="text-muted-foreground hover:text-foreground transition-colors">
+                  Privacy Policy
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

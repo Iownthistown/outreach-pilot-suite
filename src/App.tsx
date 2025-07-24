@@ -13,6 +13,7 @@ import Signup from "./pages/Signup";
 import Contact from "./pages/Contact";
 import About from "./pages/About";
 import Affiliates from "./pages/Affiliates";
+import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,6 +32,7 @@ const App = () => (
             <Route path="/contact" element={<Contact />} />
             <Route path="/about" element={<About />} />
             <Route path="/affiliates" element={<Affiliates />} />
+            <Route path="/privacy" element={<Privacy />} />
             <Route path="/onboarding" element={
               <ProtectedRoute>
                 <Onboarding />
