@@ -7,18 +7,31 @@ import PricingSection from "@/components/PricingSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import FAQSection from "@/components/FAQSection";
 import Footer from "@/components/Footer";
+import { ScrollAnimationWrapper } from "@/hooks/useScrollAnimation";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
       <HeroSection />
-      <StatsSection />
-      <FeaturesSection />
-      <HowItWorksSection />
-      <PricingSection />
-      <TestimonialsSection />
-      <FAQSection />
+      <ScrollAnimationWrapper delay={100}>
+        <StatsSection />
+      </ScrollAnimationWrapper>
+      <ScrollAnimationWrapper delay={200}>
+        <FeaturesSection />
+      </ScrollAnimationWrapper>
+      <ScrollAnimationWrapper delay={300}>
+        <HowItWorksSection />
+      </ScrollAnimationWrapper>
+      <ScrollAnimationWrapper delay={400}>
+        <PricingSection />
+      </ScrollAnimationWrapper>
+      <ScrollAnimationWrapper delay={500}>
+        <TestimonialsSection />
+      </ScrollAnimationWrapper>
+      <ScrollAnimationWrapper delay={600}>
+        <FAQSection />
+      </ScrollAnimationWrapper>
       <Footer />
     </div>
   );
