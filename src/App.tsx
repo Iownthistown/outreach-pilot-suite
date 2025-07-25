@@ -7,6 +7,10 @@ import { AuthProvider } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
+import DashboardActivity from "./pages/DashboardActivity";
+import DashboardPlan from "./pages/DashboardPlan";
+import DashboardSupport from "./pages/DashboardSupport";
+import DashboardSettings from "./pages/DashboardSettings";
 import Onboarding from "./pages/Onboarding";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -43,9 +47,24 @@ const App = () => (
                 <Dashboard />
               </ProtectedRoute>
             } />
-            <Route path="/dashboard/*" element={
+            <Route path="/dashboard/activity" element={
               <ProtectedRoute>
-                <Dashboard />
+                <DashboardActivity />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/plan" element={
+              <ProtectedRoute>
+                <DashboardPlan />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/support" element={
+              <ProtectedRoute>
+                <DashboardSupport />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/settings" element={
+              <ProtectedRoute>
+                <DashboardSettings />
               </ProtectedRoute>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
