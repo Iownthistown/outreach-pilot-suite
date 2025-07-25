@@ -126,7 +126,11 @@ const DashboardOverview = () => {
           <p className="text-muted-foreground mb-4">
             Our support team is here to help you get the most out of your Twitter bot
           </p>
-          <Button variant="outline" className="gap-2">
+          <Button 
+            variant="outline" 
+            className="gap-2"
+            onClick={() => window.location.href = '/dashboard/support'}
+          >
             <ExternalLink className="w-4 h-4" />
             Contact Support
           </Button>

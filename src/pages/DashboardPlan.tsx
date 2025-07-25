@@ -17,10 +17,10 @@ const DashboardPlan = () => {
   // Mock data - replace with real API data
   const currentPlan = {
     name: "Pro Plan",
-    price: "$49/month",
-    features: ["50 actions/day", "AI-powered replies", "24/7 monitoring", "Priority support"],
-    actionsUsed: 24,
-    actionsLimit: 50,
+    price: "$99/month",
+    features: ["1 account", "70 replies per day", "Auto likes", "Advanced analytics", "Priority support"],
+    actionsUsed: 34,
+    actionsLimit: 70,
     validUntil: "December 31, 2024"
   };
 
@@ -70,9 +70,9 @@ const DashboardPlan = () => {
   ];
 
   const billingHistory = [
-    { date: "Nov 1, 2024", amount: "$49.00", status: "Paid" },
-    { date: "Oct 1, 2024", amount: "$49.00", status: "Paid" },
-    { date: "Sep 1, 2024", amount: "$49.00", status: "Paid" }
+    { date: "Nov 1, 2024", amount: "$99.00", status: "Paid" },
+    { date: "Oct 1, 2024", amount: "$99.00", status: "Paid" },
+    { date: "Sep 1, 2024", amount: "$99.00", status: "Paid" }
   ];
 
   const usagePercentage = (currentPlan.actionsUsed / currentPlan.actionsLimit) * 100;
