@@ -44,15 +44,20 @@ class ApiService {
     return session.user.id;
   }
 
+  private async getAuthToken(): Promise<string> {
+    const { data: { session } } = await supabase.auth.getSession();
+    return session?.access_token || session?.user?.id || '';
+  }
+
   private async makeRequest<T>(
     endpoint: string, 
     options: RequestInit = {}
   ): Promise<T> {
-    const userId = await this.getUserId();
+    const token = await this.getAuthToken();
     const url = `${API_BASE_URL}${endpoint}`;
     
     const headers = {
-      'Authorization': `Bearer ${userId}`,
+      'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
       ...options.headers,
     };
