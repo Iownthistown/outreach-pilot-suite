@@ -27,40 +27,41 @@ const DashboardPlan = () => {
   const plans = [
     {
       name: "Starter",
-      price: "$19",
+      price: "$29",
       period: "/month",
-      description: "Perfect for beginners",
+      description: "Perfect for getting started",
       features: [
-        "20 actions/day",
-        "Basic automation",
-        "Email support",
-        "Basic analytics"
+        "1 account",
+        "30 replies per day",
+        "Auto likes",
+        "Basic analytics",
+        "Email support"
       ],
       popular: false
     },
     {
       name: "Pro",
-      price: "$49",
+      price: "$99",
       period: "/month", 
       description: "Most popular choice",
       features: [
-        "50 actions/day",
-        "AI-powered replies",
-        "24/7 monitoring",
-        "Priority support",
-        "Advanced analytics"
+        "1 account",
+        "70 replies per day",
+        "Auto likes",
+        "Advanced analytics",
+        "Priority support"
       ],
       popular: true
     },
     {
-      name: "Enterprise",
-      price: "$99",
-      period: "/month",
-      description: "For power users",
+      name: "Custom",
+      price: "Coming Soon",
+      period: "",
+      description: "Enterprise solutions",
       features: [
-        "Unlimited actions",
-        "Custom AI prompts",
-        "White-label solution",
+        "Custom account limits",
+        "Unlimited replies",
+        "Premium features",
         "Dedicated support",
         "Custom integrations"
       ],
@@ -168,9 +169,10 @@ const DashboardPlan = () => {
                 <Button 
                   className="w-full" 
                   variant={plan.popular ? "default" : "outline"}
+                  disabled={plan.name === "Custom"}
                 >
-                  {plan.name === "Pro" ? "Current Plan" : "Upgrade"}
-                  <ArrowRight className="w-4 h-4 ml-2" />
+                  {plan.name === "Custom" ? "Coming Soon" : plan.name === "Pro" ? "Current Plan" : "Upgrade"}
+                  {plan.name !== "Custom" && <ArrowRight className="w-4 h-4 ml-2" />}
                 </Button>
               </Card>
             ))}

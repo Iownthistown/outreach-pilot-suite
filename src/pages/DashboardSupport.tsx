@@ -43,13 +43,13 @@ const DashboardSupport = () => {
     {
       id: 2,
       question: "What are the daily limits?",
-      answer: "Daily limits vary by plan: Starter (20 actions/day), Pro (50 actions/day), Enterprise (unlimited). Actions include likes, follows, and replies. These limits help maintain healthy engagement patterns and comply with Twitter's guidelines.",
+      answer: "Daily limits vary by plan: Starter (30 replies/day), Pro (70 replies/day), Custom (unlimited). Actions include likes, follows, and replies. These limits help maintain healthy engagement patterns and comply with Twitter's guidelines.",
       category: "Limits"
     },
     {
       id: 3,
       question: "How do I connect my Twitter account?",
-      answer: "Go to Settings > Twitter Connection and click 'Connect Twitter'. You'll be redirected to Twitter to authorize our app. Once connected, your bot will start working automatically based on your plan settings.",
+      answer: "Go to Settings > Twitter Connection and click 'Connect Twitter'. You'll be redirected to Twitter to authorize our app. Once connected, your bot will start working automatically based on your plan settings. You can also follow our onboarding guide.",
       category: "Setup"
     },
     {
@@ -167,7 +167,10 @@ const DashboardSupport = () => {
             <p className="text-sm text-muted-foreground mb-4">
               Available 24/7 • Average response time: 2 minutes
             </p>
-            <Button className="w-full">
+            <Button 
+              className="w-full"
+              onClick={() => window.location.href = '/contact'}
+            >
               Start Chat
             </Button>
           </Card>
@@ -185,7 +188,11 @@ const DashboardSupport = () => {
             <p className="text-sm text-muted-foreground mb-4">
               We respond within 2 hours during business hours
             </p>
-            <Button variant="outline" className="w-full">
+            <Button 
+              variant="outline" 
+              className="w-full"
+              onClick={() => window.location.href = '/contact'}
+            >
               Send Email
             </Button>
           </Card>
@@ -232,7 +239,10 @@ const DashboardSupport = () => {
 
         {/* Quick Links */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card className="p-4 hover:shadow-md transition-shadow cursor-pointer">
+          <Card 
+            className="p-4 hover:shadow-md transition-shadow cursor-pointer"
+            onClick={() => window.location.href = '/dashboard/settings'}
+          >
             <div className="flex items-center gap-3">
               <Settings className="w-5 h-5 text-muted-foreground" />
               <div>
@@ -242,7 +252,10 @@ const DashboardSupport = () => {
             </div>
           </Card>
 
-          <Card className="p-4 hover:shadow-md transition-shadow cursor-pointer">
+          <Card 
+            className="p-4 hover:shadow-md transition-shadow cursor-pointer"
+            onClick={() => window.location.href = '/privacy'}
+          >
             <div className="flex items-center gap-3">
               <Shield className="w-5 h-5 text-muted-foreground" />
               <div>
@@ -252,7 +265,10 @@ const DashboardSupport = () => {
             </div>
           </Card>
 
-          <Card className="p-4 hover:shadow-md transition-shadow cursor-pointer">
+          <Card 
+            className="p-4 hover:shadow-md transition-shadow cursor-pointer"
+            onClick={() => window.location.href = '/onboarding'}
+          >
             <div className="flex items-center gap-3">
               <HelpCircle className="w-5 h-5 text-muted-foreground" />
               <div>
