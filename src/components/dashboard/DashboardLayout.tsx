@@ -23,12 +23,10 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const navigate = useNavigate();
 
   const navigation = [
-    { name: "Overview", href: "/dashboard", icon: BarChart3 },
-    { name: "Workflows", href: "/dashboard/workflows", icon: Target },
-    { name: "Leads", href: "/dashboard/leads", icon: Users },
-    { name: "Messages", href: "/dashboard/messages", icon: MessageSquare },
-    { name: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
-    { name: "Billing", href: "/dashboard/billing", icon: CreditCard },
+    { name: "Dashboard", href: "/dashboard", icon: BarChart3 },
+    { name: "Activity", href: "/dashboard/activity", icon: MessageSquare },
+    { name: "Plan", href: "/dashboard/plan", icon: CreditCard },
+    { name: "Support", href: "/dashboard/support", icon: Users },
     { name: "Settings", href: "/dashboard/settings", icon: Settings },
   ];
 

@@ -1,263 +1,135 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { 
-  TrendingUp, 
-  Users, 
-  MessageSquare, 
-  Target,
-  Plus,
-  Activity,
-  Calendar,
-  Clock
+  Twitter,
+  ExternalLink,
+  CreditCard
 } from "lucide-react";
-import BotControlPanel from "./BotControlPanel";
-import BotConfiguration from "./BotConfiguration";
-import BotLogs from "./BotLogs";
-import BotStatistics from "./BotStatistics";
-import type { BotConfig } from "@/lib/botManager";
+import BotStatusCard from "./BotStatusCard";
+import SimpleStats from "./SimpleStats";
+import RecentActivity from "./RecentActivity";
 import { ScrollAnimationWrapper } from "@/hooks/useScrollAnimation";
 
 const DashboardOverview = () => {
-  // Bot configuration state
-  const [botConfig, setBotConfig] = useState<BotConfig>({
-    maxActionsPerHour: 15,
-    followLimit: 5,
-    aiApiKey: '',
-    customPrompt: 'You are a helpful Twitter bot that engages authentically with users interested in our product. Be friendly, professional, and provide value in your responses.'
-  });
-  const stats = [
-    {
-      name: "Total Replies",
-      value: "1,234",
-      change: "+12%",
-      changeType: "positive",
-      icon: MessageSquare,
-    },
-    {
-      name: "Leads Generated",
-      value: "87",
-      change: "+23%",
-      changeType: "positive",
-      icon: Users,
-    },
-    {
-      name: "Active Workflows",
-      value: "5",
-      change: "+2",
-      changeType: "positive",
-      icon: Target,
-    },
-    {
-      name: "Engagement Rate",
-      value: "78%",
-      change: "+5%",
-      changeType: "positive",
-      icon: TrendingUp,
-    },
-  ];
+  // Mock data - replace with real data from your API
+  const isTwitterConnected = true; // Check if user has connected Twitter
+  const isBotActive = true; // Check bot status
+  const currentPlan = "Pro"; // User's current plan
+  const dailyLimit = 50;
+  const actionsUsed = 24;
 
-  const recentActivity = [
-    {
-      id: 1,
-      type: "reply",
-      message: "Replied to @johndoe about SaaS pricing",
-      time: "2 minutes ago",
-      workflow: "Lead Generation"
-    },
-    {
-      id: 2,
-      type: "lead",
-      message: "New lead: Sarah Chen showed interest",
-      time: "15 minutes ago",
-      workflow: "Product Mention"
-    },
-    {
-      id: 3,
-      type: "reply",
-      message: "Replied to @techstartup about automation",
-      time: "1 hour ago",
-      workflow: "Customer Support"
-    },
-    {
-      id: 4,
-      type: "lead",
-      message: "New lead: Mike Wilson requested demo",
-      time: "2 hours ago",
-      workflow: "Lead Generation"
-    },
-  ];
+  // Helper function to render connection status
+  const renderConnectionStatus = () => {
+    if (!isTwitterConnected) {
+      return (
+        <ScrollAnimationWrapper>
+          <Card className="p-8 bg-gradient-to-br from-warning/10 to-warning/5 border-warning/20 text-center">
+            <div className="flex flex-col items-center space-y-4">
+              <div className="p-4 bg-warning/20 rounded-full">
+                <Twitter className="w-8 h-8 text-warning" />
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold text-foreground mb-2">Connect Twitter First</h3>
+                <p className="text-muted-foreground mb-4">
+                  Connect your Twitter account to start automating your social media presence
+                </p>
+                <Button variant="cta" className="gap-2">
+                  <Twitter className="w-4 h-4" />
+                  Connect Twitter Account
+                </Button>
+              </div>
+            </div>
+          </Card>
+        </ScrollAnimationWrapper>
+      );
+    }
+    return null;
+  };
 
-  const workflows = [
-    {
-      name: "Lead Generation",
-      status: "Active",
-      replies: 45,
-      leads: 12,
-      lastActive: "2 minutes ago"
-    },
-    {
-      name: "Customer Support",
-      status: "Active", 
-      replies: 23,
-      leads: 3,
-      lastActive: "1 hour ago"
-    },
-    {
-      name: "Product Mentions",
-      status: "Paused",
-      replies: 67,
-      leads: 8,
-      lastActive: "1 day ago"
-    },
-  ];
+  // Helper function to render daily limit warning
+  const renderDailyLimitStatus = () => {
+    const usagePercentage = (actionsUsed / dailyLimit) * 100;
+    
+    if (usagePercentage >= 90) {
+      return (
+        <ScrollAnimationWrapper>
+          <Card className="p-6 bg-gradient-to-br from-destructive/10 to-destructive/5 border-destructive/20">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-destructive/20 rounded-full">
+                <ExternalLink className="w-6 h-6 text-destructive" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-foreground">Daily Limit Reached</h3>
+                <p className="text-sm text-muted-foreground">
+                  You've used {actionsUsed} of {dailyLimit} daily actions
+                </p>
+              </div>
+              <Button variant="outline" size="sm" className="gap-2">
+                <CreditCard className="w-4 h-4" />
+                Upgrade Plan
+              </Button>
+            </div>
+          </Card>
+        </ScrollAnimationWrapper>
+      );
+    }
+    return null;
+  };
 
   return (
     <div className="space-y-8">
       {/* Welcome Section */}
       <ScrollAnimationWrapper>
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-3xl font-bold text-foreground">Welcome back, John!</h2>
-            <p className="text-muted-foreground mt-1">Manage your Twitter bot and track your automation performance.</p>
-          </div>
-          <Button variant="hero" className="gap-2">
-            <Plus className="w-4 h-4" />
-            Create Workflow
-          </Button>
+        <div className="text-center lg:text-left">
+          <h2 className="text-3xl font-bold text-foreground mb-2">Welcome back, John!</h2>
+          <p className="text-muted-foreground">
+            Your Twitter bot is {isBotActive ? 'actively working' : 'ready to start'} • {currentPlan} Plan
+          </p>
         </div>
       </ScrollAnimationWrapper>
 
-      {/* Twitter Bot Management Section */}
-      <ScrollAnimationWrapper delay={100}>
-        <div className="space-y-6">
-          <h3 className="text-xl font-semibold text-foreground">Twitter Bot Management</h3>
-          
-          <div className="grid lg:grid-cols-2 gap-6">
-            <BotControlPanel config={botConfig} />
-            <BotStatistics />
-          </div>
-          
-          <div className="grid lg:grid-cols-2 gap-6">
-            <BotConfiguration 
-              config={botConfig} 
-              onConfigChange={setBotConfig} 
-            />
-            <BotLogs />
-          </div>
-        </div>
-      </ScrollAnimationWrapper>
+      {/* Connection Status */}
+      {renderConnectionStatus()}
 
-      {/* Stats Grid */}
-      <ScrollAnimationWrapper delay={200}>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {stats.map((stat) => (
-            <Card key={stat.name} className="p-6 bg-gradient-card border-primary/20 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:border-primary/40">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-muted-foreground text-sm font-medium">{stat.name}</p>
-                  <p className="text-2xl font-bold text-foreground mt-1">{stat.value}</p>
-                  <p className={`text-sm mt-1 ${stat.changeType === 'positive' ? 'text-success' : 'text-destructive'}`}>
-                    {stat.change} from last month
-                  </p>
-                </div>
-                <div className="p-3 bg-primary/10 rounded-full">
-                  <stat.icon className="w-6 h-6 text-primary" />
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
-      </ScrollAnimationWrapper>
+      {/* Daily Limit Warning */}
+      {renderDailyLimitStatus()}
 
-      <ScrollAnimationWrapper delay={300}>
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Active Workflows */}
-          <Card className="p-6 bg-card border-primary/20 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:border-primary/40">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-foreground">Active Workflows</h3>
-              <Button variant="outline" size="sm">
-                View All
-              </Button>
-            </div>
-            <div className="space-y-4">
-              {workflows.map((workflow, index) => (
-                <div key={index} className="flex items-center justify-between p-4 bg-muted/20 rounded-lg hover:bg-muted/30 transition-colors">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h4 className="font-medium text-foreground">{workflow.name}</h4>
-                      <span className={`px-2 py-1 text-xs rounded-full ${
-                        workflow.status === 'Active' 
-                          ? 'bg-success/20 text-success' 
-                          : 'bg-warning/20 text-warning'
-                      }`}>
-                        {workflow.status}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <span>{workflow.replies} replies</span>
-                      <span>{workflow.leads} leads</span>
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-3 h-3" />
-                        {workflow.lastActive}
-                      </span>
-                    </div>
-                  </div>
-                  <Button variant="ghost" size="sm">
-                    Edit
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </Card>
+      {/* Bot Status Card - Only show if connected */}
+      {isTwitterConnected && (
+        <ScrollAnimationWrapper delay={100}>
+          <BotStatusCard 
+            isActive={isBotActive}
+            lastAction="2 minutes ago"
+            uptime={7200} // 2 hours in seconds
+          />
+        </ScrollAnimationWrapper>
+      )}
 
-          {/* Recent Activity */}
-          <Card className="p-6 bg-card border-primary/20 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:border-primary/40">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-foreground">Recent Activity</h3>
-              <Button variant="outline" size="sm">
-                View All
-              </Button>
-            </div>
-            <div className="space-y-4">
-              {recentActivity.map((activity) => (
-                <div key={activity.id} className="flex items-start gap-3 p-3 hover:bg-muted/20 rounded-lg transition-colors">
-                  <div className="p-2 bg-primary/10 rounded-full mt-0.5">
-                    <Activity className="w-4 h-4 text-primary" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-foreground">{activity.message}</p>
-                    <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
-                      <span>{activity.workflow}</span>
-                      <span>•</span>
-                      <span>{activity.time}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Card>
-        </div>
-      </ScrollAnimationWrapper>
+      {/* Statistics - Only show if connected */}
+      {isTwitterConnected && (
+        <ScrollAnimationWrapper delay={200}>
+          <SimpleStats />
+        </ScrollAnimationWrapper>
+      )}
 
-      {/* Quick Actions */}
+      {/* Recent Activity - Only show if connected and bot is active */}
+      {isTwitterConnected && isBotActive && (
+        <ScrollAnimationWrapper delay={300}>
+          <RecentActivity />
+        </ScrollAnimationWrapper>
+      )}
+
+      {/* Support Section */}
       <ScrollAnimationWrapper delay={400}>
-        <Card className="p-6 bg-gradient-card border-primary/20 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:border-primary/40">
-          <h3 className="text-lg font-semibold text-foreground mb-4">Quick Actions</h3>
-          <div className="grid md:grid-cols-3 gap-4">
-            <Button variant="outline" className="h-20 flex-col gap-2">
-              <Target className="w-6 h-6" />
-              Create New Workflow
-            </Button>
-            <Button variant="outline" className="h-20 flex-col gap-2">
-              <Users className="w-6 h-6" />
-              View Leads
-            </Button>
-            <Button variant="outline" className="h-20 flex-col gap-2">
-              <Calendar className="w-6 h-6" />
-              Schedule Posts
-            </Button>
-          </div>
+        <Card className="p-6 bg-gradient-card border-primary/20 text-center">
+          <h3 className="text-lg font-semibold text-foreground mb-2">Need Help?</h3>
+          <p className="text-muted-foreground mb-4">
+            Our support team is here to help you get the most out of your Twitter bot
+          </p>
+          <Button variant="outline" className="gap-2">
+            <ExternalLink className="w-4 h-4" />
+            Contact Support
+          </Button>
         </Card>
       </ScrollAnimationWrapper>
     </div>
