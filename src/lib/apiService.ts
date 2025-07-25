@@ -1,3 +1,5 @@
+import { supabase } from '@/lib/supabase';
+
 const API_BASE_URL = 'https://api.costras.com';
 
 export interface DashboardStatus {
@@ -34,16 +36,19 @@ export interface BotStartResponse {
 }
 
 class ApiService {
-  private getUserId(): string {
-    // For now, use a mock user ID - in real app this would come from auth
-    return 'user_123';
+  private async getUserId(): Promise<string> {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.user?.id) {
+      throw new Error('User not authenticated');
+    }
+    return session.user.id;
   }
 
   private async makeRequest<T>(
     endpoint: string, 
     options: RequestInit = {}
   ): Promise<T> {
-    const userId = this.getUserId();
+    const userId = await this.getUserId();
     const url = `${API_BASE_URL}${endpoint}`;
     
     const headers = {
@@ -70,12 +75,12 @@ class ApiService {
   }
 
   async getDashboardStatus(): Promise<DashboardStatus> {
-    const userId = this.getUserId();
+    const userId = await this.getUserId();
     return this.makeRequest<DashboardStatus>(`/dashboard/status/${userId}`);
   }
 
   async startBot(): Promise<BotStartResponse> {
-    const userId = this.getUserId();
+    const userId = await this.getUserId();
     return this.makeRequest<BotStartResponse>('/bots/start', {
       method: 'POST',
       body: JSON.stringify({
@@ -85,7 +90,7 @@ class ApiService {
   }
 
   async stopBot(): Promise<BotStartResponse> {
-    const userId = this.getUserId();
+    const userId = await this.getUserId();
     return this.makeRequest<BotStartResponse>('/bots/stop', {
       method: 'POST',
       body: JSON.stringify({
