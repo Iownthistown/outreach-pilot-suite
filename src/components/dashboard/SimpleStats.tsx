@@ -40,41 +40,66 @@ const StatCard = ({ title, value, icon: Icon, trend, color = 'blue' }: StatCardP
   );
 };
 
-const SimpleStats = () => {
-  // Mock data - replace with real data from your API
-  const stats = [
+interface SimpleStatsProps {
+  stats?: {
+    actions_today: number;
+    new_followers: number;
+    engagement_rate: number;
+    errors: number;
+    actions_trend?: string;
+    followers_trend?: string;
+    engagement_trend?: string;
+  };
+  loading?: boolean;
+}
+
+const SimpleStats = ({ stats, loading = false }: SimpleStatsProps) => {
+  // Default stats if none provided
+  const defaultStats = {
+    actions_today: 0,
+    new_followers: 0,
+    engagement_rate: 0,
+    errors: 0,
+    actions_trend: '',
+    followers_trend: '',
+    engagement_trend: '',
+  };
+
+  const currentStats = stats || defaultStats;
+
+  const statsData = [
     {
       title: "Actions Today",
-      value: "24",
+      value: loading ? "..." : currentStats.actions_today.toString(),
       icon: Zap,
-      trend: "+8 from yesterday",
+      trend: currentStats.actions_trend,
       color: 'green' as const
     },
     {
       title: "New Followers",
-      value: "12",
+      value: loading ? "..." : currentStats.new_followers.toString(),
       icon: Users,
-      trend: "+5 from yesterday",
+      trend: currentStats.followers_trend,
       color: 'blue' as const
     },
     {
       title: "Engagement Rate",
-      value: "78%",
+      value: loading ? "..." : `${currentStats.engagement_rate}%`,
       icon: TrendingUp,
-      trend: "+3% from yesterday",
+      trend: currentStats.engagement_trend,
       color: 'green' as const
     },
     {
       title: "Errors",
-      value: "0",
+      value: loading ? "..." : currentStats.errors.toString(),
       icon: AlertTriangle,
-      color: 'green' as const
+      color: currentStats.errors === 0 ? 'green' as const : 'red' as const
     }
   ];
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {stats.map((stat, index) => (
+      {statsData.map((stat, index) => (
         <StatCard 
           key={index}
           title={stat.title}

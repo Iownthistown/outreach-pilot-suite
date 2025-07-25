@@ -3,24 +3,46 @@ import { Card } from "@/components/ui/card";
 import { 
   Twitter,
   ExternalLink,
-  CreditCard
+  CreditCard,
+  Loader2
 } from "lucide-react";
 import BotStatusCard from "./BotStatusCard";
 import SimpleStats from "./SimpleStats";
 import RecentActivity from "./RecentActivity";
 import { ScrollAnimationWrapper } from "@/hooks/useScrollAnimation";
+import { useDashboard } from "@/hooks/useDashboard";
 
 const DashboardOverview = () => {
-  // Mock data - replace with real data from your API
-  const isTwitterConnected = true; // Check if user has connected Twitter
-  const isBotActive = true; // Check bot status
-  const currentPlan = "Pro"; // User's current plan
-  const dailyLimit = 50;
-  const actionsUsed = 24;
+  const { 
+    dashboardData, 
+    loading, 
+    error, 
+    botActionLoading, 
+    startBot, 
+    stopBot 
+  } = useDashboard();
 
   // Helper function to render connection status
   const renderConnectionStatus = () => {
-    if (!isTwitterConnected) {
+    if (loading) {
+      return (
+        <ScrollAnimationWrapper>
+          <Card className="p-8 bg-gradient-to-br from-muted/10 to-muted/5 border-muted/20 text-center">
+            <div className="flex flex-col items-center space-y-4">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+              <div>
+                <h3 className="text-xl font-semibold text-foreground mb-2">Loading Dashboard</h3>
+                <p className="text-muted-foreground">
+                  Connecting to your account...
+                </p>
+              </div>
+            </div>
+          </Card>
+        </ScrollAnimationWrapper>
+      );
+    }
+
+    if (!dashboardData?.twitter_connected) {
       return (
         <ScrollAnimationWrapper>
           <Card className="p-8 bg-gradient-to-br from-warning/10 to-warning/5 border-warning/20 text-center">
@@ -48,7 +70,9 @@ const DashboardOverview = () => {
 
   // Helper function to render daily limit warning
   const renderDailyLimitStatus = () => {
-    const usagePercentage = (actionsUsed / dailyLimit) * 100;
+    if (!dashboardData) return null;
+    
+    const usagePercentage = (dashboardData.actions_used / dashboardData.daily_limit) * 100;
     
     if (usagePercentage >= 90) {
       return (
@@ -61,7 +85,7 @@ const DashboardOverview = () => {
               <div className="flex-1">
                 <h3 className="font-semibold text-foreground">Daily Limit Reached</h3>
                 <p className="text-sm text-muted-foreground">
-                  You've used {actionsUsed} of {dailyLimit} daily actions
+                  You've used {dashboardData.actions_used} of {dashboardData.daily_limit} daily actions
                 </p>
               </div>
               <Button variant="outline" size="sm" className="gap-2">
@@ -76,17 +100,53 @@ const DashboardOverview = () => {
     return null;
   };
 
+  const handleBotToggle = async () => {
+    if (!dashboardData) return;
+    
+    if (dashboardData.bot_status === 'running') {
+      await stopBot();
+    } else {
+      await startBot();
+    }
+  };
+
+  const isConnected = !error || dashboardData !== null;
+  const botIsActive = dashboardData?.bot_status === 'running';
+
   return (
     <div className="space-y-8">
       {/* Welcome Section */}
       <ScrollAnimationWrapper>
         <div className="text-center lg:text-left">
-          <h2 className="text-3xl font-bold text-foreground mb-2">Welcome back, John!</h2>
-          <p className="text-muted-foreground">
-            Your Twitter bot is {isBotActive ? 'actively working' : 'ready to start'} • {currentPlan} Plan
+          <h2 className="text-3xl font-bold text-foreground mb-2">
+            Welcome back, John!
+          </h2>
+          <p className="text-muted-foreground flex items-center gap-2">
+            Your Twitter bot is {botIsActive ? 'actively working' : 'ready to start'} • 
+            {dashboardData?.plan || 'Pro'} Plan
+            {!isConnected && (
+              <>
+                <span className="text-destructive">• API Connection Error</span>
+              </>
+            )}
           </p>
         </div>
       </ScrollAnimationWrapper>
+
+      {/* API Error Status */}
+      {error && (
+        <ScrollAnimationWrapper>
+          <Card className="p-4 bg-destructive/10 border-destructive/20">
+            <div className="flex items-center gap-3 text-destructive">
+              <ExternalLink className="w-5 h-5" />
+              <div>
+                <p className="font-medium">API Connection Error</p>
+                <p className="text-sm">{error} - Using demo data as fallback</p>
+              </div>
+            </div>
+          </Card>
+        </ScrollAnimationWrapper>
+      )}
 
       {/* Connection Status */}
       {renderConnectionStatus()}
@@ -95,27 +155,36 @@ const DashboardOverview = () => {
       {renderDailyLimitStatus()}
 
       {/* Bot Status Card - Only show if connected */}
-      {isTwitterConnected && (
+      {dashboardData?.twitter_connected && (
         <ScrollAnimationWrapper delay={100}>
           <BotStatusCard 
-            isActive={isBotActive}
-            lastAction="2 minutes ago"
-            uptime={7200} // 2 hours in seconds
+            isActive={botIsActive}
+            lastAction={dashboardData?.last_action}
+            uptime={dashboardData?.uptime}
+            isLoading={botActionLoading}
+            isConnected={isConnected}
+            onToggle={handleBotToggle}
           />
         </ScrollAnimationWrapper>
       )}
 
       {/* Statistics - Only show if connected */}
-      {isTwitterConnected && (
+      {dashboardData?.twitter_connected && (
         <ScrollAnimationWrapper delay={200}>
-          <SimpleStats />
+          <SimpleStats 
+            stats={dashboardData?.stats}
+            loading={loading}
+          />
         </ScrollAnimationWrapper>
       )}
 
       {/* Recent Activity - Only show if connected and bot is active */}
-      {isTwitterConnected && isBotActive && (
+      {dashboardData?.twitter_connected && (
         <ScrollAnimationWrapper delay={300}>
-          <RecentActivity />
+          <RecentActivity 
+            activities={dashboardData?.recent_activity}
+            loading={loading}
+          />
         </ScrollAnimationWrapper>
       )}
 

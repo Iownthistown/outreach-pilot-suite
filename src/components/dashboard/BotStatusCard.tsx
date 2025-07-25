@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,55 +7,28 @@ import {
   Moon, 
   Zap, 
   Clock,
-  Loader2
+  Loader2,
+  Wifi,
+  WifiOff
 } from "lucide-react";
-import { botManager } from "@/lib/botManager";
-import { useToast } from "@/hooks/use-toast";
 
 interface BotStatusCardProps {
   isActive: boolean;
   lastAction?: string;
   uptime?: number;
+  isLoading?: boolean;
+  isConnected?: boolean;
+  onToggle?: () => void;
 }
 
-const BotStatusCard = ({ isActive: initialActive, lastAction, uptime }: BotStatusCardProps) => {
-  const [isActive, setIsActive] = useState(initialActive);
-  const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
-
-  const handleToggleBotStatus = async () => {
-    setIsLoading(true);
-    try {
-      if (isActive) {
-        await botManager.stopBot();
-        setIsActive(false);
-        toast({
-          title: "Bot paused",
-          description: "Your bot is now sleeping",
-        });
-      } else {
-        await botManager.startBot({
-          maxActionsPerHour: 15,
-          followLimit: 5,
-          aiApiKey: '',
-          customPrompt: ''
-        });
-        setIsActive(true);
-        toast({
-          title: "Bot activated",
-          description: "Your bot is now working",
-        });
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to toggle bot status",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+const BotStatusCard = ({ 
+  isActive, 
+  lastAction, 
+  uptime, 
+  isLoading = false,
+  isConnected = true,
+  onToggle 
+}: BotStatusCardProps) => {
 
   const formatUptime = (seconds: number): string => {
     const hours = Math.floor(seconds / 3600);
@@ -67,37 +39,60 @@ const BotStatusCard = ({ isActive: initialActive, lastAction, uptime }: BotStatu
     return `${minutes}m`;
   };
 
+  const getStatusText = () => {
+    if (!isConnected) return "Connection Error";
+    return isActive ? "Your bot is working" : "Your bot is sleeping";
+  };
+
+  const getStatusDescription = () => {
+    if (!isConnected) return "Check your internet connection and API status";
+    return isActive 
+      ? "Actively engaging with your Twitter audience" 
+      : "Ready to start when you are";
+  };
+
+  const getStatusIcon = () => {
+    if (!isConnected) return <WifiOff className="w-12 h-12" />;
+    return isActive ? <Zap className="w-12 h-12" /> : <Moon className="w-12 h-12" />;
+  };
+
+  const getStatusColor = () => {
+    if (!isConnected) return 'bg-destructive/20 text-destructive';
+    return isActive 
+      ? 'bg-success/20 text-success animate-pulse' 
+      : 'bg-muted/20 text-muted-foreground';
+  };
+
   return (
     <Card className="p-8 bg-gradient-to-br from-card to-card/80 border-primary/20 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-primary/40">
       <div className="flex flex-col items-center text-center space-y-6">
+        {/* Connection Status Indicator */}
+        {!isConnected && (
+          <div className="w-full p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+            <div className="flex items-center gap-2 text-destructive text-sm">
+              <WifiOff className="w-4 h-4" />
+              <span>API Connection Error</span>
+            </div>
+          </div>
+        )}
+
         {/* Status Icon */}
-        <div className={`p-6 rounded-full transition-all duration-500 ${
-          isActive 
-            ? 'bg-success/20 text-success animate-pulse' 
-            : 'bg-muted/20 text-muted-foreground'
-        }`}>
-          {isActive ? (
-            <Zap className="w-12 h-12" />
-          ) : (
-            <Moon className="w-12 h-12" />
-          )}
+        <div className={`p-6 rounded-full transition-all duration-500 ${getStatusColor()}`}>
+          {getStatusIcon()}
         </div>
 
         {/* Status Text */}
         <div>
           <h3 className="text-2xl font-bold text-foreground mb-2">
-            {isActive ? "Your bot is working" : "Your bot is sleeping"}
+            {getStatusText()}
           </h3>
           <p className="text-muted-foreground">
-            {isActive 
-              ? "Actively engaging with your Twitter audience" 
-              : "Ready to start when you are"
-            }
+            {getStatusDescription()}
           </p>
         </div>
 
         {/* Status Details */}
-        {isActive && (
+        {isActive && isConnected && (
           <div className="flex items-center gap-6 text-sm text-muted-foreground">
             {lastAction && (
               <div className="flex items-center gap-2">
@@ -115,10 +110,16 @@ const BotStatusCard = ({ isActive: initialActive, lastAction, uptime }: BotStatu
           </div>
         )}
 
+        {/* Real-time Connection Indicator */}
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-success animate-pulse' : 'bg-destructive'}`} />
+          <span>{isConnected ? 'Connected to API' : 'API Offline'}</span>
+        </div>
+
         {/* Action Button */}
         <Button 
-          onClick={handleToggleBotStatus}
-          disabled={isLoading}
+          onClick={onToggle}
+          disabled={isLoading || !isConnected}
           size="lg"
           variant={isActive ? "outline" : "cta"}
           className={`px-8 py-3 text-lg transition-all duration-300 ${
