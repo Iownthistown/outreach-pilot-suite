@@ -17,21 +17,19 @@ export const useDashboard = () => {
     try {
       const data = await apiService.getDashboardStatus();
       setDashboardData(data);
+      setError(null); // Clear any previous errors
     } catch (err: any) {
       const errorMessage = handleApiError(err);
       setError(errorMessage);
       
-      // Show fallback toast for serious errors
-      if (errorMessage.includes('Network') || errorMessage.includes('CORS')) {
-        toast({
-          title: "API Connection Error",
-          description: "Using demo data. Check backend connection.",
-          variant: "destructive",
-        });
-        
-        // Use fallback data
-        setDashboardData(getFallbackData());
-      }
+      toast({
+        title: "API Connection Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+      
+      // Don't use fallback data - let components handle loading state
+      setDashboardData(null);
     } finally {
       if (showLoading) setLoading(false);
     }

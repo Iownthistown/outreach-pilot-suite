@@ -141,7 +141,7 @@ const DashboardOverview = () => {
               <ExternalLink className="w-5 h-5" />
               <div>
                 <p className="font-medium">API Connection Error</p>
-                <p className="text-sm">{error} - Using demo data as fallback</p>
+                <p className="text-sm">{error}</p>
               </div>
             </div>
           </Card>
