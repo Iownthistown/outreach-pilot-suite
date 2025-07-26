@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import OnboardingLayout from "@/components/onboarding/OnboardingLayout";
 import WelcomeStep from "@/components/onboarding/WelcomeStep";
-import AccountSetupStep from "@/components/onboarding/AccountSetupStep";
+import PlanSelectionStep from "@/components/onboarding/PlanSelectionStep";
 import ChromeExtensionStep from "@/components/onboarding/ChromeExtensionStep";
 import TwitterConnectStep from "@/components/onboarding/TwitterConnectStep";
 import SuccessStep from "@/components/onboarding/SuccessStep";
@@ -20,7 +20,6 @@ const Onboarding = () => {
     extensionInstalled,
     twitterConnected,
     handleWelcomeComplete,
-    handleAccountSetup,
     handleExtensionInstall,
     handleTwitterConnect,
     completeOnboarding,
@@ -34,12 +33,12 @@ const Onboarding = () => {
     }
   }, [currentStep, totalSteps, navigate]);
 
-  // Redirect to login if not authenticated and past account setup
+  // Redirect to login if not authenticated
   useEffect(() => {
-    if (!authLoading && !user && currentStep > 1) {
+    if (!authLoading && !user) {
       navigate("/login");
     }
-  }, [authLoading, user, navigate, currentStep]);
+  }, [authLoading, user, navigate]);
 
   const handleComplete = async () => {
     await completeOnboarding();
@@ -59,8 +58,8 @@ const Onboarding = () => {
         );
       case 1:
         return (
-          <AccountSetupStep 
-            onNext={handleAccountSetup} 
+          <PlanSelectionStep 
+            onNext={nextStep} 
             loading={loading}
           />
         );

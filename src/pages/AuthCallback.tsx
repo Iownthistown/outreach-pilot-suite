@@ -7,15 +7,22 @@ const AuthCallback = () => {
   const { user, loading } = useAuth();
 
   useEffect(() => {
-    if (!loading) {
-      if (user) {
-        // User is authenticated, redirect to onboarding
-        navigate("/onboarding", { replace: true });
-      } else {
-        // Authentication failed, redirect to login
-        navigate("/login", { replace: true });
+    // Add a small delay to ensure auth state is fully processed
+    const timer = setTimeout(() => {
+      if (!loading) {
+        if (user) {
+          console.log('OAuth successful, redirecting to onboarding');
+          // User is authenticated, redirect to onboarding
+          navigate("/onboarding", { replace: true });
+        } else {
+          console.log('OAuth failed, redirecting to login');
+          // Authentication failed, redirect to login
+          navigate("/login", { replace: true });
+        }
       }
-    }
+    }, 1000);
+
+    return () => clearTimeout(timer);
   }, [user, loading, navigate]);
 
   // Show loading while processing authentication
