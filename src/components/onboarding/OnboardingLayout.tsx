@@ -1,17 +1,19 @@
 import { ReactNode } from "react";
-import { CheckCircle, Clock, Circle } from "lucide-react";
+import { CheckCircle, Clock, Circle, ChevronLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface OnboardingLayoutProps {
   children: ReactNode;
   currentStep: number;
   totalSteps: number;
   loading?: boolean;
+  onGoBack?: () => void;
 }
 
-const OnboardingLayout = ({ children, currentStep, totalSteps, loading = false }: OnboardingLayoutProps) => {
+const OnboardingLayout = ({ children, currentStep, totalSteps, loading = false, onGoBack }: OnboardingLayoutProps) => {
   const steps = [
     { title: "Welcome", description: "Get started with COSTRAS" },
-    { title: "Account Setup", description: "Create your account" },
+    { title: "Choose Plan", description: "Select your subscription" },
     { title: "Install Extension", description: "Add Chrome extension" },
     { title: "Connect Twitter", description: "Link your Twitter/X account" },
     { title: "Complete Setup", description: "Finish configuration" }
@@ -20,13 +22,35 @@ const OnboardingLayout = ({ children, currentStep, totalSteps, loading = false }
   return (
     <div className="min-h-screen bg-gradient-hero flex items-center justify-center p-4">
       <div className="max-w-3xl w-full">
+        {/* Back button */}
+        {currentStep > 0 && onGoBack && (
+          <div className="mb-6">
+            <Button
+              variant="ghost"
+              onClick={onGoBack}
+              className="text-muted-foreground hover:text-foreground"
+              disabled={loading}
+            >
+              <ChevronLeft className="w-4 h-4 mr-2" />
+              Go Back
+            </Button>
+          </div>
+        )}
+        
         {/* Enhanced Progress indicator */}
         <div className="mb-12">
           {/* Progress bar */}
           <div className="relative mb-8">
             <div className="flex justify-between items-center">
               {steps.map((step, i) => (
-                <div key={i} className="flex flex-col items-center relative z-10">
+                <button
+                  key={i}
+                  onClick={() => onGoBack && i < currentStep && onGoBack()}
+                  disabled={i >= currentStep || loading}
+                  className={`flex flex-col items-center relative z-10 ${
+                    i < currentStep && onGoBack ? 'cursor-pointer hover:opacity-80' : 'cursor-default'
+                  }`}
+                >
                   <div
                     className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-500 ${
                       i < currentStep
@@ -62,7 +86,7 @@ const OnboardingLayout = ({ children, currentStep, totalSteps, loading = false }
                       {step.description}
                     </div>
                   </div>
-                </div>
+                </button>
               ))}
             </div>
             

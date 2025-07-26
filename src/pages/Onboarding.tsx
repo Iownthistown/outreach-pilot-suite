@@ -23,7 +23,8 @@ const Onboarding = () => {
     handleExtensionInstall,
     handleTwitterConnect,
     completeOnboarding,
-    nextStep
+    nextStep,
+    goBack
   } = useOnboarding();
 
   // Redirect to dashboard if user completes onboarding
@@ -107,6 +108,7 @@ const Onboarding = () => {
       currentStep={currentStep} 
       totalSteps={totalSteps}
       loading={loading}
+      onGoBack={goBack}
     >
       {renderStep()}
     </OnboardingLayout>

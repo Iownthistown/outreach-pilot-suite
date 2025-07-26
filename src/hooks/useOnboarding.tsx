@@ -231,6 +231,14 @@ export const useOnboarding = () => {
     await trackOnboardingStep(newStep);
   }, [state.currentStep, trackOnboardingStep]);
 
+  const goBack = useCallback(() => {
+    if (state.currentStep > 0) {
+      const newStep = state.currentStep - 1;
+      setState(prev => ({ ...prev, currentStep: newStep }));
+      localStorage.setItem('onboarding_step', newStep.toString());
+    }
+  }, [state.currentStep]);
+
   const setLoading = useCallback((loading: boolean) => {
     setState(prev => ({ ...prev, loading }));
   }, []);
@@ -379,6 +387,7 @@ export const useOnboarding = () => {
     handleExtensionInstall,
     completeOnboarding,
     nextStep,
+    goBack,
     setLoading,
     setError,
     startExtensionDetection,
