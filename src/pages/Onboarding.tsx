@@ -34,10 +34,11 @@ const Onboarding = () => {
     }
   }, [currentStep, totalSteps, navigate]);
 
-  // Redirect to login if not authenticated
+  // Handle authentication state - only redirect if we're sure user is not authenticated
   useEffect(() => {
     if (!authLoading && !user) {
-      navigate("/login");
+      console.log('User not authenticated in onboarding, redirecting to login');
+      navigate("/login", { replace: true });
     }
   }, [authLoading, user, navigate]);
 
@@ -92,15 +93,21 @@ const Onboarding = () => {
     }
   };
 
+  // Show loading while auth is being determined
   if (authLoading) {
     return (
       <div className="min-h-screen bg-gradient-hero flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">Loading...</p>
+          <p className="mt-4 text-muted-foreground">Setting up your account...</p>
         </div>
       </div>
     );
+  }
+
+  // Don't render onboarding if user is not authenticated
+  if (!user) {
+    return null;
   }
 
   return (
