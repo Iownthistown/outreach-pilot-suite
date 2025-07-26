@@ -44,23 +44,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         console.log('Auth state change:', event, !!session);
         
         if (mounted) {
-          // For OAuth callbacks, ensure we wait a bit for session to fully settle
-          if (event === 'SIGNED_IN' && session) {
-            // Small delay to ensure session is fully processed
-            setTimeout(() => {
-              if (mounted) {
-                setUser(session.user);
-                setLoading(false);
-              }
-            }, 100);
-          } else {
-            setUser(session?.user ?? null);
-            setLoading(false);
-          }
+          setUser(session?.user ?? null);
+          setLoading(false);
         }
       }
     );

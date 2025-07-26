@@ -7,31 +7,16 @@ const AuthCallback = () => {
   const { user, loading } = useAuth();
 
   useEffect(() => {
-    let isMounted = true;
-    
-    const processAuthCallback = async () => {
-      // Wait a bit longer to ensure auth state is fully processed
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      if (!isMounted) return;
-      
+    // Wait for auth state to be determined
+    if (!loading) {
       if (user) {
         console.log('OAuth successful, user authenticated:', user.id);
         navigate("/onboarding", { replace: true });
-      } else if (!loading) {
+      } else {
         console.log('OAuth failed or user not found, redirecting to login');
         navigate("/login", { replace: true });
       }
-    };
-
-    // Only start processing if loading is complete or we have a user
-    if (!loading || user) {
-      processAuthCallback();
     }
-
-    return () => {
-      isMounted = false;
-    };
   }, [user, loading, navigate]);
 
   // Show loading while processing authentication
