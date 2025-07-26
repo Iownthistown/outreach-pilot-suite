@@ -7,10 +7,15 @@ const AuthCallback = () => {
   const { user, loading } = useAuth();
 
   useEffect(() => {
-    // Same logic as Login page - redirect when we have a user
-    if (user && !loading) {
-      console.log('OAuth successful, user authenticated:', user.id);
-      navigate("/onboarding", { replace: true });
+    // Wait for loading to complete, then redirect if user exists
+    if (!loading) {
+      if (user) {
+        console.log('OAuth successful, user authenticated:', user.id);
+        navigate("/onboarding", { replace: true });
+      } else {
+        console.log('OAuth failed, redirecting to login');
+        navigate("/login", { replace: true });
+      }
     }
   }, [user, loading, navigate]);
 
