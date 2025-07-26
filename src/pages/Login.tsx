@@ -36,6 +36,7 @@ const Login = () => {
   const handleGoogleLogin = async () => {
     try {
       await signInWithGoogle();
+      // No navigation here - OAuth will handle redirect
     } catch (error: any) {
       toast({
         title: "Error",
