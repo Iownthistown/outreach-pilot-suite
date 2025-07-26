@@ -65,7 +65,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       provider: 'google',
       options: {
         scopes: 'https://www.googleapis.com/auth/userinfo.email',
-        redirectTo: `${window.location.origin}/auth/callback`
+        redirectTo: `${window.location.origin}/onboarding`
       }
     })
     if (error) throw error
