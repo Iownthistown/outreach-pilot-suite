@@ -34,7 +34,23 @@ const Privacy = () => {
             </div>
 
             <div className="mb-4">
-              <h3 className="text-xl font-medium text-foreground mb-2">b. Usage Data</h3>
+              <h3 className="text-xl font-medium text-foreground mb-2">b. Google OAuth Data Collection</h3>
+              <p className="text-muted-foreground leading-relaxed mb-2">
+                When you choose to authenticate with Google, we collect the following information from your Google account:
+              </p>
+              <ul className="list-disc list-inside text-muted-foreground space-y-1">
+                <li>Email address (via Google OAuth authentication)</li>
+                <li>Name (if provided through Google OAuth)</li>
+                <li>Basic profile information from Google account</li>
+                <li>User profile picture (if available and shared)</li>
+              </ul>
+              <p className="text-muted-foreground leading-relaxed mt-2 text-sm">
+                This data is collected exclusively for authentication and account management purposes within the Costras application.
+              </p>
+            </div>
+
+            <div className="mb-4">
+              <h3 className="text-xl font-medium text-foreground mb-2">c. Usage Data</h3>
               <ul className="list-disc list-inside text-muted-foreground space-y-1">
                 <li>Actions performed within the Costras platform (e.g., bot activation, dashboard usage)</li>
                 <li>Technical logs for debugging and service improvement</li>
@@ -43,14 +59,14 @@ const Privacy = () => {
             </div>
 
             <div className="mb-4">
-              <h3 className="text-xl font-medium text-foreground mb-2">c. Twitter Authentication Data</h3>
+              <h3 className="text-xl font-medium text-foreground mb-2">d. Twitter Authentication Data</h3>
               <ul className="list-disc list-inside text-muted-foreground space-y-1">
                 <li>Twitter session cookies (collected via the Chrome extension, only with your explicit consent, and transmitted securely to our backend for bot operation)</li>
               </ul>
             </div>
 
             <div className="mb-4">
-              <h3 className="text-xl font-medium text-foreground mb-2">d. Device and Technical Data</h3>
+              <h3 className="text-xl font-medium text-foreground mb-2">e. Device and Technical Data</h3>
               <ul className="list-disc list-inside text-muted-foreground space-y-1">
                 <li>Browser type and version</li>
                 <li>Operating system</li>
@@ -60,7 +76,7 @@ const Privacy = () => {
             </div>
 
             <div className="mb-4">
-              <h3 className="text-xl font-medium text-foreground mb-2">e. Cookies and Tracking Technologies</h3>
+              <h3 className="text-xl font-medium text-foreground mb-2">f. Cookies and Tracking Technologies</h3>
               <ul className="list-disc list-inside text-muted-foreground space-y-1">
                 <li>We use strictly necessary cookies for authentication and session management.</li>
                 <li>We do not use cookies for advertising or third-party tracking.</li>
@@ -80,6 +96,23 @@ const Privacy = () => {
               <li>To monitor and improve our services, including debugging and analytics (aggregated and anonymized)</li>
               <li>To comply with legal obligations and enforce our Terms of Service</li>
             </ul>
+
+            <div className="mt-6">
+              <h3 className="text-xl font-medium text-foreground mb-2">Google User Data Usage</h3>
+              <p className="text-muted-foreground leading-relaxed mb-2">
+                For users who authenticate via Google OAuth, we use your Google account data specifically to:
+              </p>
+              <ul className="list-disc list-inside text-muted-foreground space-y-1">
+                <li>Authenticate your account and enable secure login</li>
+                <li>Provide personalized services within the Costras platform</li>
+                <li>Send important account notifications and service updates</li>
+                <li>Improve application functionality and user experience</li>
+                <li>Ensure account security and prevent unauthorized access</li>
+              </ul>
+              <p className="text-muted-foreground leading-relaxed mt-2 text-sm font-medium">
+                We do NOT use Google user data for advertising, marketing to third parties, or any purposes outside of providing and improving the Costras application functionality.
+              </p>
+            </div>
           </section>
 
           <section className="mb-8">
@@ -92,6 +125,20 @@ const Privacy = () => {
               <li><strong>Legal Compliance:</strong> If required by law, regulation, or legal process, or to protect the rights, property, or safety of Costras, our users, or others.</li>
               <li><strong>Business Transfers:</strong> In the event of a merger, acquisition, or sale of assets, your information may be transferred as part of that transaction, subject to this Privacy Policy.</li>
             </ul>
+
+            <div className="mt-6 p-4 bg-muted/50 rounded-lg border">
+              <h3 className="text-xl font-medium text-foreground mb-2">Google User Data Sharing Policy</h3>
+              <p className="text-muted-foreground leading-relaxed mb-2">
+                <strong>We do NOT share, sell, or transfer Google user data to third parties.</strong> Specifically:
+              </p>
+              <ul className="list-disc list-inside text-muted-foreground space-y-1">
+                <li>Google user data is used exclusively for providing and improving the Costras application functionality</li>
+                <li>No Google user data is shared with advertisers, data brokers, or marketing companies</li>
+                <li>Data is not used for purposes other than the core application features you explicitly consent to</li>
+                <li>Access to Google user data is restricted to authorized Costras personnel only, on a need-to-know basis</li>
+                <li>All staff with access to user data are bound by strict confidentiality agreements</li>
+              </ul>
+            </div>
           </section>
 
           <section className="mb-8">
@@ -109,9 +156,20 @@ const Privacy = () => {
 
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-foreground mb-4">6. Data Retention</h2>
-            <p className="text-muted-foreground leading-relaxed">
+            <p className="text-muted-foreground leading-relaxed mb-4">
               We retain your personal information only as long as necessary to provide our services, comply with legal obligations, resolve disputes, and enforce our agreements. You may request deletion of your account and associated data at any time.
             </p>
+
+            <div className="mt-4">
+              <h3 className="text-xl font-medium text-foreground mb-2">Google User Data Retention</h3>
+              <ul className="list-disc list-inside text-muted-foreground space-y-1">
+                <li><strong>Active Accounts:</strong> Google user data is retained only as long as your Costras account remains active and you continue to use our services</li>
+                <li><strong>Account Deletion:</strong> When you delete your account, all associated Google user data is permanently removed from our systems within 30 days</li>
+                <li><strong>User-Requested Deletion:</strong> You can request immediate deletion of your Google user data at any time through our contact page</li>
+                <li><strong>Inactive Accounts:</strong> If an account remains inactive for more than 2 years, we will automatically delete the associated Google user data</li>
+                <li><strong>Service Discontinuation:</strong> If we discontinue the service, all Google user data will be deleted within 90 days of service termination</li>
+              </ul>
+            </div>
           </section>
 
           <section className="mb-8">
