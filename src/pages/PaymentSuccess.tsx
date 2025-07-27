@@ -3,14 +3,26 @@ import { useNavigate } from "react-router-dom";
 import { Check, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useOnboarding } from "@/hooks/useOnboarding";
 
 const PaymentSuccess = () => {
   const navigate = useNavigate();
+  const { currentStep } = useOnboarding();
+  
+  const isInOnboarding = currentStep < 4; // 4 total steps in onboarding
 
   useEffect(() => {
     // Optional: Track successful payment in analytics
     console.log("Payment successful - user landed on success page");
   }, []);
+
+  const handleNextStep = () => {
+    if (isInOnboarding) {
+      navigate("/onboarding");
+    } else {
+      navigate("/dashboard");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-hero flex items-center justify-center px-4">
@@ -22,15 +34,15 @@ const PaymentSuccess = () => {
 
         {/* Success Message */}
         <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-          Betaling Succesvol!
+          Payment Successful!
         </h1>
         <p className="text-xl text-muted-foreground mb-8">
-          Welkom bij Costras! Je account is geactiveerd en je kunt nu alle premium features gebruiken.
+          Welcome to Costras! Your account is activated and you can now use all premium features.
         </p>
 
         {/* Features Preview */}
         <div className="bg-background/50 rounded-lg p-6 mb-8 text-left">
-          <h3 className="text-lg font-semibold text-foreground mb-4">Je hebt nu toegang tot:</h3>
+          <h3 className="text-lg font-semibold text-foreground mb-4">You now have access to:</h3>
           <ul className="space-y-2">
             <li className="flex items-center gap-3">
               <Check className="w-5 h-5 text-success flex-shrink-0" />
@@ -38,11 +50,11 @@ const PaymentSuccess = () => {
             </li>
             <li className="flex items-center gap-3">
               <Check className="w-5 h-5 text-success flex-shrink-0" />
-              <span className="text-foreground">Automatische replies en likes</span>
+              <span className="text-foreground">Automatic replies and likes</span>
             </li>
             <li className="flex items-center gap-3">
               <Check className="w-5 h-5 text-success flex-shrink-0" />
-              <span className="text-foreground">Geavanceerde analytics</span>
+              <span className="text-foreground">Advanced analytics</span>
             </li>
             <li className="flex items-center gap-3">
               <Check className="w-5 h-5 text-success flex-shrink-0" />
@@ -56,10 +68,10 @@ const PaymentSuccess = () => {
           <Button 
             variant="hero" 
             size="lg"
-            onClick={() => navigate("/dashboard")}
+            onClick={handleNextStep}
             className="flex items-center gap-2"
           >
-            Ga naar Dashboard
+            {isInOnboarding ? "Continue Setup" : "Go to Dashboard"}
             <ArrowRight className="w-4 h-4" />
           </Button>
           <Button 
@@ -67,16 +79,16 @@ const PaymentSuccess = () => {
             size="lg"
             onClick={() => navigate("/")}
           >
-            Terug naar Home
+            Back to Home
           </Button>
         </div>
 
         {/* Additional Info */}
         <div className="mt-8 pt-6 border-t border-primary/20">
           <p className="text-sm text-muted-foreground">
-            Je ontvangt binnen enkele minuten een bevestigingsmail met je subscription details.
+            You will receive a confirmation email with your subscription details within a few minutes.
             <br />
-            Heb je vragen? Neem contact met ons op via support@costras.com
+            Have questions? Contact us at support@costras.com
           </p>
         </div>
       </Card>

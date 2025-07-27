@@ -2,12 +2,28 @@ import { useNavigate } from "react-router-dom";
 import { X, ArrowRight, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useOnboarding } from "@/hooks/useOnboarding";
 
 const PaymentCancel = () => {
   const navigate = useNavigate();
+  const { currentStep } = useOnboarding();
+  
+  const isInOnboarding = currentStep < 4; // 4 total steps in onboarding
 
   const handleRetryPayment = () => {
-    navigate("/pricing");
+    if (isInOnboarding) {
+      navigate("/onboarding");
+    } else {
+      navigate("/pricing");
+    }
+  };
+
+  const handleGoHome = () => {
+    if (isInOnboarding) {
+      navigate("/onboarding");
+    } else {
+      navigate("/");
+    }
   };
 
   return (
@@ -20,31 +36,31 @@ const PaymentCancel = () => {
 
         {/* Cancel Message */}
         <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-          Betaling Geannuleerd
+          Payment Cancelled
         </h1>
         <p className="text-xl text-muted-foreground mb-8">
-          Je betaling is geannuleerd. Geen zorgen, er is niets gefactureerd.
+          Your payment has been cancelled. Don't worry, nothing has been charged.
         </p>
 
         {/* Why Costras */}
         <div className="bg-background/50 rounded-lg p-6 mb-8 text-left">
-          <h3 className="text-lg font-semibold text-foreground mb-4">Waarom Costras kiezen?</h3>
+          <h3 className="text-lg font-semibold text-foreground mb-4">Why choose Costras?</h3>
           <ul className="space-y-2">
             <li className="flex items-start gap-3">
               <ArrowRight className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-              <span className="text-foreground">Verhoog je Twitter engagement met AI</span>
+              <span className="text-foreground">Boost your Twitter engagement with AI</span>
             </li>
             <li className="flex items-start gap-3">
               <ArrowRight className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-              <span className="text-foreground">Automatiseer replies en likes intelligent</span>
+              <span className="text-foreground">Intelligently automate replies and likes</span>
             </li>
             <li className="flex items-start gap-3">
               <ArrowRight className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-              <span className="text-foreground">7 dagen gratis proberen</span>
+              <span className="text-foreground">7-day free trial</span>
             </li>
             <li className="flex items-start gap-3">
               <ArrowRight className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-              <span className="text-foreground">Cancel anytime, geen verborgen kosten</span>
+              <span className="text-foreground">Cancel anytime, no hidden costs</span>
             </li>
           </ul>
         </div>
@@ -58,23 +74,23 @@ const PaymentCancel = () => {
             className="flex items-center gap-2"
           >
             <RefreshCw className="w-4 h-4" />
-            Probeer Opnieuw
+            {isInOnboarding ? "Continue Setup" : "Try Again"}
           </Button>
           <Button 
             variant="outline" 
             size="lg"
-            onClick={() => navigate("/")}
+            onClick={handleGoHome}
           >
-            Terug naar Home
+            {isInOnboarding ? "Back to Setup" : "Back to Home"}
           </Button>
         </div>
 
         {/* Contact Info */}
         <div className="mt-8 pt-6 border-t border-primary/20">
           <p className="text-sm text-muted-foreground">
-            Heb je vragen over onze pricing of features?
+            Have questions about our pricing or features?
             <br />
-            Neem contact met ons op via support@costras.com
+            Contact us at support@costras.com
           </p>
         </div>
       </Card>
