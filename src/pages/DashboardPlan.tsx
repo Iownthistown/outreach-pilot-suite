@@ -169,10 +169,12 @@ const DashboardPlan = () => {
                 <Button 
                   className="w-full" 
                   variant={plan.popular ? "default" : "outline"}
-                  disabled={plan.name === "Custom"}
+                  disabled={plan.name === "Custom" || plan.name === "Pro"}
                 >
-                  {plan.name === "Custom" ? "Coming Soon" : plan.name === "Pro" ? "Current Plan" : "Upgrade"}
-                  {plan.name !== "Custom" && <ArrowRight className="w-4 h-4 ml-2" />}
+                  {plan.name === "Custom" ? "Coming Soon" : 
+                   plan.name === "Pro" ? "Current Plan" : 
+                   currentPlan.name === "Pro Plan" && plan.name === "Starter" ? "Downgrade" : "Upgrade"}
+                  {plan.name !== "Custom" && plan.name !== "Pro" && <ArrowRight className="w-4 h-4 ml-2" />}
                 </Button>
               </Card>
             ))}

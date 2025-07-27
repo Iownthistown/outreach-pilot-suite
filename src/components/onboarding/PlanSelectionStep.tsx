@@ -39,10 +39,10 @@ const PlanSelectionStep = ({ onNext, loading = false }: PlanSelectionStepProps) 
       popular: true
     },
     {
-      name: "Enterprise",
-      price: "$199",
-      period: "/month",
-      description: "For large teams and agencies",
+      name: "Custom",
+      price: "Coming Soon",
+      period: "",
+      description: "Enterprise solutions for large teams",
       features: [
         "Unlimited automated actions",
         "White-label solution",
@@ -115,9 +115,9 @@ const PlanSelectionStep = ({ onNext, loading = false }: PlanSelectionStepProps) 
                       window.open(paymentLink, '_blank');
                     }
                   }}
-                  disabled={loading || plan.name === "Enterprise"}
+                  disabled={loading || plan.name === "Custom"}
                 >
-                  {plan.name === "Enterprise" ? "Coming Soon" : "Get Started"}
+                  {plan.name === "Custom" ? "Coming Soon" : "Get Started"}
                 </Button>
               </CardContent>
             </Card>

@@ -60,10 +60,8 @@ const PricingSection = () => {
 
   const handleGetStarted = (planName: string) => {
     if (planName === "Custom") return;
-    const paymentLink = paymentLinks[planName as keyof typeof paymentLinks];
-    if (paymentLink) {
-      window.open(paymentLink, '_blank');
-    }
+    // Redirect to signup page - users need an account to purchase
+    navigate("/signup");
   };
 
   return (

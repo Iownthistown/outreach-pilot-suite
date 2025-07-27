@@ -12,7 +12,7 @@ const Header = () => {
   };
 
   const handleSignup = () => {
-    window.open("https://buy.stripe.com/28EdRa4RG8JB2bk6aP8AE01", '_blank');
+    navigate("/signup");
   };
 
   return (
