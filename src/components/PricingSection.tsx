@@ -53,8 +53,17 @@ const PricingSection = () => {
     }
   ];
 
+  const paymentLinks = {
+    Starter: "https://buy.stripe.com/28E7sMgAoaRJ6rAczd8AE00",
+    Pro: "https://buy.stripe.com/28EdRa4RG8JB2bk6aP8AE01",
+  };
+
   const handleGetStarted = (planName: string) => {
-    navigate("/dashboard");
+    if (planName === "Custom") return;
+    const paymentLink = paymentLinks[planName as keyof typeof paymentLinks];
+    if (paymentLink) {
+      window.open(paymentLink, '_blank');
+    }
   };
 
   return (

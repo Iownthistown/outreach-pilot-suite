@@ -105,10 +105,19 @@ const PlanSelectionStep = ({ onNext, loading = false }: PlanSelectionStepProps) 
                 <Button 
                   className="w-full" 
                   variant={plan.popular ? "default" : "outline"}
-                  onClick={onNext}
-                  disabled={loading}
+                  onClick={() => {
+                    const paymentLinks = {
+                      Starter: "https://buy.stripe.com/28E7sMgAoaRJ6rAczd8AE00",
+                      Pro: "https://buy.stripe.com/28EdRa4RG8JB2bk6aP8AE01",
+                    };
+                    const paymentLink = paymentLinks[plan.name as keyof typeof paymentLinks];
+                    if (paymentLink) {
+                      window.open(paymentLink, '_blank');
+                    }
+                  }}
+                  disabled={loading || plan.name === "Enterprise"}
                 >
-                  {plan.popular ? "Get Started" : "Choose Plan"}
+                  {plan.name === "Enterprise" ? "Coming Soon" : "Get Started"}
                 </Button>
               </CardContent>
             </Card>

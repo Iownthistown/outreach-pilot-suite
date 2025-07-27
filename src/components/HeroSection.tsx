@@ -8,7 +8,7 @@ const HeroSection = () => {
   const [showVideoDialog, setShowVideoDialog] = useState(false);
   
   const handleGetStarted = () => {
-    navigate("/dashboard");
+    window.open("https://buy.stripe.com/28EdRa4RG8JB2bk6aP8AE01", '_blank');
   };
   
   const handleWatchDemo = () => {
