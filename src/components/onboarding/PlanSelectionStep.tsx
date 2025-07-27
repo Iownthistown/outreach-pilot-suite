@@ -27,7 +27,7 @@ const PlanSelectionStep = ({ onNext, loading = false }: PlanSelectionStepProps) 
     },
     {
       name: "Pro",
-      price: "$79",
+      price: "$99",
       period: "/month", 
       description: "Best for growing businesses and creators",
       features: [
@@ -94,8 +94,8 @@ const PlanSelectionStep = ({ onNext, loading = false }: PlanSelectionStepProps) 
                   </span>
                 </div>
               )}
-              {plan.popular && !isPlanPurchased && (
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+              {plan.popular && !isPlanPurchased && !hasPlan && (
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
                   <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-medium">
                     Most Popular
                   </span>

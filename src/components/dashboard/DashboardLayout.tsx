@@ -12,6 +12,8 @@ import {
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
+import { useSubscription } from "@/hooks/useSubscription";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -21,6 +23,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { user, signOut } = useAuth();
+  const { planName } = useSubscription();
 
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: BarChart3 },
@@ -30,9 +34,18 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     { name: "Settings", href: "/dashboard/settings", icon: Settings },
   ];
 
-  const handleLogout = () => {
-    // For now, redirect to home - will be replaced with auth
-    navigate("/");
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      navigate("/");
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
+
+  const getUserInitials = () => {
+    if (!user?.email) return "U";
+    return user.email.charAt(0).toUpperCase();
   };
 
   return (
@@ -96,11 +109,22 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           <div className="p-4 border-t border-primary/20 flex-shrink-0">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center">
-                <span className="text-primary-foreground font-semibold">JD</span>
+                <span className="text-primary-foreground font-semibold">
+                  {getUserInitials()}
+                </span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-foreground truncate">John Doe</p>
-                <p className="text-xs text-muted-foreground truncate">john@example.com</p>
+                <p className="text-sm font-medium text-foreground truncate">
+                  {user?.email?.split('@')[0] || 'User'}
+                </p>
+                <p className="text-xs text-muted-foreground truncate">
+                  {user?.email || 'user@example.com'}
+                </p>
+                {planName && (
+                  <p className="text-xs text-primary truncate">
+                    {planName} Plan
+                  </p>
+                )}
               </div>
             </div>
             <Button 
