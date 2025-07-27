@@ -19,6 +19,8 @@ import About from "./pages/About";
 import Affiliates from "./pages/Affiliates";
 import Privacy from "./pages/Privacy";
 import AuthCallback from "./pages/AuthCallback";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import PaymentCancel from "./pages/PaymentCancel";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -39,6 +41,8 @@ const App = () => (
             <Route path="/affiliates" element={<Affiliates />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
+            <Route path="/success" element={<PaymentSuccess />} />
+            <Route path="/cancel" element={<PaymentCancel />} />
             <Route path="/onboarding" element={
               <ProtectedRoute>
                 <Onboarding />
