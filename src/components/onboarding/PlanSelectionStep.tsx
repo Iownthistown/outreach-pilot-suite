@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, Zap, Star, Crown } from "lucide-react";
+import { Check, Zap, Star, Crown, CheckCircle } from "lucide-react";
+import { useSubscription } from "@/hooks/useSubscription";
 
 interface PlanSelectionStepProps {
   onNext: () => void;
@@ -8,6 +9,7 @@ interface PlanSelectionStepProps {
 }
 
 const PlanSelectionStep = ({ onNext, loading = false }: PlanSelectionStepProps) => {
+  const { subscription, planName, hasPlan } = useSubscription();
   const plans = [
     {
       name: "Starter",
@@ -59,18 +61,40 @@ const PlanSelectionStep = ({ onNext, loading = false }: PlanSelectionStepProps) 
   return (
     <div className="w-full max-w-6xl mx-auto space-y-8">
       <div className="text-center space-y-4">
-        <h1 className="text-3xl font-bold">Choose Your Plan</h1>
+        <h1 className="text-3xl font-bold">
+          {hasPlan ? `Your ${planName} Plan` : "Choose Your Plan"}
+        </h1>
         <p className="text-muted-foreground text-lg">
-          Select the plan that best fits your needs. You can upgrade or downgrade anytime.
+          {hasPlan 
+            ? "Great! You've successfully purchased a plan. Continue with your setup."
+            : "Select the plan that best fits your needs. You can upgrade or downgrade anytime."
+          }
         </p>
       </div>
 
       <div className="grid md:grid-cols-3 gap-6">
         {plans.map((plan) => {
           const Icon = plan.icon;
+          const isPlanPurchased = hasPlan && planName?.toLowerCase() === plan.name.toLowerCase();
+          const isDisabled = hasPlan && !isPlanPurchased;
+          
           return (
-            <Card key={plan.name} className={`relative ${plan.popular ? 'border-primary ring-2 ring-primary/20' : ''}`}>
-              {plan.popular && (
+            <Card key={plan.name} className={`relative ${
+              isPlanPurchased 
+                ? 'border-green-500 ring-2 ring-green-500/20 bg-green-50/50' 
+                : plan.popular 
+                  ? 'border-primary ring-2 ring-primary/20' 
+                  : ''
+            } ${isDisabled ? 'opacity-50' : ''}`}>
+              {isPlanPurchased && (
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                  <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1">
+                    <CheckCircle className="w-3 h-3" />
+                    Purchased
+                  </span>
+                </div>
+              )}
+              {plan.popular && !isPlanPurchased && (
                 <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                   <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-medium">
                     Most Popular
@@ -104,8 +128,13 @@ const PlanSelectionStep = ({ onNext, loading = false }: PlanSelectionStepProps) 
                 
                 <Button 
                   className="w-full" 
-                  variant={plan.popular ? "default" : "outline"}
+                  variant={isPlanPurchased ? "secondary" : plan.popular ? "default" : "outline"}
                   onClick={() => {
+                    if (isPlanPurchased) {
+                      onNext();
+                      return;
+                    }
+                    
                     const paymentLinks = {
                       Starter: "https://buy.stripe.com/28E7sMgAoaRJ6rAczd8AE00",
                       Pro: "https://buy.stripe.com/28EdRa4RG8JB2bk6aP8AE01",
@@ -115,9 +144,14 @@ const PlanSelectionStep = ({ onNext, loading = false }: PlanSelectionStepProps) 
                       window.open(paymentLink, '_blank');
                     }
                   }}
-                  disabled={loading || plan.name === "Custom"}
+                  disabled={loading || plan.name === "Custom" || isDisabled}
                 >
-                  {plan.name === "Custom" ? "Coming Soon" : "Get Started"}
+                  {isPlanPurchased 
+                    ? "Continue Setup" 
+                    : plan.name === "Custom" 
+                      ? "Coming Soon" 
+                      : "Get Started"
+                  }
                 </Button>
               </CardContent>
             </Card>
@@ -125,11 +159,21 @@ const PlanSelectionStep = ({ onNext, loading = false }: PlanSelectionStepProps) 
         })}
       </div>
 
-      <div className="text-center">
-        <Button variant="ghost" onClick={onNext} disabled={loading} className="text-muted-foreground">
-          Skip for now - I'll choose later
-        </Button>
-      </div>
+      {!hasPlan && (
+        <div className="text-center">
+          <Button variant="ghost" onClick={onNext} disabled={loading} className="text-muted-foreground">
+            Skip for now - I'll choose later
+          </Button>
+        </div>
+      )}
+      
+      {hasPlan && (
+        <div className="text-center">
+          <Button onClick={onNext} disabled={loading} className="w-full max-w-md">
+            Continue to Next Step
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

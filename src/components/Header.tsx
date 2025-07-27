@@ -1,11 +1,24 @@
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, User, LogOut, Settings, CreditCard } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { useSubscription } from "@/hooks/useSubscription";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const { user, loading: authLoading, signOut } = useAuth();
+  const { subscription, planName } = useSubscription();
 
   const handleLogin = () => {
     navigate("/login");
@@ -13,6 +26,20 @@ const Header = () => {
 
   const handleSignup = () => {
     navigate("/signup");
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      navigate("/");
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
+
+  const getUserInitials = () => {
+    if (!user?.email) return "U";
+    return user.email.charAt(0).toUpperCase();
   };
 
   return (
@@ -47,14 +74,62 @@ const Header = () => {
             </a>
           </nav>
 
-          {/* Auth Buttons */}
+          {/* Auth Section */}
           <div className="hidden md:flex items-center gap-3">
-            <Button variant="ghost" onClick={handleLogin}>
-              Login
-            </Button>
-            <Button variant="hero" onClick={handleSignup}>
-              Get Started Free
-            </Button>
+            {authLoading ? (
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+            ) : user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                    <Avatar className="h-10 w-10">
+                      <AvatarFallback className="bg-primary text-primary-foreground">
+                        {getUserInitials()}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">{user.email}</p>
+                      {planName && (
+                        <p className="text-xs leading-none text-muted-foreground">
+                          {planName} Plan
+                        </p>
+                      )}
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate("/dashboard")}>
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Dashboard</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate("/dashboard/plan")}>
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    <span>Subscription</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate("/dashboard/settings")}>
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>Settings</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Log out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <>
+                <Button variant="ghost" onClick={handleLogin}>
+                  Login
+                </Button>
+                <Button variant="hero" onClick={handleSignup}>
+                  Get Started Free
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -83,12 +158,29 @@ const Header = () => {
                 Testimonials
               </a>
               <div className="flex flex-col gap-2 mt-4">
-                <Button variant="ghost" onClick={handleLogin}>
-                  Login
-                </Button>
-                <Button variant="hero" onClick={handleSignup}>
-                  Get Started Free
-                </Button>
+                {user ? (
+                  <>
+                    <div className="text-sm text-foreground mb-2">
+                      Welcome, {user.email}
+                      {planName && <span className="block text-xs text-muted-foreground">{planName} Plan</span>}
+                    </div>
+                    <Button variant="ghost" onClick={() => navigate("/dashboard")}>
+                      Dashboard
+                    </Button>
+                    <Button variant="outline" onClick={handleLogout}>
+                      Log out
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button variant="ghost" onClick={handleLogin}>
+                      Login
+                    </Button>
+                    <Button variant="hero" onClick={handleSignup}>
+                      Get Started Free
+                    </Button>
+                  </>
+                )}
               </div>
             </nav>
           </div>
