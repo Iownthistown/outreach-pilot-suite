@@ -135,26 +135,66 @@ const DashboardPlan = () => {
         features: ["Limited access"],
         actionsUsed: 0,
         actionsLimit: 10,
-        validUntil: "No expiration"
+        validUntil: "No expiration",
+        planType: "Free"
       };
     }
 
-    const planName = subscription.plan_name || "Pro Plan";
-    const planFeatures = planName === "Pro Plan" 
-      ? ["1 account", "70 replies per day", "Auto likes", "Advanced analytics", "Priority support"]
-      : ["1 account", "30 replies per day", "Auto likes", "Basic analytics", "Email support"];
+    // Map subscription plan_type to plan names
+    const planType = (subscription as any).plan_type || "free";
+    let planName, price, features, actionsLimit;
+    
+    switch (planType.toLowerCase()) {
+      case "starter":
+        planName = "Starter";
+        price = "$29/month";
+        features = ["1 account", "30 replies per day", "Auto likes", "Basic analytics", "Email support"];
+        actionsLimit = 30;
+        break;
+      case "pro":
+        planName = "Pro";
+        price = "$99/month";
+        features = ["1 account", "70 replies per day", "Auto likes", "Advanced analytics", "Priority support"];
+        actionsLimit = 70;
+        break;
+      default:
+        planName = "Free Plan";
+        price = "$0/month";
+        features = ["Limited access"];
+        actionsLimit = 10;
+    }
     
     return {
       name: planName,
-      price: planName === "Pro Plan" ? "$99/month" : "$29/month",
-      features: planFeatures,
+      price: price,
+      features: features,
       actionsUsed: 34, // This would come from your bot statistics
-      actionsLimit: planName === "Pro Plan" ? 70 : 30,
-      validUntil: subscription.created_at ? new Date(subscription.created_at).toLocaleDateString() : "Unknown"
+      actionsLimit: actionsLimit,
+      validUntil: (subscription as any).current_period_end ? new Date((subscription as any).current_period_end).toLocaleDateString() : "Unknown",
+      planType: planType
     };
   };
 
   const currentPlan = getCurrentPlan();
+
+  // Helper functions to determine plan status
+  const isCurrentPlan = (planName: string) => {
+    return currentPlan.name.toLowerCase() === planName.toLowerCase();
+  };
+
+  const shouldShowDowngrade = (planName: string) => {
+    const currentLevel = getPlanLevel(currentPlan.name);
+    const targetLevel = getPlanLevel(planName);
+    return currentLevel > targetLevel;
+  };
+
+  const getPlanLevel = (planName: string) => {
+    switch (planName.toLowerCase()) {
+      case "starter": return 1;
+      case "pro": return 2;
+      default: return 0; // Free plan
+    }
+  };
 
   const plans = [
     {
@@ -310,12 +350,12 @@ const DashboardPlan = () => {
                 <Button 
                   className="w-full" 
                   variant={plan.popular ? "default" : "outline"}
-                  disabled={plan.name === "Custom" || plan.name === "Pro"}
+                  disabled={plan.name === "Custom" || isCurrentPlan(plan.name)}
                 >
                   {plan.name === "Custom" ? "Coming Soon" : 
-                   plan.name === "Pro" ? "Current Plan" : 
-                   currentPlan.name === "Pro Plan" && plan.name === "Starter" ? "Downgrade" : "Upgrade"}
-                  {plan.name !== "Custom" && plan.name !== "Pro" && <ArrowRight className="w-4 h-4 ml-2" />}
+                   isCurrentPlan(plan.name) ? "Current Plan" : 
+                   shouldShowDowngrade(plan.name) ? "Downgrade" : "Upgrade"}
+                  {plan.name !== "Custom" && !isCurrentPlan(plan.name) && <ArrowRight className="w-4 h-4 ml-2" />}
                 </Button>
               </Card>
             ))}
