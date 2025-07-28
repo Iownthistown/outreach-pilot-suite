@@ -25,6 +25,7 @@ const DashboardPlan = () => {
   const { subscription, loading: subscriptionLoading } = useSubscription();
   const { toast } = useToast();
   const [isManagingBilling, setIsManagingBilling] = useState(false);
+  const [isUpgrading, setIsUpgrading] = useState<string | null>(null);
   const [billingHistory, setBillingHistory] = useState([]);
   const [paymentInfo, setPaymentInfo] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -123,6 +124,59 @@ const DashboardPlan = () => {
       });
     } finally {
       setIsManagingBilling(false);
+    }
+  };
+
+  // Handle plan upgrade
+  const handleUpgrade = async (planType: string) => {
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to upgrade your plan.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsUpgrading(planType);
+    
+    try {
+      // Get the current session token
+      const { data: { session } } = await supabase.auth.getSession();
+      const accessToken = session?.access_token;
+
+      if (!accessToken) {
+        throw new Error('No access token available');
+      }
+
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: {
+          plan_type: planType
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (error) {
+        throw new Error(error.message || 'Failed to create checkout session');
+      }
+      
+      if (data?.url) {
+        // Redirect to Stripe Checkout
+        window.location.href = data.url;
+      } else {
+        throw new Error('No checkout URL received');
+      }
+    } catch (error) {
+      console.error('Error creating checkout session:', error);
+      toast({
+        title: "Error",
+        description: "Failed to start checkout. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUpgrading(null);
     }
   };
 
@@ -350,12 +404,18 @@ const DashboardPlan = () => {
                 <Button 
                   className="w-full" 
                   variant={plan.popular ? "default" : "outline"}
-                  disabled={plan.name === "Custom" || isCurrentPlan(plan.name)}
+                  disabled={plan.name === "Custom" || isCurrentPlan(plan.name) || isUpgrading === plan.name.toLowerCase()}
+                  onClick={() => {
+                    if (!isCurrentPlan(plan.name) && plan.name !== "Custom") {
+                      handleUpgrade(plan.name.toLowerCase());
+                    }
+                  }}
                 >
                   {plan.name === "Custom" ? "Coming Soon" : 
                    isCurrentPlan(plan.name) ? "Current Plan" : 
+                   isUpgrading === plan.name.toLowerCase() ? "Processing..." :
                    shouldShowDowngrade(plan.name) ? "Downgrade" : "Upgrade"}
-                  {plan.name !== "Custom" && !isCurrentPlan(plan.name) && <ArrowRight className="w-4 h-4 ml-2" />}
+                  {plan.name !== "Custom" && !isCurrentPlan(plan.name) && isUpgrading !== plan.name.toLowerCase() && <ArrowRight className="w-4 h-4 ml-2" />}
                 </Button>
               </Card>
             ))}
