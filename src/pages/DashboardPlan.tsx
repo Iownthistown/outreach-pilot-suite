@@ -7,7 +7,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
   Crown,
   Zap,
@@ -25,6 +25,53 @@ const DashboardPlan = () => {
   const { subscription, loading: subscriptionLoading } = useSubscription();
   const { toast } = useToast();
   const [isManagingBilling, setIsManagingBilling] = useState(false);
+  const [billingHistory, setBillingHistory] = useState([]);
+  const [paymentInfo, setPaymentInfo] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // Load real billing data
+  useEffect(() => {
+    const loadBillingData = async () => {
+      if (!user) return;
+      
+      try {
+        setLoading(true);
+        
+        // Load billing history
+        const { data: billingData, error: billingError } = await supabase
+          .from('billing_history')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(10);
+
+        if (billingError) {
+          console.error('Error loading billing history:', billingError);
+        } else {
+          setBillingHistory(billingData || []);
+        }
+
+        // Load user payment info
+        const { data: userData, error: userError } = await supabase
+          .from('users')
+          .select('payment_method_brand, payment_method_last4')
+          .eq('id', user.id)
+          .single();
+
+        if (userError) {
+          console.error('Error loading user data:', userError);
+        } else {
+          setPaymentInfo(userData);
+        }
+      } catch (error) {
+        console.error('Error loading billing data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadBillingData();
+  }, [user]);
 
   // Handle Stripe Customer Portal redirect
   const handleManageBilling = async () => {
@@ -48,24 +95,20 @@ const DashboardPlan = () => {
         throw new Error('No access token available');
       }
 
-      const response = await fetch('/api/create-portal-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`,
+      const { data, error } = await supabase.functions.invoke('create-portal-session', {
+        body: {
+          return_url: `${window.location.origin}/dashboard/plan`
         },
-        body: JSON.stringify({
-          return_url: 'https://costras.com/dashboard'
-        }),
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to create portal session');
+      if (error) {
+        throw new Error(error.message || 'Failed to create portal session');
       }
-
-      const data = await response.json();
       
-      if (data.url) {
+      if (data?.url) {
         // Redirect to Stripe Customer Portal
         window.location.href = data.url;
       } else {
@@ -158,11 +201,20 @@ const DashboardPlan = () => {
     }
   ];
 
-  const billingHistory = [
-    { date: "Nov 1, 2024", amount: "$99.00", status: "Paid" },
-    { date: "Oct 1, 2024", amount: "$99.00", status: "Paid" },
-    { date: "Sep 1, 2024", amount: "$99.00", status: "Paid" }
-  ];
+  // Format billing history for display
+  const formatBillingHistory = (history) => {
+    return history.map(bill => ({
+      date: new Date(bill.created_at).toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric' 
+      }),
+      amount: `$${(bill.amount / 100).toFixed(2)}`,
+      status: bill.status === 'paid' ? 'Paid' : bill.status
+    }));
+  };
+
+  const formattedBillingHistory = formatBillingHistory(billingHistory);
 
   const usagePercentage = (currentPlan.actionsUsed / currentPlan.actionsLimit) * 100;
 
@@ -275,48 +327,80 @@ const DashboardPlan = () => {
           {/* Billing History */}
           <Card className="p-6">
             <h3 className="text-lg font-semibold text-foreground mb-4">Billing History</h3>
-            <div className="space-y-3">
-              {billingHistory.map((bill, index) => (
-                <div key={index} className="flex items-center justify-between py-2 border-b border-border last:border-0">
-                  <div>
-                    <p className="text-sm font-medium text-foreground">{bill.date}</p>
-                    <p className="text-xs text-muted-foreground">Monthly subscription</p>
+            {loading ? (
+              <div className="space-y-3">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="animate-pulse">
+                    <div className="h-4 bg-muted rounded w-3/4 mb-2"></div>
+                    <div className="h-3 bg-muted rounded w-1/2"></div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm font-medium text-foreground">{bill.amount}</p>
-                    <Badge variant="secondary" className="text-xs">
-                      {bill.status}
-                    </Badge>
+                ))}
+              </div>
+            ) : formattedBillingHistory.length > 0 ? (
+              <div className="space-y-3">
+                {formattedBillingHistory.map((bill, index) => (
+                  <div key={index} className="flex items-center justify-between py-2 border-b border-border last:border-0">
+                    <div>
+                      <p className="text-sm font-medium text-foreground">{bill.date}</p>
+                      <p className="text-xs text-muted-foreground">Monthly subscription</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-medium text-foreground">{bill.amount}</p>
+                      <Badge variant="secondary" className="text-xs">
+                        {bill.status}
+                      </Badge>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">No billing history found.</p>
+            )}
           </Card>
 
           {/* Payment Method */}
           <Card className="p-6">
             <h3 className="text-lg font-semibold text-foreground mb-4">Payment Information</h3>
             <div className="space-y-4">
-              <div className="flex items-center gap-3 p-3 bg-muted/20 rounded-lg">
-                <CreditCard className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <p className="text-sm font-medium text-foreground">•••• •••• •••• 4242</p>
-                  <p className="text-xs text-muted-foreground">Expires 12/25</p>
+              {loading ? (
+                <div className="animate-pulse space-y-3">
+                  <div className="h-12 bg-muted rounded-lg"></div>
+                  <div className="h-4 bg-muted rounded w-2/3"></div>
                 </div>
-              </div>
-              
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-sm text-foreground">Next billing date: December 1, 2024</span>
-                </div>
-              </div>
+              ) : paymentInfo?.payment_method_last4 ? (
+                <>
+                  <div className="flex items-center gap-3 p-3 bg-muted/20 rounded-lg">
+                    <CreditCard className="w-5 h-5 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">
+                        •••• •••• •••• {paymentInfo.payment_method_last4}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {paymentInfo.payment_method_brand || 'Card'}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {(subscription as any)?.current_period_end && (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-sm text-foreground">
+                          Next billing date: {new Date((subscription as any).current_period_end).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <p className="text-sm text-muted-foreground">No payment method on file.</p>
+              )}
 
               <Button 
                 variant="outline" 
                 className="w-full"
                 onClick={handleManageBilling}
-                disabled={isManagingBilling}
+                disabled={isManagingBilling || !subscription}
               >
                 <Settings className="w-4 h-4 mr-2" />
                 {isManagingBilling ? "Opening..." : "Manage Billing"}

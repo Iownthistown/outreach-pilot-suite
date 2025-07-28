@@ -1,1 +1,4 @@
 project_id = "sjsuwthvozuzabktkcxu"
+
+[functions.create-portal-session]
+verify_jwt = false
