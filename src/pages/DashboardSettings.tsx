@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,13 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
   User,
   Twitter,
   Bell,
   Shield,
-  Upload,
   CheckCircle,
   AlertTriangle,
   Trash2,
@@ -21,9 +19,15 @@ import {
   EyeOff
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/lib/supabase";
 
 const DashboardSettings = () => {
+  const { user } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [notifications, setNotifications] = useState({
     email: true,
     dailySummary: false,
@@ -32,11 +36,43 @@ const DashboardSettings = () => {
   const [isConnected, setIsConnected] = useState(true);
   const { toast } = useToast();
 
-  const handleSave = () => {
-    toast({
-      title: "Settings saved",
-      description: "Your changes have been saved successfully.",
-    });
+  const handleChangePassword = async () => {
+    if (!currentPassword || !newPassword) {
+      toast({
+        title: "Error",
+        description: "Please fill in both current and new password.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsChangingPassword(true);
+    
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      toast({
+        title: "Password updated",
+        description: "Your password has been changed successfully.",
+      });
+      
+      setCurrentPassword("");
+      setNewPassword("");
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update password.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsChangingPassword(false);
+    }
   };
 
   const handleDisconnectTwitter = () => {
@@ -80,33 +116,19 @@ const DashboardSettings = () => {
           </div>
           
           <div className="space-y-6">
-            {/* Avatar Upload */}
-            <div className="flex items-center gap-6">
-              <Avatar className="w-20 h-20">
-                <AvatarImage src="/placeholder-avatar.jpg" />
-                <AvatarFallback>JD</AvatarFallback>
-              </Avatar>
-              <div>
-                <Button variant="outline" size="sm">
-                  <Upload className="w-4 h-4 mr-2" />
-                  Upload Photo
-                </Button>
-                <p className="text-xs text-muted-foreground mt-1">
-                  JPG, PNG or GIF. Max size 2MB.
-                </p>
-              </div>
-            </div>
-
-            {/* Name and Email */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
-                <Input id="name" defaultValue="John Doe" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
-                <Input id="email" defaultValue="john@example.com" type="email" />
-              </div>
+            {/* Email Display */}
+            <div className="space-y-2">
+              <Label htmlFor="email">Email Address</Label>
+              <Input 
+                id="email" 
+                value={user?.email || ""} 
+                type="email" 
+                disabled
+                className="bg-muted"
+              />
+              <p className="text-xs text-muted-foreground">
+                Email address cannot be changed here. Contact support if needed.
+              </p>
             </div>
 
             {/* Password Change */}
@@ -120,6 +142,8 @@ const DashboardSettings = () => {
                       id="current-password" 
                       type={showPassword ? "text" : "password"}
                       placeholder="Enter current password"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
                     />
                     <Button
                       type="button"
@@ -142,12 +166,18 @@ const DashboardSettings = () => {
                     id="new-password" 
                     type="password"
                     placeholder="Enter new password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
                   />
                 </div>
               </div>
+              <Button 
+                onClick={handleChangePassword}
+                disabled={isChangingPassword || !currentPassword || !newPassword}
+              >
+                {isChangingPassword ? "Updating..." : "Change Password"}
+              </Button>
             </div>
-
-            <Button onClick={handleSave}>Save Changes</Button>
           </div>
         </Card>
 
