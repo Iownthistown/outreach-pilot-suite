@@ -3,6 +3,11 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { useToast } from "@/components/ui/use-toast";
+import { useSubscription } from "@/hooks/useSubscription";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/lib/supabase";
+import { useState } from "react";
 import { 
   Crown,
   Zap,
@@ -10,19 +15,103 @@ import {
   CreditCard,
   Check,
   Sparkles,
-  ArrowRight
+  ArrowRight,
+  Settings,
+  ExternalLink
 } from "lucide-react";
 
 const DashboardPlan = () => {
-  // Mock data - replace with real API data
-  const currentPlan = {
-    name: "Pro Plan",
-    price: "$99/month",
-    features: ["1 account", "70 replies per day", "Auto likes", "Advanced analytics", "Priority support"],
-    actionsUsed: 34,
-    actionsLimit: 70,
-    validUntil: "December 31, 2024"
+  const { user } = useAuth();
+  const { subscription, loading: subscriptionLoading } = useSubscription();
+  const { toast } = useToast();
+  const [isManagingBilling, setIsManagingBilling] = useState(false);
+
+  // Handle Stripe Customer Portal redirect
+  const handleManageBilling = async () => {
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to manage your billing.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsManagingBilling(true);
+    
+    try {
+      // Get the current session token
+      const { data: { session } } = await supabase.auth.getSession();
+      const accessToken = session?.access_token;
+
+      if (!accessToken) {
+        throw new Error('No access token available');
+      }
+
+      const response = await fetch('/api/create-portal-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          return_url: 'https://costras.com/dashboard'
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create portal session');
+      }
+
+      const data = await response.json();
+      
+      if (data.url) {
+        // Redirect to Stripe Customer Portal
+        window.location.href = data.url;
+      } else {
+        throw new Error('No portal URL received');
+      }
+    } catch (error) {
+      console.error('Error creating portal session:', error);
+      toast({
+        title: "Error",
+        description: "Failed to open billing management. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsManagingBilling(false);
+    }
   };
+
+  // Get current plan info from subscription
+  const getCurrentPlan = () => {
+    if (!subscription) {
+      return {
+        name: "Free Plan",
+        price: "$0/month",
+        features: ["Limited access"],
+        actionsUsed: 0,
+        actionsLimit: 10,
+        validUntil: "No expiration"
+      };
+    }
+
+    const planName = subscription.plan_name || "Pro Plan";
+    const planFeatures = planName === "Pro Plan" 
+      ? ["1 account", "70 replies per day", "Auto likes", "Advanced analytics", "Priority support"]
+      : ["1 account", "30 replies per day", "Auto likes", "Basic analytics", "Email support"];
+    
+    return {
+      name: planName,
+      price: planName === "Pro Plan" ? "$99/month" : "$29/month",
+      features: planFeatures,
+      actionsUsed: 34, // This would come from your bot statistics
+      actionsLimit: planName === "Pro Plan" ? 70 : 30,
+      validUntil: subscription.created_at ? new Date(subscription.created_at).toLocaleDateString() : "Unknown"
+    };
+  };
+
+  const currentPlan = getCurrentPlan();
 
   const plans = [
     {
@@ -223,8 +312,15 @@ const DashboardPlan = () => {
                 </div>
               </div>
 
-              <Button variant="outline" className="w-full">
-                Update Payment Method
+              <Button 
+                variant="outline" 
+                className="w-full"
+                onClick={handleManageBilling}
+                disabled={isManagingBilling}
+              >
+                <Settings className="w-4 h-4 mr-2" />
+                {isManagingBilling ? "Opening..." : "Manage Billing"}
+                <ExternalLink className="w-4 h-4 ml-2" />
               </Button>
             </div>
           </Card>
