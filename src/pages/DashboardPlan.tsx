@@ -51,14 +51,14 @@ const DashboardPlan = () => {
           setBillingHistory(billingData || []);
         }
 
-        // Load user payment info
+        // Load user payment info - eerst proberen uit users tabel, dan fallback
         const { data: userData, error: userError } = await supabase
           .from('users')
           .select('payment_method_brand, payment_method_last4')
           .eq('id', user.id)
-          .single();
+          .maybeSingle(); // gebruik maybeSingle() om geen error te krijgen bij 0 rows
 
-        if (userError) {
+        if (userError && userError.code !== 'PGRST116') {
           console.error('Error loading user data:', userError);
         } else {
           setPaymentInfo(userData);
@@ -400,7 +400,7 @@ const DashboardPlan = () => {
                 variant="outline" 
                 className="w-full"
                 onClick={handleManageBilling}
-                disabled={isManagingBilling || !subscription}
+                disabled={isManagingBilling}
               >
                 <Settings className="w-4 h-4 mr-2" />
                 {isManagingBilling ? "Opening..." : "Manage Billing"}
