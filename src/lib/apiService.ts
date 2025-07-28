@@ -2,6 +2,15 @@ import { supabase } from '@/lib/supabase';
 
 const API_BASE_URL = 'https://api.costras.com';
 
+export interface TwitterUserInfo {
+  handle: string;
+  display_name: string;
+  profile_image_url: string;
+  connected_at: string;
+  last_sync: string;
+  is_connected: boolean;
+}
+
 export interface DashboardStatus {
   bot_status: 'running' | 'stopped' | 'error';
   last_action: string;
@@ -158,6 +167,33 @@ class ApiService {
       method: 'POST',
       body: JSON.stringify({
         config: { user_id: userId }
+      }),
+    });
+  }
+
+  async getTwitterUserInfo(): Promise<TwitterUserInfo> {
+    const userId = await this.getUserId();
+    return this.makeRequest<TwitterUserInfo>(`/twitter/user-info/${userId}`);
+  }
+
+  async connectTwitter(authToken: string, ct0Token: string): Promise<TwitterUserInfo> {
+    const userId = await this.getUserId();
+    return this.makeRequest<TwitterUserInfo>('/twitter/connect', {
+      method: 'POST',
+      body: JSON.stringify({
+        user_id: userId,
+        auth_token: authToken,
+        ct0_token: ct0Token
+      }),
+    });
+  }
+
+  async disconnectTwitter(): Promise<{ success: boolean; message: string }> {
+    const userId = await this.getUserId();
+    return this.makeRequest<{ success: boolean; message: string }>('/twitter/disconnect', {
+      method: 'POST',
+      body: JSON.stringify({
+        user_id: userId
       }),
     });
   }

@@ -16,14 +16,26 @@ import {
   Trash2,
   Download,
   Eye,
-  EyeOff
+  EyeOff,
+  Loader2,
+  RefreshCw
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import { useTwitter } from "@/hooks/useTwitter";
 import { supabase } from "@/lib/supabase";
 
 const DashboardSettings = () => {
   const { user } = useAuth();
+  const { 
+    twitterData, 
+    loading: twitterLoading, 
+    error: twitterError,
+    fetchTwitterData,
+    disconnectTwitter,
+    isConnected 
+  } = useTwitter();
+  
   const [showPassword, setShowPassword] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -33,7 +45,6 @@ const DashboardSettings = () => {
     dailySummary: false,
     errorAlerts: true
   });
-  const [isConnected, setIsConnected] = useState(true);
   const { toast } = useToast();
 
   const handleChangePassword = async () => {
@@ -75,21 +86,34 @@ const DashboardSettings = () => {
     }
   };
 
-  const handleDisconnectTwitter = () => {
-    setIsConnected(false);
-    toast({
-      title: "Twitter disconnected",
-      description: "Your Twitter account has been disconnected.",
-      variant: "destructive",
-    });
+  const handleDisconnectTwitter = async () => {
+    try {
+      await disconnectTwitter();
+    } catch (error) {
+      // Error handling is done in the hook
+    }
   };
 
   const handleReconnectTwitter = () => {
-    setIsConnected(true);
+    // In real implementation, this would trigger Chrome extension
     toast({
-      title: "Twitter connected",
-      description: "Your Twitter account has been reconnected successfully.",
+      title: "Reconnection Required",
+      description: "Please use the Chrome extension to reconnect your Twitter account.",
+      variant: "default",
     });
+  };
+
+  const getLastSyncText = () => {
+    if (!twitterData?.last_sync) return "Never synced";
+    const lastSync = new Date(twitterData.last_sync);
+    const now = new Date();
+    const diffHours = Math.floor((now.getTime() - lastSync.getTime()) / (1000 * 60 * 60));
+    
+    if (diffHours < 1) return "Synced recently";
+    if (diffHours === 1) return "Last synced 1 hour ago";
+    if (diffHours < 24) return `Last synced ${diffHours} hours ago`;
+    const diffDays = Math.floor(diffHours / 24);
+    return `Last synced ${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
   };
 
   const handleExportData = () => {
@@ -191,21 +215,66 @@ const DashboardSettings = () => {
           <div className="space-y-4">
             <div className="flex items-center justify-between p-4 bg-muted/20 rounded-lg">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
-                  <Twitter className="w-5 h-5 text-white" />
-                </div>
+                {twitterLoading ? (
+                  <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  </div>
+                ) : twitterData?.profile_image_url ? (
+                  <img 
+                    src={twitterData.profile_image_url} 
+                    alt="Twitter profile" 
+                    className="w-10 h-10 rounded-full"
+                  />
+                ) : (
+                  <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                    <Twitter className="w-5 h-5 text-white" />
+                  </div>
+                )}
                 <div>
-                  <p className="font-medium text-foreground">
-                    {isConnected ? "Connected to @johndoe" : "Not connected"}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    {isConnected ? "Last synced 2 hours ago" : "Connect your Twitter account to start using the bot"}
-                  </p>
+                  {twitterLoading ? (
+                    <div className="space-y-1">
+                      <div className="h-4 w-32 bg-muted animate-pulse rounded" />
+                      <div className="h-3 w-24 bg-muted animate-pulse rounded" />
+                    </div>
+                  ) : (
+                    <>
+                      <p className="font-medium text-foreground">
+                        {isConnected && twitterData?.handle 
+                          ? `Connected to @${twitterData.handle}` 
+                          : "Not connected"}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {isConnected 
+                          ? getLastSyncText()
+                          : "Connect your Twitter account to start using the bot"}
+                      </p>
+                      {twitterData?.display_name && (
+                        <p className="text-xs text-muted-foreground">
+                          {twitterData.display_name}
+                        </p>
+                      )}
+                    </>
+                  )}
                 </div>
               </div>
               <div className="flex items-center gap-2">
+                {!twitterLoading && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={fetchTwitterData}
+                    className="p-2"
+                  >
+                    <RefreshCw className="w-3 h-3" />
+                  </Button>
+                )}
                 <Badge variant={isConnected ? "default" : "secondary"}>
-                  {isConnected ? (
+                  {twitterLoading ? (
+                    <>
+                      <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                      Loading
+                    </>
+                  ) : isConnected ? (
                     <>
                       <CheckCircle className="w-3 h-3 mr-1" />
                       Connected
@@ -217,14 +286,16 @@ const DashboardSettings = () => {
                     </>
                   )}
                 </Badge>
-                {isConnected ? (
-                  <Button variant="outline" size="sm" onClick={handleDisconnectTwitter}>
-                    Disconnect
-                  </Button>
-                ) : (
-                  <Button size="sm" onClick={handleReconnectTwitter}>
-                    Connect Twitter
-                  </Button>
+                {!twitterLoading && (
+                  isConnected ? (
+                    <Button variant="outline" size="sm" onClick={handleDisconnectTwitter}>
+                      Disconnect
+                    </Button>
+                  ) : (
+                    <Button size="sm" onClick={handleReconnectTwitter}>
+                      Connect Twitter
+                    </Button>
+                  )
                 )}
               </div>
             </div>

@@ -152,6 +152,13 @@ export type Database = {
           payment_method_id: string | null
           payment_method_last4: string | null
           stripe_customer_id: string | null
+          twitter_auth_token: string | null
+          twitter_connected_at: string | null
+          twitter_ct0_token: string | null
+          twitter_display_name: string | null
+          twitter_handle: string | null
+          twitter_last_sync: string | null
+          twitter_profile_image_url: string | null
           updated_at: string | null
         }
         Insert: {
@@ -162,6 +169,13 @@ export type Database = {
           payment_method_id?: string | null
           payment_method_last4?: string | null
           stripe_customer_id?: string | null
+          twitter_auth_token?: string | null
+          twitter_connected_at?: string | null
+          twitter_ct0_token?: string | null
+          twitter_display_name?: string | null
+          twitter_handle?: string | null
+          twitter_last_sync?: string | null
+          twitter_profile_image_url?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -172,6 +186,13 @@ export type Database = {
           payment_method_id?: string | null
           payment_method_last4?: string | null
           stripe_customer_id?: string | null
+          twitter_auth_token?: string | null
+          twitter_connected_at?: string | null
+          twitter_ct0_token?: string | null
+          twitter_display_name?: string | null
+          twitter_handle?: string | null
+          twitter_last_sync?: string | null
+          twitter_profile_image_url?: string | null
           updated_at?: string | null
         }
         Relationships: []
