@@ -15,7 +15,7 @@ import {
 interface BotStatusCardProps {
   isActive: boolean;
   lastAction?: string;
-  uptime?: number;
+  uptime?: number | string;
   isLoading?: boolean;
   isConnected?: boolean;
   onToggle?: () => void;
@@ -30,9 +30,13 @@ const BotStatusCard = ({
   onToggle 
 }: BotStatusCardProps) => {
 
-  const formatUptime = (seconds: number): string => {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
+  const formatUptime = (uptime: number | string): string => {
+    if (typeof uptime === 'string') {
+      return uptime;
+    }
+    
+    const hours = Math.floor(uptime / 3600);
+    const minutes = Math.floor((uptime % 3600) / 60);
     if (hours > 0) {
       return `${hours}h ${minutes}m`;
     }

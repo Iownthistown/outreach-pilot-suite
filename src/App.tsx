@@ -7,6 +7,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
+import DashboardAnalytics from "./pages/DashboardAnalytics";
 import DashboardActivity from "./pages/DashboardActivity";
 import DashboardPlan from "./pages/DashboardPlan";
 import DashboardSupport from "./pages/DashboardSupport";
@@ -51,6 +52,11 @@ const App = () => (
             <Route path="/dashboard" element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/analytics" element={
+              <ProtectedRoute>
+                <DashboardAnalytics />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/activity" element={

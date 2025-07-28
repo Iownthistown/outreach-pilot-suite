@@ -3,25 +3,30 @@ import {
   Heart, 
   UserPlus, 
   MessageCircle,
-  Clock
+  Clock,
+  Eye,
+  CheckCircle,
+  X,
+  Loader2
 } from "lucide-react";
 
 interface ActivityItem {
   id: number;
-  type: 'like' | 'follow' | 'reply';
+  type: 'like' | 'follow' | 'reply' | 'view';
   message: string;
   time: string;
   user?: string;
+  timestamp: string;
+  target?: string;
+  tweet_content?: string;
+  reply_content?: string;
+  status: 'success' | 'failed' | 'pending';
+  icon?: string;
+  ai_service?: string;
 }
 
 interface RecentActivityProps {
-  activities?: Array<{
-    id: number;
-    type: 'like' | 'follow' | 'reply';
-    message: string;
-    time: string;
-    user?: string;
-  }>;
+  activities?: Array<ActivityItem>;
   loading?: boolean;
 }
 
@@ -34,6 +39,8 @@ const RecentActivity = ({ activities = [], loading = false }: RecentActivityProp
         return <UserPlus className="w-4 h-4 text-blue-500" />;
       case 'reply':
         return <MessageCircle className="w-4 h-4 text-green-500" />;
+      case 'view':
+        return <Eye className="w-4 h-4 text-purple-500" />;
       default:
         return <Clock className="w-4 h-4 text-muted-foreground" />;
     }
@@ -72,16 +79,47 @@ const RecentActivity = ({ activities = [], loading = false }: RecentActivityProp
           activities.map((activity) => (
             <div 
               key={activity.id} 
-              className="flex items-start gap-3 p-3 hover:bg-muted/20 rounded-lg transition-colors"
+              className="flex items-start gap-3 p-3 hover:bg-muted/20 rounded-lg transition-colors border border-muted/20"
             >
               <div className="p-2 bg-muted/20 rounded-full mt-0.5 flex-shrink-0">
                 {getActivityIcon(activity.type)}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm text-foreground">{activity.message}</p>
-                <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-sm text-foreground font-medium">{activity.message}</p>
+                  <div className="flex items-center gap-2">
+                    {activity.status === 'success' && <CheckCircle className="w-4 h-4 text-success" />}
+                    {activity.status === 'failed' && <X className="w-4 h-4 text-destructive" />}
+                    {activity.status === 'pending' && <Loader2 className="w-4 h-4 text-warning animate-spin" />}
+                    <span className={`text-xs px-2 py-1 rounded-full ${
+                      activity.status === 'success' ? 'bg-success/10 text-success' :
+                      activity.status === 'failed' ? 'bg-destructive/10 text-destructive' :
+                      'bg-warning/10 text-warning'
+                    }`}>
+                      {activity.status}
+                    </span>
+                  </div>
+                </div>
+                {activity.tweet_content && (
+                  <p className="text-xs text-muted-foreground mb-2 italic">
+                    "{activity.tweet_content.substring(0, 100)}{activity.tweet_content.length > 100 ? '...' : ''}"
+                  </p>
+                )}
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Clock className="w-3 h-3" />
                   <span>{activity.time}</span>
+                  {activity.target && (
+                    <>
+                      <span>•</span>
+                      <span className="font-medium">{activity.target}</span>
+                    </>
+                  )}
+                  {activity.ai_service && (
+                    <>
+                      <span>•</span>
+                      <span className="text-primary">{activity.ai_service}</span>
+                    </>
+                  )}
                 </div>
               </div>
             </div>

@@ -3,9 +3,9 @@ import { supabase } from '@/lib/supabase';
 const API_BASE_URL = 'https://api.costras.com';
 
 export interface DashboardStatus {
-  bot_status: 'running' | 'stopped';
+  bot_status: 'running' | 'stopped' | 'error';
   last_action: string;
-  uptime: number;
+  uptime: number | string;
   stats: {
     actions_today: number;
     new_followers: number;
@@ -17,16 +17,59 @@ export interface DashboardStatus {
   };
   recent_activity: Array<{
     id: number;
-    type: 'like' | 'follow' | 'reply';
+    type: 'like' | 'follow' | 'reply' | 'view';
     message: string;
     time: string;
     user?: string;
     timestamp: string;
+    target?: string;
+    tweet_content?: string;
+    reply_content?: string;
+    status: 'success' | 'failed' | 'pending';
+    icon?: string;
+    ai_service?: string;
   }>;
   twitter_connected: boolean;
   plan: string;
   daily_limit: number;
   actions_used: number;
+}
+
+export interface AnalyticsData {
+  bot_performance: {
+    status: 'running' | 'stopped' | 'error';
+    uptime: string;
+    actions_today: number;
+    success_rate: string;
+    avg_response_time: string;
+    errors: number;
+  };
+  engagement_metrics: {
+    engagement_rate: string;
+    follower_growth: number;
+    follower_growth_rate: string;
+    actions_trend: string;
+    engagement_trend: string;
+  };
+  recent_actions: Array<{
+    action: 'like' | 'follow' | 'reply' | 'view';
+    target: string;
+    tweet_content: string;
+    reply_content?: string;
+    timestamp: string;
+    status: 'success' | 'failed' | 'pending';
+    icon: string;
+    ai_service?: string;
+  }>;
+  trends: {
+    actions_trend: string;
+    success_rate_trend: string;
+    best_hour: string;
+  };
+  insights: {
+    recommendation: string;
+    warning?: string;
+  };
 }
 
 export interface BotStartResponse {
@@ -81,7 +124,22 @@ class ApiService {
 
   async getDashboardStatus(): Promise<DashboardStatus> {
     const userId = await this.getUserId();
-    return this.makeRequest<DashboardStatus>(`/dashboard/status/${userId}`);
+    return this.makeRequest<DashboardStatus>(`/analytics/dashboard/${userId}`);
+  }
+
+  async getAnalyticsData(): Promise<AnalyticsData> {
+    const userId = await this.getUserId();
+    return this.makeRequest<AnalyticsData>(`/analytics/dashboard/${userId}`);
+  }
+
+  async getRecentActions(): Promise<any[]> {
+    const userId = await this.getUserId();
+    return this.makeRequest<any[]>(`/analytics/actions/${userId}`);
+  }
+
+  async getPerformanceMetrics(): Promise<any> {
+    const userId = await this.getUserId();
+    return this.makeRequest<any>(`/analytics/performance/${userId}`);
   }
 
   async startBot(): Promise<BotStartResponse> {

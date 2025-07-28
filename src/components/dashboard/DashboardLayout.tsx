@@ -8,7 +8,8 @@ import {
   CreditCard,
   Menu,
   X,
-  LogOut
+  LogOut,
+  TrendingUp
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -28,6 +29,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: BarChart3 },
+    { name: "Analytics", href: "/dashboard/analytics", icon: TrendingUp },
     { name: "Activity", href: "/dashboard/activity", icon: MessageSquare },
     { name: "Plan", href: "/dashboard/plan", icon: CreditCard },
     { name: "Support", href: "/dashboard/support", icon: Users },
