@@ -55,6 +55,42 @@ export type Database = {
           },
         ]
       }
+      extension_sessions: {
+        Row: {
+          browser_info: string | null
+          created_at: string
+          extension_version: string | null
+          id: string
+          ip_address: string | null
+          is_active: boolean | null
+          last_activity: string
+          session_token: string
+          user_id: string
+        }
+        Insert: {
+          browser_info?: string | null
+          created_at?: string
+          extension_version?: string | null
+          id?: string
+          ip_address?: string | null
+          is_active?: boolean | null
+          last_activity?: string
+          session_token: string
+          user_id: string
+        }
+        Update: {
+          browser_info?: string | null
+          created_at?: string
+          extension_version?: string | null
+          id?: string
+          ip_address?: string | null
+          is_active?: boolean | null
+          last_activity?: string
+          session_token?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       payment_history: {
         Row: {
           amount: number
@@ -145,12 +181,18 @@ export type Database = {
       }
       users: {
         Row: {
+          auto_login_enabled: boolean | null
+          connection_method: string | null
           created_at: string | null
           email: string
+          extension_connected: boolean | null
+          extension_last_connected: string | null
+          extension_version: string | null
           id: string
           payment_method_brand: string | null
           payment_method_id: string | null
           payment_method_last4: string | null
+          session_origin: string | null
           stripe_customer_id: string | null
           twitter_auth_token: string | null
           twitter_connected_at: string | null
@@ -162,12 +204,18 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          auto_login_enabled?: boolean | null
+          connection_method?: string | null
           created_at?: string | null
           email: string
+          extension_connected?: boolean | null
+          extension_last_connected?: string | null
+          extension_version?: string | null
           id?: string
           payment_method_brand?: string | null
           payment_method_id?: string | null
           payment_method_last4?: string | null
+          session_origin?: string | null
           stripe_customer_id?: string | null
           twitter_auth_token?: string | null
           twitter_connected_at?: string | null
@@ -179,12 +227,18 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          auto_login_enabled?: boolean | null
+          connection_method?: string | null
           created_at?: string | null
           email?: string
+          extension_connected?: boolean | null
+          extension_last_connected?: string | null
+          extension_version?: string | null
           id?: string
           payment_method_brand?: string | null
           payment_method_id?: string | null
           payment_method_last4?: string | null
+          session_origin?: string | null
           stripe_customer_id?: string | null
           twitter_auth_token?: string | null
           twitter_connected_at?: string | null
@@ -202,7 +256,19 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      disconnect_extension: {
+        Args: { p_user_id: string }
+        Returns: Json
+      }
+      update_extension_status: {
+        Args: {
+          p_user_id: string
+          p_extension_version?: string
+          p_session_token?: string
+          p_browser_info?: string
+        }
+        Returns: Json
+      }
     }
     Enums: {
       [_ in never]: never
