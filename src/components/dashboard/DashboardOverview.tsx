@@ -9,8 +9,10 @@ import {
 import BotStatusCard from "./BotStatusCard";
 import SimpleStats from "./SimpleStats";
 import RecentActivity from "./RecentActivity";
+import ExtensionStatusCard from "./ExtensionStatusCard";
 import { ScrollAnimationWrapper } from "@/hooks/useScrollAnimation";
 import { useDashboard } from "@/hooks/useDashboard";
+import { useExtensionStatus } from "@/hooks/useExtensionStatus";
 
 const DashboardOverview = () => {
   const { 
@@ -21,6 +23,12 @@ const DashboardOverview = () => {
     startBot, 
     stopBot 
   } = useDashboard();
+  
+  const { 
+    extensionStatus, 
+    loading: extensionLoading, 
+    disconnectExtension 
+  } = useExtensionStatus();
 
   // Helper function to render connection status
   const renderConnectionStatus = () => {
@@ -154,9 +162,18 @@ const DashboardOverview = () => {
       {/* Daily Limit Warning */}
       {renderDailyLimitStatus()}
 
+      {/* Extension Status Card */}
+      <ScrollAnimationWrapper delay={100}>
+        <ExtensionStatusCard
+          extensionStatus={extensionStatus}
+          loading={extensionLoading}
+          onDisconnect={disconnectExtension}
+        />
+      </ScrollAnimationWrapper>
+
       {/* Bot Status Card - Only show if connected */}
       {dashboardData?.twitter_connected && (
-        <ScrollAnimationWrapper delay={100}>
+        <ScrollAnimationWrapper delay={150}>
           <BotStatusCard 
             isActive={botIsActive}
             lastAction={dashboardData?.last_action}
@@ -180,7 +197,7 @@ const DashboardOverview = () => {
 
       {/* Recent Activity - Only show if connected and bot is active */}
       {dashboardData?.twitter_connected && (
-        <ScrollAnimationWrapper delay={300}>
+        <ScrollAnimationWrapper delay={250}>
           <RecentActivity 
             activities={dashboardData?.recent_activity}
             loading={loading}
@@ -189,7 +206,7 @@ const DashboardOverview = () => {
       )}
 
       {/* Support Section */}
-      <ScrollAnimationWrapper delay={400}>
+      <ScrollAnimationWrapper delay={300}>
         <Card className="p-6 bg-gradient-card border-primary/20 text-center">
           <h3 className="text-lg font-semibold text-foreground mb-2">Need Help?</h3>
           <p className="text-muted-foreground mb-4">

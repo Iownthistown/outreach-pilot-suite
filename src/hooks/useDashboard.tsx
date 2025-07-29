@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { apiService, DashboardStatus, AnalyticsData, handleApiError, listenForChromeExtension } from '@/lib/apiService';
 import { useToast } from '@/hooks/use-toast';
+import { useExtensionStatus } from '@/hooks/useExtensionStatus';
 
 export const useDashboard = () => {
   const [dashboardData, setDashboardData] = useState<DashboardStatus | null>(null);
@@ -8,6 +9,7 @@ export const useDashboard = () => {
   const [error, setError] = useState<string | null>(null);
   const [botActionLoading, setBotActionLoading] = useState(false);
   const { toast } = useToast();
+  const { extensionStatus } = useExtensionStatus();
 
   // Fetch real analytics data from API
   const fetchDashboardData = useCallback(async (showLoading = true) => {
@@ -167,6 +169,7 @@ export const useDashboard = () => {
     loading,
     error,
     botActionLoading,
+    extensionStatus,
     startBot,
     stopBot,
     refetch: () => fetchDashboardData(),
