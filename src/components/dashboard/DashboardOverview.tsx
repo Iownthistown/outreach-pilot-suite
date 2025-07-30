@@ -127,7 +127,7 @@ const DashboardOverview = () => {
       <ScrollAnimationWrapper>
         <div className="text-center lg:text-left">
           <h2 className="text-3xl font-bold text-foreground mb-2">
-            Welcome back, John!
+            Welcome back!
           </h2>
           <p className="text-muted-foreground flex items-center gap-2">
             Your Twitter bot is {botIsActive ? 'actively working' : 'ready to start'} • 
