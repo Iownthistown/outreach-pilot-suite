@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/supabase';
 
-const API_BASE_URL = 'https://api.costras.com';
+const API_BASE_URL = 'http://34.173.83.251:8080';
 
 export interface TwitterUserInfo {
   handle: string;
