@@ -59,10 +59,14 @@ export const useDashboard = () => {
       setDashboardData(transformedData);
       setError(null);
     } catch (err: any) {
-      const errorMessage = handleApiError(err);
-      setError(errorMessage);
-      
-      console.warn('Using fallback data due to API error:', errorMessage);
+      // Only show error for unexpected issues, not API unavailability
+      if (err.name !== 'TypeError' && !err.message.includes('Failed to fetch')) {
+        const errorMessage = handleApiError(err);
+        setError(errorMessage);
+      } else {
+        setError(null); // Clear any previous errors
+        console.info('External API unavailable, using fallback data');
+      }
       
       // Use fallback data when API fails
       setDashboardData(getFallbackData());
