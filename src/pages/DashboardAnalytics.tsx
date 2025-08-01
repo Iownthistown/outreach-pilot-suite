@@ -203,18 +203,7 @@ const DashboardAnalytics = () => {
           </div>
         </div>
 
-        {/* Error Alert */}
-        {error && (
-          <Card className="p-4 bg-destructive/10 border-destructive/20">
-            <div className="flex items-center gap-3 text-destructive">
-              <AlertTriangle className="w-5 h-5" />
-              <div>
-                <p className="font-medium">Analytics Data Error</p>
-                <p className="text-sm">{error}</p>
-              </div>
-            </div>
-          </Card>
-        )}
+        {/* Error Alert - Removed to prevent showing API connection errors */}
 
         <Tabs defaultValue="performance" className="space-y-6">
           <TabsList className="grid w-full grid-cols-3">
