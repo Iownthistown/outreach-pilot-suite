@@ -5,14 +5,16 @@ import WelcomeStep from "@/components/onboarding/WelcomeStep";
 import PlanSelectionStep from "@/components/onboarding/PlanSelectionStep";
 import ChromeExtensionStep from "@/components/onboarding/ChromeExtensionStep";
 import TwitterConnectStep from "@/components/onboarding/TwitterConnectStep";
-import SuccessStep from "@/components/onboarding/SuccessStep";
+import AccountAnalysisStep from "@/components/onboarding/AccountAnalysisStep";
+import BotConfigurationStep from "@/components/onboarding/BotConfigurationStep";
+import FinalSuccessStep from "@/components/onboarding/FinalSuccessStep";
 import { useOnboarding } from "@/hooks/useOnboarding";
 import { useAuth } from "@/hooks/useAuth";
 
 const Onboarding = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
-  const totalSteps = 5;
+  const totalSteps = 6;
   
   const {
     currentStep,
@@ -22,9 +24,13 @@ const Onboarding = () => {
     handleWelcomeComplete,
     handleExtensionInstall,
     handleTwitterConnect,
+    handleAnalysisComplete,
+    handleBotConfiguration,
     completeOnboarding,
     nextStep,
-    goBack
+    goBack,
+    analysisData,
+    botConfig
   } = useOnboarding();
 
   // Redirect to dashboard if user completes onboarding
@@ -82,7 +88,30 @@ const Onboarding = () => {
           />
         );
       case 4:
-        return <SuccessStep onComplete={handleComplete} />;
+        return (
+          <AccountAnalysisStep
+            onNext={nextStep}
+            loading={loading}
+            twitterConnected={twitterConnected}
+            onAnalysisComplete={handleAnalysisComplete}
+          />
+        );
+      case 5:
+        return (
+          <BotConfigurationStep
+            onNext={() => handleBotConfiguration({})}
+            loading={loading}
+            analysisData={analysisData}
+          />
+        );
+      case 6:
+        return (
+          <FinalSuccessStep 
+            onComplete={handleComplete}
+            analysisData={analysisData}
+            botConfig={botConfig}
+          />
+        );
       default:
         return (
           <WelcomeStep 

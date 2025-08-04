@@ -7,10 +7,14 @@ interface OnboardingState {
   accountSetup: boolean;
   twitterConnected: boolean;
   extensionInstalled: boolean;
+  accountAnalyzed: boolean;
+  botConfigured: boolean;
   onboardingComplete: boolean;
   currentStep: number;
   loading: boolean;
   error: string | null;
+  analysisData?: any;
+  botConfig?: any;
 }
 
 interface OnboardingData {
@@ -18,9 +22,13 @@ interface OnboardingData {
   account_setup: boolean;
   twitter_connected: boolean;
   extension_installed: boolean;
+  account_analyzed: boolean;
+  bot_configured: boolean;
   onboarding_complete: boolean;
   user_id: string;
   timestamp: number;
+  analysis_data?: any;
+  bot_config?: any;
 }
 
 export const useOnboarding = () => {
@@ -32,10 +40,14 @@ export const useOnboarding = () => {
     accountSetup: false,
     twitterConnected: false,
     extensionInstalled: false,
+    accountAnalyzed: false,
+    botConfigured: false,
     onboardingComplete: false,
     currentStep: 0,
     loading: false,
-    error: null
+    error: null,
+    analysisData: null,
+    botConfig: null
   });
 
   const [extensionCheckInterval, setExtensionCheckInterval] = useState<NodeJS.Timeout | null>(null);
@@ -47,7 +59,13 @@ export const useOnboarding = () => {
     const accountSetup = localStorage.getItem('onboarding_account_setup') === 'true';
     const twitterConnected = localStorage.getItem('costras_twitter_connected') === 'true';
     const extensionInstalled = localStorage.getItem('costras_extension_installed') === 'true';
+    const accountAnalyzed = localStorage.getItem('onboarding_account_analyzed') === 'true';
+    const botConfigured = localStorage.getItem('onboarding_bot_configured') === 'true';
     const onboardingComplete = localStorage.getItem('onboarding_complete') === 'true';
+    
+    // Load saved analysis data and bot config
+    const analysisData = localStorage.getItem('onboarding_analysis_data');
+    const botConfig = localStorage.getItem('onboarding_bot_config');
     
     setState(prev => ({
       ...prev,
@@ -56,7 +74,11 @@ export const useOnboarding = () => {
       accountSetup,
       twitterConnected,
       extensionInstalled,
-      onboardingComplete
+      accountAnalyzed,
+      botConfigured,
+      onboardingComplete,
+      analysisData: analysisData ? JSON.parse(analysisData) : null,
+      botConfig: botConfig ? JSON.parse(botConfig) : null
     }));
   }, []);
 
@@ -379,12 +401,32 @@ export const useOnboarding = () => {
     }
   }, [state.twitterConnected, state.currentStep, nextStep]);
 
+  // Account analysis
+  const handleAnalysisComplete = useCallback(async (analysisData: any) => {
+    setState(prev => ({ ...prev, accountAnalyzed: true, analysisData }));
+    localStorage.setItem('onboarding_account_analyzed', 'true');
+    localStorage.setItem('onboarding_analysis_data', JSON.stringify(analysisData));
+    await trackOnboardingStep(4, { account_analyzed: true, analysis_data: analysisData });
+    await nextStep();
+  }, [trackOnboardingStep, nextStep]);
+
+  // Bot configuration
+  const handleBotConfiguration = useCallback(async (botConfig: any) => {
+    setState(prev => ({ ...prev, botConfigured: true, botConfig }));
+    localStorage.setItem('onboarding_bot_configured', 'true');
+    localStorage.setItem('onboarding_bot_config', JSON.stringify(botConfig));
+    await trackOnboardingStep(5, { bot_configured: true, bot_config: botConfig });
+    await nextStep();
+  }, [trackOnboardingStep, nextStep]);
+
   return {
     ...state,
     handleWelcomeComplete,
     handleAccountSetup,
     handleTwitterConnect,
     handleExtensionInstall,
+    handleAnalysisComplete,
+    handleBotConfiguration,
     completeOnboarding,
     nextStep,
     goBack,
