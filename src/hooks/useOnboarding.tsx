@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface OnboardingState {
   welcomeCompleted: boolean;
@@ -90,36 +91,137 @@ export const useOnboarding = () => {
     }
   }, [user]);
 
-  // Listen for extension events
+  // Enhanced real-time connection detection
   useEffect(() => {
-    const handleExtensionInstalled = () => {
+    if (!user?.id) return;
+
+    let pollingInterval: NodeJS.Timeout;
+    let supabaseSubscription: any;
+
+    const handleExtensionInstalled = (event?: any) => {
+      console.log('Extension installed event:', event?.detail);
       setState(prev => ({ ...prev, extensionInstalled: true }));
       localStorage.setItem('costras_extension_installed', 'true');
       toast({
-        title: "Success!",
-        description: "Chrome extension detected successfully!",
+        title: "Extension Detected!",
+        description: "Chrome extension installed successfully.",
+        duration: 3000
       });
     };
 
-    const handleTwitterConnected = () => {
-      setState(prev => ({ ...prev, twitterConnected: true }));
+    const handleTwitterConnected = (event?: any) => {
+      console.log('Twitter connected event:', event?.detail);
+      const userData = event?.detail;
+      
+      setState(prev => ({ 
+        ...prev, 
+        twitterConnected: true,
+        twitterData: userData
+      }));
+      
       localStorage.setItem('costras_twitter_connected', 'true');
+      if (userData) {
+        localStorage.setItem('costras_twitter_user', JSON.stringify(userData));
+      }
+      
       toast({
-        title: "Success!",
-        description: "Twitter account connected successfully!",
+        title: "Twitter Connected!",
+        description: userData?.username ? 
+          `Successfully connected @${userData.username}` : 
+          "Twitter account connected successfully!",
+        duration: 5000
       });
     };
 
+    // Real-time Supabase subscription
+    const setupSupabaseSubscription = () => {
+      supabaseSubscription = supabase
+        .channel(`user-connection-${user.id}`)
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'users',
+            filter: `id=eq.${user.id}`
+          },
+          (payload) => {
+            console.log('Supabase: User data updated:', payload);
+            const newUser = payload.new;
+            
+            // Check Twitter connection
+            if (newUser.twitter_auth_token && !state.twitterConnected) {
+              const userData = {
+                username: newUser.twitter_handle,
+                displayName: newUser.twitter_display_name,
+                profileImage: newUser.twitter_profile_image_url
+              };
+              handleTwitterConnected({ detail: userData });
+            }
+
+            // Check extension connection
+            if (newUser.extension_connected && !state.extensionInstalled) {
+              handleExtensionInstalled();
+            }
+          }
+        )
+        .subscribe();
+    };
+
+    // Background polling as fallback
+    const startPolling = () => {
+      pollingInterval = setInterval(async () => {
+        try {
+          const { data: userData, error } = await supabase
+            .from('users')
+            .select('twitter_auth_token, twitter_handle, twitter_display_name, twitter_profile_image_url, extension_connected')
+            .eq('id', user.id)
+            .single();
+
+          if (error) return;
+
+          // Check Twitter connection
+          if (userData.twitter_auth_token && !state.twitterConnected) {
+            const twitterData = {
+              username: userData.twitter_handle,
+              displayName: userData.twitter_display_name,
+              profileImage: userData.twitter_profile_image_url
+            };
+            handleTwitterConnected({ detail: twitterData });
+          }
+
+          // Check extension connection
+          if (userData.extension_connected && !state.extensionInstalled) {
+            handleExtensionInstalled();
+          }
+        } catch (error) {
+          console.error('Polling connection status error:', error);
+        }
+      }, 3000); // Poll every 3 seconds
+    };
+
+    // Set up all detection methods
     window.addEventListener('costrasExtensionInstalled', handleExtensionInstalled);
     window.addEventListener('costrasTwitterConnected', handleTwitterConnected);
     window.addEventListener('costrasConnectionSuccess', handleTwitterConnected);
+    
+    setupSupabaseSubscription();
+    startPolling();
 
     return () => {
       window.removeEventListener('costrasExtensionInstalled', handleExtensionInstalled);
       window.removeEventListener('costrasTwitterConnected', handleTwitterConnected);
       window.removeEventListener('costrasConnectionSuccess', handleTwitterConnected);
+      
+      if (supabaseSubscription) {
+        supabase.removeChannel(supabaseSubscription);
+      }
+      
+      if (pollingInterval) {
+        clearInterval(pollingInterval);
+      }
     };
-  }, [toast]);
+  }, [user?.id, state.twitterConnected, state.extensionInstalled, toast]);
 
   // Backend API calls
   const trackOnboardingStep = useCallback(async (step: number, data: Partial<OnboardingData> = {}) => {
