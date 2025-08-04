@@ -14,8 +14,7 @@ const OnboardingLayout = ({ children, currentStep, totalSteps, loading = false, 
   const steps = [
     { title: "Welcome", description: "Get started with COSTRAS" },
     { title: "Choose Plan", description: "Select your subscription" },
-    { title: "Install Extension", description: "Add Chrome extension" },
-    { title: "Connect Twitter", description: "Link your Twitter/X account" },
+    { title: "Connect & Setup", description: "Install extension & connect account" },
     { title: "Analyze Account", description: "AI-powered analysis" },
     { title: "Complete Setup", description: "Finish configuration" }
   ];
