@@ -485,23 +485,7 @@ export const useOnboarding = () => {
     };
   }, [stopExtensionDetection]);
 
-  // Auto-advance when extension is detected
-  useEffect(() => {
-    if (state.extensionInstalled && state.currentStep === 2) {
-      setTimeout(() => {
-        nextStep();
-      }, 2000);
-    }
-  }, [state.extensionInstalled, state.currentStep, nextStep]);
-
-  // Auto-advance when Twitter is connected
-  useEffect(() => {
-    if (state.twitterConnected && state.currentStep === 3) {
-      setTimeout(() => {
-        nextStep();
-      }, 2000);
-    }
-  }, [state.twitterConnected, state.currentStep, nextStep]);
+  // Note: Removed auto-advance effects to require manual "Next" button clicks
 
   // Account analysis
   const handleAnalysisComplete = useCallback(async (analysisData: any) => {
