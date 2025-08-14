@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { useToast } from "@/hooks/use-toast";
 import { 
   Twitter, 
   Brain, 
@@ -13,7 +14,8 @@ import {
   Sparkles,
   CheckCircle,
   RefreshCw,
-  AlertCircle
+  AlertCircle,
+  Clock
 } from "lucide-react";
 
 interface AccountAnalysisStepProps {
@@ -21,33 +23,41 @@ interface AccountAnalysisStepProps {
   loading?: boolean;
   twitterConnected: boolean;
   onAnalysisComplete: (analysisData: any) => void;
+  twitterHandle?: string;
+  userId?: string;
 }
 
 interface AnalysisResult {
-  niche: string;
-  confidence: number;
-  content_patterns: {
+  status: 'complete' | 'pending' | 'in_progress';
+  twitter_handle: string;
+  niche?: string;
+  confidence_score?: number;
+  custom_prompts?: any;
+  content_patterns?: {
     posting_style: string;
     content_type: string[];
     engagement_patterns: string;
   };
-  engagement_style: string;
-  tone: string;
-  key_topics: string[];
-  twitter_handle: string;
+  engagement_style?: string;
+  tone?: string;
+  key_topics?: string[];
 }
 
 const AccountAnalysisStep = ({ 
   onNext, 
   loading = false, 
   twitterConnected,
-  onAnalysisComplete 
+  onAnalysisComplete,
+  twitterHandle,
+  userId 
 }: AccountAnalysisStepProps) => {
   const [analysisStatus, setAnalysisStatus] = useState<'waiting' | 'analyzing' | 'complete' | 'error'>('waiting');
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
   const [progress, setProgress] = useState(0);
   const [currentStage, setCurrentStage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [canContinue, setCanContinue] = useState(false);
+  const { toast } = useToast();
 
   // Start analysis when Twitter is connected
   useEffect(() => {
@@ -89,57 +99,110 @@ const AccountAnalysisStep = ({
   const startAnalysis = async () => {
     setAnalysisStatus('analyzing');
     setProgress(0);
+    setCanContinue(false);
     
     try {
-      // Get Twitter handle from localStorage or user data
-      const twitterHandle = localStorage.getItem('costras_twitter_handle') || 'username';
+      // Get user data
+      const userIdValue = userId || localStorage.getItem('costras_user_id');
+      const handleValue = twitterHandle || localStorage.getItem('costras_twitter_handle') || 'username';
       
-      // Simulate analysis stages
-      const stages = [
-        { message: "Connecting to Twitter account...", duration: 1000 },
-        { message: "Analyzing posting patterns...", duration: 2000 },
-        { message: "Detecting content themes...", duration: 1500 },
-        { message: "Evaluating engagement style...", duration: 1500 },
-        { message: "Generating insights...", duration: 1000 }
-      ];
-
-      let currentProgress = 0;
-      
-      for (const stage of stages) {
-        setCurrentStage(stage.message);
-        await new Promise(resolve => setTimeout(resolve, stage.duration));
-        currentProgress += 100 / stages.length;
-        setProgress(Math.min(currentProgress, 95));
+      if (!userIdValue) {
+        throw new Error('User ID not found');
       }
 
-      // Call the actual API
-      const response = await fetch('https://api.costras.com/analyze-account', {
+      // Start with scanning profile stage
+      setCurrentStage("Scanning profile...");
+      setProgress(25);
+
+      // Start analysis via API
+      const response = await fetch('https://api.costras.com/api/analyze-account', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('costras_user_id')}`
+          'Authorization': `Bearer ${userIdValue}`
         },
         body: JSON.stringify({
-          twitter_url: `https://x.com/${twitterHandle}`
+          twitter_handle: handleValue,
+          user_id: userIdValue
         })
       });
 
       if (!response.ok) {
-        throw new Error('Analysis failed');
+        throw new Error(`API returned ${response.status}: ${response.statusText}`);
       }
 
-      const result = await response.json();
-      
-      setProgress(100);
-      setCurrentStage("Analysis complete!");
-      setAnalysisResult(result);
-      setAnalysisStatus('complete');
-      onAnalysisComplete(result);
+      // Analysis started successfully
+      setCurrentStage("Analyzing content...");
+      setProgress(50);
+      setCanContinue(true); // Allow user to continue while analysis runs
+
+      toast({
+        title: "Analysis Started",
+        description: "This might take a minute. You can continue to the next step while analysis runs in the background.",
+        duration: 5000
+      });
+
+      // Start polling for status
+      const pollInterval = setInterval(async () => {
+        try {
+          const statusResponse = await fetch(
+            `https://api.costras.com/api/custom-prompt/${userIdValue}/${handleValue}`,
+            {
+              headers: {
+                'Authorization': `Bearer ${userIdValue}`
+              }
+            }
+          );
+
+          if (statusResponse.ok) {
+            const statusData = await statusResponse.json();
+            
+            if (statusData.status === 'complete') {
+              clearInterval(pollInterval);
+              setProgress(100);
+              setCurrentStage("Analysis complete!");
+              setAnalysisResult(statusData);
+              setAnalysisStatus('complete');
+              onAnalysisComplete(statusData);
+              
+              // Store completion status
+              localStorage.setItem('analysis_complete', 'true');
+              localStorage.setItem('analysis_data', JSON.stringify(statusData));
+              
+              toast({
+                title: "Analysis Complete!",
+                description: "Your account analysis is ready.",
+                duration: 3000
+              });
+            } else if (statusData.status === 'in_progress') {
+              // Update progress based on analysis stage
+              if (currentStage.includes("Scanning")) {
+                setCurrentStage("Building insights...");
+                setProgress(75);
+              } else if (currentStage.includes("Analyzing")) {
+                setCurrentStage("Generating prompts...");
+                setProgress(90);
+              }
+            }
+          }
+        } catch (pollError) {
+          console.error('Status check error:', pollError);
+        }
+      }, 5000); // Check every 5 seconds
+
+      // Store the interval ID to clean up later
+      (window as any).analysisInterval = pollInterval;
       
     } catch (error) {
       console.error('Analysis error:', error);
       setAnalysisStatus('error');
-      setErrorMessage('Failed to analyze account. Please try again.');
+      setErrorMessage(error instanceof Error ? error.message : 'Failed to analyze account. Please try again.');
+      
+      toast({
+        title: "Analysis Failed",
+        description: "Unable to start account analysis. Please try again.",
+        variant: "destructive"
+      });
     }
   };
 
@@ -147,8 +210,24 @@ const AccountAnalysisStep = ({
     setAnalysisStatus('waiting');
     setProgress(0);
     setErrorMessage('');
+    setCanContinue(false);
+    
+    // Clear any existing interval
+    if ((window as any).analysisInterval) {
+      clearInterval((window as any).analysisInterval);
+    }
+    
     startAnalysis();
   };
+
+  // Cleanup interval on unmount
+  useEffect(() => {
+    return () => {
+      if ((window as any).analysisInterval) {
+        clearInterval((window as any).analysisInterval);
+      }
+    };
+  }, []);
 
   if (!twitterConnected) {
     return (
@@ -181,6 +260,12 @@ const AccountAnalysisStep = ({
         <p className="text-muted-foreground">
           We're analyzing your Twitter account to optimize your bot settings
         </p>
+        {canContinue && (
+          <div className="flex items-center gap-2 text-sm text-primary bg-primary/10 px-3 py-2 rounded-lg">
+            <Clock className="w-4 h-4" />
+            <span>This might take a minute. You can continue to the next step while analysis runs in the background.</span>
+          </div>
+        )}
       </div>
 
       {analysisStatus === 'analyzing' && (
@@ -201,27 +286,42 @@ const AccountAnalysisStep = ({
                 <span className="text-muted-foreground">{currentStage}</span>
                 <span className="text-primary font-medium">{Math.round(progress)}%</span>
               </div>
-              <Progress value={progress} className="h-2" />
+              <Progress 
+                value={progress} 
+                className="h-3 bg-muted/20" 
+                style={{
+                  background: 'linear-gradient(90deg, hsl(var(--primary)) 0%, hsl(var(--primary-foreground)) 100%)'
+                }}
+              />
             </div>
             
             <div className="grid grid-cols-2 gap-4 text-center">
-              <div className="p-4 rounded-lg bg-muted/50">
+              <div className="p-4 rounded-lg bg-muted/50 transition-all hover:bg-muted/70">
                 <TrendingUp className="w-8 h-8 mx-auto mb-2 text-blue-500" />
                 <p className="text-xs font-medium">Content Patterns</p>
               </div>
-              <div className="p-4 rounded-lg bg-muted/50">
+              <div className="p-4 rounded-lg bg-muted/50 transition-all hover:bg-muted/70">
                 <Users className="w-8 h-8 mx-auto mb-2 text-green-500" />
                 <p className="text-xs font-medium">Engagement Style</p>
               </div>
-              <div className="p-4 rounded-lg bg-muted/50">
+              <div className="p-4 rounded-lg bg-muted/50 transition-all hover:bg-muted/70">
                 <MessageCircle className="w-8 h-8 mx-auto mb-2 text-purple-500" />
                 <p className="text-xs font-medium">Communication Tone</p>
               </div>
-              <div className="p-4 rounded-lg bg-muted/50">
+              <div className="p-4 rounded-lg bg-muted/50 transition-all hover:bg-muted/70">
                 <Hash className="w-8 h-8 mx-auto mb-2 text-orange-500" />
                 <p className="text-xs font-medium">Key Topics</p>
               </div>
             </div>
+
+            {canContinue && (
+              <div className="pt-4 border-t">
+                <Button onClick={onNext} className="w-full" variant="outline">
+                  Continue to Next Step
+                  <span className="ml-2 text-xs text-muted-foreground">(Analysis continues in background)</span>
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
       )}
@@ -236,61 +336,84 @@ const AccountAnalysisStep = ({
             <CardDescription>Here's what we discovered about your account</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Niche Detection */}
-            <div className="text-center space-y-3">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-white font-medium text-lg" 
-                   style={{ background: `linear-gradient(135deg, ${getNicheBadgeStyle(analysisResult.niche)})` }}>
-                <span className="text-2xl">{getNicheIcon(analysisResult.niche)}</span>
-                {analysisResult.niche.charAt(0).toUpperCase() + analysisResult.niche.slice(1)} Creator
+            {/* Niche Detection - only show if niche exists */}
+            {analysisResult.niche && (
+              <div className="text-center space-y-3">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-white font-medium text-lg" 
+                     style={{ background: `linear-gradient(135deg, ${getNicheBadgeStyle(analysisResult.niche)})` }}>
+                  <span className="text-2xl">{getNicheIcon(analysisResult.niche)}</span>
+                  {analysisResult.niche.charAt(0).toUpperCase() + analysisResult.niche.slice(1)} Creator
+                </div>
+                {analysisResult.confidence_score && (
+                  <div className="flex items-center justify-center gap-2">
+                    <span className="text-sm text-muted-foreground">Confidence:</span>
+                    <Progress value={analysisResult.confidence_score} className="w-24 h-2" />
+                    <span className="text-sm font-medium">{analysisResult.confidence_score}%</span>
+                  </div>
+                )}
               </div>
-              <div className="flex items-center justify-center gap-2">
-                <span className="text-sm text-muted-foreground">Confidence:</span>
-                <Progress value={analysisResult.confidence} className="w-24 h-2" />
-                <span className="text-sm font-medium">{analysisResult.confidence}%</span>
-              </div>
-            </div>
+            )}
 
-            {/* Content Insights */}
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="p-4 rounded-lg border">
-                <h4 className="font-medium mb-2 flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4 text-blue-500" />
-                  Content Patterns
-                </h4>
-                <div className="space-y-1 text-sm">
-                  <p><span className="text-muted-foreground">Style:</span> {analysisResult.content_patterns.posting_style}</p>
-                  <p><span className="text-muted-foreground">Types:</span> {analysisResult.content_patterns.content_type.join(', ')}</p>
+            {/* Content Insights - only show if data exists */}
+            {analysisResult.content_patterns && (
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="p-4 rounded-lg border">
+                  <h4 className="font-medium mb-2 flex items-center gap-2">
+                    <TrendingUp className="w-4 h-4 text-blue-500" />
+                    Content Patterns
+                  </h4>
+                  <div className="space-y-1 text-sm">
+                    <p><span className="text-muted-foreground">Style:</span> {analysisResult.content_patterns.posting_style}</p>
+                    <p><span className="text-muted-foreground">Types:</span> {analysisResult.content_patterns.content_type.join(', ')}</p>
+                  </div>
+                </div>
+                
+                <div className="p-4 rounded-lg border">
+                  <h4 className="font-medium mb-2 flex items-center gap-2">
+                    <Users className="w-4 h-4 text-green-500" />
+                    Engagement Style
+                  </h4>
+                  <div className="space-y-1 text-sm">
+                    {analysisResult.engagement_style && (
+                      <Badge variant="outline">{analysisResult.engagement_style}</Badge>
+                    )}
+                    <p className="text-muted-foreground text-xs">
+                      {analysisResult.content_patterns.engagement_patterns}
+                    </p>
+                  </div>
                 </div>
               </div>
-              
-              <div className="p-4 rounded-lg border">
-                <h4 className="font-medium mb-2 flex items-center gap-2">
-                  <Users className="w-4 h-4 text-green-500" />
-                  Engagement Style
+            )}
+
+            {/* Key Topics - only show if they exist */}
+            {analysisResult.key_topics && analysisResult.key_topics.length > 0 && (
+              <div>
+                <h4 className="font-medium mb-3 flex items-center gap-2">
+                  <Hash className="w-4 h-4 text-orange-500" />
+                  Key Topics & Themes
                 </h4>
-                <div className="space-y-1 text-sm">
-                  <Badge variant="outline">{analysisResult.engagement_style}</Badge>
-                  <p className="text-muted-foreground text-xs">
-                    {analysisResult.content_patterns.engagement_patterns}
-                  </p>
+                <div className="flex flex-wrap gap-2">
+                  {analysisResult.key_topics.map((topic, index) => (
+                    <Badge key={index} variant="secondary" className="text-xs">
+                      {topic}
+                    </Badge>
+                  ))}
                 </div>
               </div>
-            </div>
+            )}
 
-            {/* Key Topics */}
-            <div>
-              <h4 className="font-medium mb-3 flex items-center gap-2">
-                <Hash className="w-4 h-4 text-orange-500" />
-                Key Topics & Themes
-              </h4>
-              <div className="flex flex-wrap gap-2">
-                {analysisResult.key_topics.map((topic, index) => (
-                  <Badge key={index} variant="secondary" className="text-xs">
-                    {topic}
-                  </Badge>
-                ))}
+            {/* Custom Prompts Available Indicator */}
+            {analysisResult.custom_prompts && (
+              <div className="p-4 rounded-lg bg-primary/10 border border-primary/20">
+                <div className="flex items-center gap-2 text-primary">
+                  <Sparkles className="w-5 h-5" />
+                  <span className="font-medium">Custom AI prompts generated!</span>
+                </div>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Your bot will use personalized prompts based on your account analysis.
+                </p>
               </div>
-            </div>
+            )}
 
             <div className="flex gap-3 pt-4">
               <Button onClick={onNext} className="flex-1">

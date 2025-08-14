@@ -18,6 +18,7 @@ interface BotStatusCardProps {
   uptime?: number | string;
   isLoading?: boolean;
   isConnected?: boolean;
+  analysisComplete?: boolean;
   onToggle?: () => void;
 }
 
@@ -27,6 +28,7 @@ const BotStatusCard = ({
   uptime, 
   isLoading = false,
   isConnected = true,
+  analysisComplete = true,
   onToggle 
 }: BotStatusCardProps) => {
 
@@ -50,6 +52,7 @@ const BotStatusCard = ({
 
   const getStatusDescription = () => {
     if (!isConnected) return "Check your internet connection and API status";
+    if (!analysisComplete) return "Bot will be available once account analysis is complete";
     return isActive 
       ? "Actively engaging with your Twitter audience" 
       : "Ready to start when you are";
@@ -123,7 +126,7 @@ const BotStatusCard = ({
         {/* Action Button */}
         <Button 
           onClick={onToggle}
-          disabled={isLoading || !isConnected}
+          disabled={isLoading || !isConnected || (!analysisComplete && !isActive)}
           size="lg"
           variant={isActive ? "outline" : "cta"}
           className={`px-8 py-3 text-lg transition-all duration-300 ${
@@ -143,7 +146,9 @@ const BotStatusCard = ({
             ? "Processing..." 
             : isActive 
               ? "Pause Bot" 
-              : "Wake Up Bot"
+              : analysisComplete
+                ? "Wake Up Bot"
+                : "Analysis Required"
           }
         </Button>
       </div>

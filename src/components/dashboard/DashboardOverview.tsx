@@ -10,9 +10,11 @@ import BotStatusCard from "./BotStatusCard";
 import SimpleStats from "./SimpleStats";
 import RecentActivity from "./RecentActivity";
 import ExtensionStatusCard from "./ExtensionStatusCard";
+import AccountAnalysisCard from "./AccountAnalysisCard";
 import { ScrollAnimationWrapper } from "@/hooks/useScrollAnimation";
 import { useDashboard } from "@/hooks/useDashboard";
 import { useExtensionStatus } from "@/hooks/useExtensionStatus";
+import { useAuth } from "@/hooks/useAuth";
 
 const DashboardOverview = () => {
   const { 
@@ -29,6 +31,8 @@ const DashboardOverview = () => {
     loading: extensionLoading, 
     disconnectExtension 
   } = useExtensionStatus();
+
+  const { user } = useAuth();
 
   // Helper function to render connection status
   const renderConnectionStatus = () => {
@@ -111,15 +115,20 @@ const DashboardOverview = () => {
   const handleBotToggle = async () => {
     if (!dashboardData) return;
     
+    // Check if analysis is complete before allowing bot start
+    const analysisComplete = localStorage.getItem('analysis_complete') === 'true';
+    
     if (dashboardData.bot_status === 'running') {
       await stopBot();
-    } else {
+    } else if (analysisComplete) {
       await startBot();
     }
   };
 
   const isConnected = !error || dashboardData !== null;
   const botIsActive = dashboardData?.bot_status === 'running';
+  const analysisComplete = localStorage.getItem('analysis_complete') === 'true';
+  const twitterHandle = localStorage.getItem('costras_twitter_handle');
 
   return (
     <div className="space-y-8">
@@ -171,6 +180,16 @@ const DashboardOverview = () => {
         />
       </ScrollAnimationWrapper>
 
+      {/* Account Analysis Status Card - Only show if connected */}
+      {dashboardData?.twitter_connected && (
+        <ScrollAnimationWrapper delay={125}>
+          <AccountAnalysisCard 
+            userId={user?.id}
+            twitterHandle={twitterHandle || undefined}
+          />
+        </ScrollAnimationWrapper>
+      )}
+
       {/* Bot Status Card - Only show if connected */}
       {dashboardData?.twitter_connected && (
         <ScrollAnimationWrapper delay={150}>
@@ -180,6 +199,7 @@ const DashboardOverview = () => {
             uptime={dashboardData?.uptime}
             isLoading={botActionLoading}
             isConnected={isConnected}
+            analysisComplete={analysisComplete}
             onToggle={handleBotToggle}
           />
         </ScrollAnimationWrapper>

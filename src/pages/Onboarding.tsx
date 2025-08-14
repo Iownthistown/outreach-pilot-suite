@@ -87,6 +87,8 @@ const Onboarding = () => {
             loading={loading}
             twitterConnected={twitterConnected}
             onAnalysisComplete={handleAnalysisComplete}
+            twitterHandle={localStorage.getItem('costras_twitter_handle') || undefined}
+            userId={user?.id}
           />
         );
       case 4:
