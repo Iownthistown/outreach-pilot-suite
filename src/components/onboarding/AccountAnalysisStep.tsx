@@ -60,10 +60,15 @@ const AccountAnalysisStep = ({
   const [canContinue, setCanContinue] = useState(false);
   const { toast } = useToast();
 
-  // Start analysis when Twitter is connected
+  // Start analysis when Twitter is connected and show continue message after 1 second
   useEffect(() => {
     if (twitterConnected && analysisStatus === 'waiting') {
       startAnalysis();
+      
+      // Show continue message after 1 second
+      setTimeout(() => {
+        setCanContinue(true);
+      }, 1000);
     }
   }, [twitterConnected, analysisStatus]);
 
@@ -158,11 +163,10 @@ const AccountAnalysisStep = ({
       // Analysis started successfully
       setCurrentStage("Analyzing content...");
       setProgress(50);
-      setCanContinue(true); // Allow user to continue while analysis runs
 
       toast({
         title: "Analysis Started",
-        description: "This might take a minute. You can continue to the next step while analysis runs in the background.",
+        description: "This might take a few minutes. You can continue to the next step while analysis runs in the background.",
         duration: 5000
       });
 
@@ -292,9 +296,9 @@ const AccountAnalysisStep = ({
           We're analyzing your Twitter account to optimize your bot settings
         </p>
         {canContinue && (
-          <div className="flex items-center gap-2 text-sm text-primary bg-primary/10 px-3 py-2 rounded-lg">
+          <div className="flex items-center gap-2 text-sm text-primary bg-primary/10 px-3 py-2 rounded-lg animate-fade-in">
             <Clock className="w-4 h-4" />
-            <span>This might take a minute. You can continue to the next step while analysis runs in the background.</span>
+            <span>This might take a few minutes. You can continue to the next step while analysis runs in the background.</span>
           </div>
         )}
       </div>
@@ -346,10 +350,10 @@ const AccountAnalysisStep = ({
             </div>
 
             {canContinue && (
-              <div className="pt-4 border-t">
-                <Button onClick={onNext} className="w-full" variant="outline">
-                  Continue to Next Step
-                  <span className="ml-2 text-xs text-muted-foreground">(Analysis continues in background)</span>
+              <div className="pt-4 border-t animate-fade-in">
+                <Button onClick={onNext} className="w-full">
+                  Continue to Bot Configuration
+                  <span className="ml-2 text-xs opacity-70">(Analysis continues in background)</span>
                 </Button>
               </div>
             )}
@@ -450,10 +454,6 @@ const AccountAnalysisStep = ({
               <Button onClick={onNext} className="flex-1">
                 Continue to Bot Configuration
               </Button>
-              <Button onClick={handleRetry} variant="outline" size="sm">
-                <RefreshCw className="w-4 h-4 mr-2" />
-                Re-analyze
-              </Button>
             </div>
           </CardContent>
         </Card>
@@ -476,8 +476,8 @@ const AccountAnalysisStep = ({
               </Button>
             </div>
             <div className="text-center">
-              <Button variant="ghost" onClick={onNext} size="sm">
-                Continue with default settings
+              <Button onClick={onNext} className="w-full">
+                Continue to Bot Configuration
               </Button>
             </div>
           </CardContent>

@@ -269,16 +269,23 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
         {analysisStatus && analysisStatus.status !== 'not_started' && (
           <div className="space-y-2">
             <div className="flex justify-between text-xs text-muted-foreground">
-              <span>Progress</span>
+              <span>
+                {analysisStatus.status === 'in_progress' ? 'Analyzing...' : 
+                 analysisStatus.status === 'pending' ? 'Starting analysis...' : 
+                 'Progress'}
+              </span>
               <span>{progress}%</span>
             </div>
             <Progress 
               value={progress} 
-              className="h-2"
-              style={{
-                background: 'linear-gradient(90deg, hsl(var(--primary)) 0%, hsl(var(--primary)) 100%)'
-              }}
+              className="h-3 bg-muted/20 transition-all duration-300"
             />
+            {analysisStatus.status === 'in_progress' && (
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+                <span>AI is analyzing your Twitter content and engagement patterns...</span>
+              </div>
+            )}
           </div>
         )}
 
