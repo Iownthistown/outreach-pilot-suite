@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import { 
   Twitter, 
   Brain, 
@@ -102,8 +103,23 @@ const AccountAnalysisStep = ({
     setCanContinue(false);
     
     try {
+      // Get current session and access token
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError) {
+        throw new Error(`Session error: ${sessionError.message}`);
+      }
+      
+      if (!session) {
+        throw new Error('No active session found. Please log in again.');
+      }
+      
+      const accessToken = session.access_token;
+      console.log('Access token found:', accessToken ? 'Yes' : 'No');
+      console.log('User ID:', session.user.id);
+
       // Get user data
-      const userIdValue = userId || localStorage.getItem('costras_user_id');
+      const userIdValue = userId || session.user.id;
       const handleValue = twitterHandle || localStorage.getItem('costras_twitter_handle') || 'username';
       
       if (!userIdValue) {
@@ -114,12 +130,17 @@ const AccountAnalysisStep = ({
       setCurrentStage("Scanning profile...");
       setProgress(25);
 
-      // Start analysis via API
+      console.log('Making API call with headers:', {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      });
+
+      // Start analysis via API with JWT token
       const response = await fetch('https://api.costras.com/api/analyze-account', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${userIdValue}`
+          'Authorization': `Bearer ${accessToken}`
         },
         body: JSON.stringify({
           twitter_handle: handleValue,
@@ -127,8 +148,11 @@ const AccountAnalysisStep = ({
         })
       });
 
+      console.log('API Response status:', response.status);
+
       if (!response.ok) {
-        throw new Error(`API returned ${response.status}: ${response.statusText}`);
+        const errorText = await response.text();
+        throw new Error(`API returned ${response.status}: ${errorText}`);
       }
 
       // Analysis started successfully
@@ -145,11 +169,18 @@ const AccountAnalysisStep = ({
       // Start polling for status
       const pollInterval = setInterval(async () => {
         try {
+          // Get fresh session for status checks
+          const { data: { session: statusSession } } = await supabase.auth.getSession();
+          if (!statusSession) {
+            console.error('No session available for status check');
+            return;
+          }
+
           const statusResponse = await fetch(
             `https://api.costras.com/api/custom-prompt/${userIdValue}/${handleValue}`,
             {
               headers: {
-                'Authorization': `Bearer ${userIdValue}`
+                'Authorization': `Bearer ${statusSession.access_token}`
               }
             }
           );
