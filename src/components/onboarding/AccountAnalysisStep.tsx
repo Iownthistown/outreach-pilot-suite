@@ -126,9 +126,14 @@ const AccountAnalysisStep = ({
       // Get user data
       const userIdValue = userId || session.user.id;
       const handleValue = twitterHandle || localStorage.getItem('costras_twitter_handle') || 'username';
+      const userEmail = session.user.email;
       
       if (!userIdValue) {
         throw new Error('User ID not found');
+      }
+      
+      if (!userEmail) {
+        throw new Error('User email not found. Please ensure you are properly logged in.');
       }
 
       // Start with scanning profile stage
@@ -149,7 +154,8 @@ const AccountAnalysisStep = ({
         },
         body: JSON.stringify({
           twitter_handle: handleValue,
-          user_id: userIdValue
+          user_id: userIdValue,
+          user_email: userEmail
         })
       });
 
