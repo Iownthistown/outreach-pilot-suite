@@ -5,7 +5,6 @@ import WelcomeStep from "@/components/onboarding/WelcomeStep";
 import PlanSelectionStep from "@/components/onboarding/PlanSelectionStep";
 import ChromeExtensionStep from "@/components/onboarding/ChromeExtensionStep";
 import AccountAnalysisStep from "@/components/onboarding/AccountAnalysisStep";
-import BotConfigurationStep from "@/components/onboarding/BotConfigurationStep";
 import FinalSuccessStep from "@/components/onboarding/FinalSuccessStep";
 import { useOnboarding } from "@/hooks/useOnboarding";
 import { useAuth } from "@/hooks/useAuth";
@@ -13,7 +12,7 @@ import { useAuth } from "@/hooks/useAuth";
 const Onboarding = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
-  const totalSteps = 5;
+  const totalSteps = 4;
   
   const {
     currentStep,
@@ -92,14 +91,6 @@ const Onboarding = () => {
           />
         );
       case 4:
-        return (
-          <BotConfigurationStep
-            onNext={() => handleBotConfiguration({})}
-            loading={loading}
-            analysisData={analysisData}
-          />
-        );
-      case 5:
         return (
           <FinalSuccessStep 
             onComplete={handleComplete}
