@@ -19,7 +19,7 @@ interface AccountAnalysisCardProps {
 }
 
 interface AnalysisStatus {
-  status: 'complete' | 'pending' | 'in_progress' | 'not_started';
+  status: 'complete' | 'pending' | 'in_progress' | 'not_started' | 'failed' | 'error';
   twitter_handle: string;
   niche?: string;
   confidence_score?: number;
@@ -182,6 +182,9 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
         return "⏳ Analysis Pending...";
       case 'not_started':
         return "🔍 Ready to Analyze";
+      case 'failed':
+      case 'error':
+        return "❌ Analysis Failed";
       default:
         return "Analysis Status Unknown";
     }
@@ -201,6 +204,9 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
         return "Analysis request submitted and will begin processing shortly";
       case 'not_started':
         return "Start analyzing your account to get personalized bot settings";
+      case 'failed':
+      case 'error':
+        return "The analysis could not be completed. Click retry to try again.";
       default:
         return "Unable to determine analysis status";
     }
@@ -221,6 +227,9 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
         return <Loader2 className="w-6 h-6 text-warning animate-spin" />;
       case 'not_started':
         return <Brain className="w-6 h-6 text-muted-foreground" />;
+      case 'failed':
+      case 'error':
+        return <AlertCircle className="w-6 h-6 text-destructive" />;
       default:
         return <Brain className="w-6 h-6 text-muted-foreground" />;
     }
@@ -341,14 +350,31 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
             </Button>
           )}
           
-          {error && (
+          {(analysisStatus?.status === 'failed' || analysisStatus?.status === 'error') && (
+            <Button 
+              onClick={startAnalysis} 
+              variant="destructive" 
+              size="sm"
+              disabled={loading}
+              className="flex-1"
+            >
+              {loading ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <RefreshCw className="w-4 h-4 mr-2" />
+              )}
+              Retry Analysis
+            </Button>
+          )}
+          
+          {error && !analysisStatus?.status && (
             <Button 
               onClick={checkAnalysisStatus} 
               variant="outline" 
               size="sm"
             >
               <RefreshCw className="w-4 h-4 mr-2" />
-              Retry
+              Check Status
             </Button>
           )}
         </div>
