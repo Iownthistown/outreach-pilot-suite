@@ -77,11 +77,6 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Blog
-                </a>
-              </li>
-              <li>
                 <Link to="/affiliates" onClick={scrollToTop} className="text-muted-foreground hover:text-foreground transition-colors">
                   Affiliates
                 </Link>
