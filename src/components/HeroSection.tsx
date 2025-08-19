@@ -70,7 +70,6 @@ const HeroSection = () => {
                     Watch Demo
                   </Button>
                 </div>
-                <p className="text-sm text-muted-foreground">No credit card required.</p>
               </div>
             </div>
 
