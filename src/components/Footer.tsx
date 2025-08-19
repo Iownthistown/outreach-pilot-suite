@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Twitter, Linkedin, Mail } from "lucide-react";
+import { X, Instagram, Mail } from "lucide-react";
 
 const Footer = () => {
   const scrollToTop = () => {
@@ -28,15 +28,15 @@ const Footer = () => {
               Leading AI Twitter/X automation platform. Streamline your Twitter engagement and expand your reach.
             </p>
             <div className="flex items-center gap-4">
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <Twitter className="w-5 h-5" />
+              <a href="https://x.com/CostrasAI" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                <X className="w-5 h-5" />
               </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <Linkedin className="w-5 h-5" />
+              <a href="https://www.instagram.com/costras.ai/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                <Instagram className="w-5 h-5" />
               </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+              <Link to="/contact" className="text-muted-foreground hover:text-primary transition-colors">
                 <Mail className="w-5 h-5" />
-              </a>
+              </Link>
             </div>
           </div>
 
