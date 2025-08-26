@@ -16,8 +16,10 @@ import {
   CheckCircle,
   RefreshCw,
   AlertCircle,
-  Clock
+  Clock,
+  Loader2
 } from "lucide-react";
+import { analysisProgressService, AnalysisProgress } from "@/services/analysisProgressService";
 
 interface AccountAnalysisStepProps {
   onNext: () => void;
@@ -58,6 +60,8 @@ const AccountAnalysisStep = ({
   const [currentStage, setCurrentStage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [canContinue, setCanContinue] = useState(false);
+  const [progressMessage, setProgressMessage] = useState('');
+  const [lastUpdate, setLastUpdate] = useState<string>('');
   const { toast } = useToast();
 
   // Start analysis when Twitter is connected and show continue message after 1 second
@@ -106,6 +110,7 @@ const AccountAnalysisStep = ({
     setAnalysisStatus('analyzing');
     setProgress(0);
     setCanContinue(false);
+    setProgressMessage('Starting analysis...');
     
     try {
       // Get current session and access token
@@ -136,10 +141,6 @@ const AccountAnalysisStep = ({
         throw new Error('User email not found. Please ensure you are properly logged in.');
       }
 
-      // Start with scanning profile stage
-      setCurrentStage("Scanning profile...");
-      setProgress(25);
-
       console.log('Making API call with headers:', {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${accessToken}`
@@ -166,73 +167,55 @@ const AccountAnalysisStep = ({
         throw new Error(`API returned ${response.status}: ${errorText}`);
       }
 
-      // Analysis started successfully
-      setCurrentStage("Analyzing content...");
-      setProgress(50);
-
       toast({
         title: "Analysis Started",
         description: "This might take a few minutes. You can continue to the next step while analysis runs in the background.",
         duration: 5000
       });
 
-      // Start polling for status
-      const pollInterval = setInterval(async () => {
-        try {
-          // Get fresh session for status checks
-          const { data: { session: statusSession } } = await supabase.auth.getSession();
-          if (!statusSession) {
-            console.error('No session available for status check');
-            return;
+      // Start real-time progress tracking
+      analysisProgressService.startPolling(userIdValue, {
+        onProgressUpdate: (progressData: AnalysisProgress) => {
+          setProgress(progressData.percent);
+          setProgressMessage(progressData.message);
+          setCurrentStage(progressData.stage);
+          setLastUpdate(progressData.updated_at);
+          
+          // Allow continue after reaching 10%
+          if (progressData.percent >= 10 && !canContinue) {
+            setCanContinue(true);
           }
-
-          const statusResponse = await fetch(
-            `https://api.costras.com/api/custom-prompt/${userIdValue}/${handleValue}`,
-            {
-              headers: {
-                'Authorization': `Bearer ${statusSession.access_token}`
-              }
-            }
-          );
-
-          if (statusResponse.ok) {
-            const statusData = await statusResponse.json();
-            
-            if (statusData.status === 'complete') {
-              clearInterval(pollInterval);
-              setProgress(100);
-              setCurrentStage("Analysis complete!");
-              setAnalysisResult(statusData);
-              setAnalysisStatus('complete');
-              onAnalysisComplete(statusData);
-              
-              // Store completion status
-              localStorage.setItem('analysis_complete', 'true');
-              localStorage.setItem('analysis_data', JSON.stringify(statusData));
-              
-              toast({
-                title: "Analysis Complete!",
-                description: "Your account analysis is ready.",
-                duration: 3000
-              });
-            } else if (statusData.status === 'in_progress') {
-              // Update progress based on analysis stage
-              if (currentStage.includes("Scanning")) {
-                setCurrentStage("Building insights...");
-                setProgress(75);
-              } else if (currentStage.includes("Analyzing")) {
-                setCurrentStage("Generating prompts...");
-                setProgress(90);
-              }
-            }
+        },
+        onComplete: (result: any) => {
+          setProgress(100);
+          setCurrentStage("Analysis complete!");
+          setProgressMessage("Analysis completed successfully!");
+          setAnalysisResult(result);
+          setAnalysisStatus('complete');
+          onAnalysisComplete(result);
+          
+          // Store completion status
+          localStorage.setItem('analysis_complete', 'true');
+          localStorage.setItem('analysis_data', JSON.stringify(result));
+          
+          toast({
+            title: "Analysis Complete!",
+            description: "Your account analysis is ready.",
+            duration: 3000
+          });
+        },
+        onError: (error: string) => {
+          console.error('Progress tracking error:', error);
+          // Don't fail completely on progress errors, continue with fallback
+          if (!canContinue && progress === 0) {
+            // If we haven't made any progress, show continue option after 10 seconds
+            setTimeout(() => {
+              setCanContinue(true);
+            }, 10000);
           }
-        } catch (pollError) {
-          console.error('Status check error:', pollError);
-        }
-      }, 5000); // Check every 5 seconds
-
-      // Store the interval ID to clean up later
-      (window as any).analysisInterval = pollInterval;
+        },
+        interval: 1500 // Poll every 1.5 seconds
+      });
       
     } catch (error) {
       console.error('Analysis error:', error);
@@ -252,21 +235,18 @@ const AccountAnalysisStep = ({
     setProgress(0);
     setErrorMessage('');
     setCanContinue(false);
+    setProgressMessage('');
     
-    // Clear any existing interval
-    if ((window as any).analysisInterval) {
-      clearInterval((window as any).analysisInterval);
-    }
+    // Stop any existing polling
+    analysisProgressService.stopPolling();
     
     startAnalysis();
   };
 
-  // Cleanup interval on unmount
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
-      if ((window as any).analysisInterval) {
-        clearInterval((window as any).analysisInterval);
-      }
+      analysisProgressService.cleanup();
     };
   }, []);
 
@@ -322,18 +302,21 @@ const AccountAnalysisStep = ({
             <CardDescription>This may take a few moments...</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="space-y-2">
+            <div className="space-y-3">
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">{currentStage}</span>
+                <span className="text-muted-foreground">{progressMessage || currentStage}</span>
                 <span className="text-primary font-medium">{Math.round(progress)}%</span>
               </div>
               <Progress 
                 value={progress} 
-                className="h-3 bg-muted/20" 
-                style={{
-                  background: 'linear-gradient(90deg, hsl(var(--primary)) 0%, hsl(var(--primary-foreground)) 100%)'
-                }}
+                className="h-3 bg-muted/20 transition-all duration-300" 
               />
+              {lastUpdate && (
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                  <span>Last updated: {new Date(lastUpdate).toLocaleTimeString()}</span>
+                </div>
+              )}
             </div>
             
             <div className="grid grid-cols-2 gap-4 text-center">

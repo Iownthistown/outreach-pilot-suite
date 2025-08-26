@@ -12,6 +12,7 @@ import {
   RefreshCw,
   Sparkles 
 } from "lucide-react";
+import { analysisProgressService, AnalysisProgress } from "@/services/analysisProgressService";
 
 interface AccountAnalysisCardProps {
   userId?: string;
@@ -31,6 +32,9 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
+  const [progressMessage, setProgressMessage] = useState('');
+  const [lastUpdate, setLastUpdate] = useState<string>('');
+  const [isPolling, setIsPolling] = useState(false);
   const { toast } = useToast();
 
   const checkAnalysisStatus = useCallback(async () => {
@@ -91,25 +95,14 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
     }
   }, [userId, twitterHandle]);
 
-  // Poll for status updates
+  // Initial status check and cleanup
   useEffect(() => {
     checkAnalysisStatus();
 
-    // Set up polling if analysis is in progress
-    let pollInterval: NodeJS.Timeout;
-    
-    if (analysisStatus?.status === 'in_progress' || analysisStatus?.status === 'pending') {
-      pollInterval = setInterval(() => {
-        checkAnalysisStatus();
-      }, 10000); // Check every 10 seconds
-    }
-
     return () => {
-      if (pollInterval) {
-        clearInterval(pollInterval);
-      }
+      analysisProgressService.cleanup();
     };
-  }, [checkAnalysisStatus, analysisStatus?.status]);
+  }, [checkAnalysisStatus]);
 
   const startAnalysis = async () => {
     if (!userId || !twitterHandle) {
@@ -123,6 +116,7 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
 
     setLoading(true);
     setError(null);
+    setProgressMessage('Starting analysis...');
 
     try {
       const response = await fetch('https://api.costras.com/api/analyze-account', {
@@ -149,12 +143,43 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
 
       // Update status to show analysis is starting
       setAnalysisStatus({ status: 'pending', twitter_handle: twitterHandle });
-      setProgress(25);
+      setProgress(0);
+      setIsPolling(true);
 
-      // Start polling
-      setTimeout(() => {
-        checkAnalysisStatus();
-      }, 2000);
+      // Start real-time progress tracking
+      analysisProgressService.startPolling(userId, {
+        onProgressUpdate: (progressData: AnalysisProgress) => {
+          setProgress(progressData.percent);
+          setProgressMessage(progressData.message);
+          setLastUpdate(progressData.updated_at);
+          
+          // Update status based on progress
+          if (progressData.percent < 100) {
+            setAnalysisStatus({ status: 'in_progress', twitter_handle: twitterHandle });
+          }
+        },
+        onComplete: (result: any) => {
+          setProgress(100);
+          setProgressMessage("Analysis completed successfully!");
+          setAnalysisStatus(result);
+          setIsPolling(false);
+          
+          // Store completion status
+          localStorage.setItem('analysis_complete', 'true');
+          localStorage.setItem('analysis_data', JSON.stringify(result));
+          
+          toast({
+            title: "Analysis Complete!",
+            description: "Your account analysis is ready.",
+            duration: 3000
+          });
+        },
+        onError: (error: string) => {
+          console.error('Progress tracking error:', error);
+          setError(error);
+        },
+        interval: 2000 // Poll every 2 seconds
+      });
 
     } catch (err) {
       console.error('Start analysis error:', err);
@@ -276,12 +301,13 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
 
         {/* Progress Bar */}
         {analysisStatus && analysisStatus.status !== 'not_started' && (
-          <div className="space-y-2">
+          <div className="space-y-3">
             <div className="flex justify-between text-xs text-muted-foreground">
               <span>
-                {analysisStatus.status === 'in_progress' ? 'Analyzing...' : 
-                 analysisStatus.status === 'pending' ? 'Starting analysis...' : 
-                 'Progress'}
+                {progressMessage || 
+                 (analysisStatus.status === 'in_progress' ? 'Analyzing...' : 
+                  analysisStatus.status === 'pending' ? 'Starting analysis...' : 
+                  'Progress')}
               </span>
               <span>{progress}%</span>
             </div>
@@ -289,10 +315,16 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
               value={progress} 
               className="h-3 bg-muted/20 transition-all duration-300"
             />
-            {analysisStatus.status === 'in_progress' && (
+            {(analysisStatus.status === 'in_progress' || analysisStatus.status === 'pending') && (
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
                 <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
-                <span>AI is analyzing your Twitter content and engagement patterns...</span>
+                <span>{progressMessage || "AI is analyzing your Twitter content and engagement patterns..."}</span>
+              </div>
+            )}
+            {lastUpdate && isPolling && (
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <Loader2 className="w-3 h-3 animate-spin" />
+                <span>Last updated: {new Date(lastUpdate).toLocaleTimeString()}</span>
               </div>
             )}
           </div>
