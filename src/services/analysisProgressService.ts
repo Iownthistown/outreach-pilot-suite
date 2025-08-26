@@ -26,7 +26,7 @@ export const PROGRESS_STAGES = {
 };
 
 export class AnalysisProgressService {
-  private pollInterval: NodeJS.Timeout | null = null;
+  private eventSource: EventSource | null = null;
   private onProgressUpdate: ((progress: AnalysisProgress) => void) | null = null;
   private onComplete: ((result: any) => void) | null = null;
   private onError: ((error: string) => void) | null = null;
@@ -77,57 +77,85 @@ export class AnalysisProgressService {
     }
   }
 
-  startPolling(
+  startRealTimeTracking(
     userId: string,
     options: {
       onProgressUpdate: (progress: AnalysisProgress) => void;
       onComplete?: (result: any) => void;
       onError?: (error: string) => void;
-      interval?: number;
     }
   ) {
     this.onProgressUpdate = options.onProgressUpdate;
     this.onComplete = options.onComplete;
     this.onError = options.onError;
 
-    const pollInterval = options.interval || 1500; // 1.5 seconds
+    // Close existing connection if any
+    this.stopTracking();
 
-    this.pollInterval = setInterval(async () => {
-      try {
-        const response = await this.getProgress(userId);
-        
-        if (this.onProgressUpdate) {
-          this.onProgressUpdate(response.progress);
-        }
+    try {
+      // Use SSE for real-time progress updates
+      const eventSourceUrl = `https://api.costras.com/api/analysis-progress-stream/${userId}`;
+      this.eventSource = new EventSource(eventSourceUrl);
 
-        if (response.status === 'complete') {
-          this.stopPolling();
-          if (this.onComplete) {
-            // Fetch final analysis result
-            try {
-              const finalResult = await this.getFinalResult(userId);
-              this.onComplete(finalResult);
-            } catch (error) {
-              if (this.onError) {
-                this.onError('Failed to fetch final results');
-              }
+      this.eventSource.onmessage = (event) => {
+        try {
+          const progressData = JSON.parse(event.data);
+          
+          const progress: AnalysisProgress = {
+            stage: progressData.stage || "unknown",
+            percent: progressData.percent || 0,
+            message: progressData.message || PROGRESS_STAGES[progressData.percent as keyof typeof PROGRESS_STAGES] || "Processing...",
+            updated_at: progressData.updated_at || new Date().toISOString()
+          };
+
+          if (this.onProgressUpdate) {
+            this.onProgressUpdate(progress);
+          }
+
+          // Check if analysis is complete
+          if (progress.percent >= 100) {
+            this.stopTracking();
+            if (this.onComplete) {
+              // Fetch final analysis result
+              this.getFinalResult(userId)
+                .then(result => this.onComplete?.(result))
+                .catch(error => this.onError?.('Failed to fetch final results'));
             }
           }
+        } catch (error) {
+          console.error('Error parsing SSE data:', error);
+          if (this.onError) {
+            this.onError('Error processing progress update');
+          }
         }
-      } catch (error) {
-        console.error('Polling error:', error);
+      };
+
+      this.eventSource.onerror = (event) => {
+        console.error('SSE connection error:', event);
         if (this.onError) {
-          this.onError(error instanceof Error ? error.message : 'Progress update failed');
+          this.onError('Connection error - real-time updates may be delayed');
         }
-        // Don't stop polling on errors - continue trying
+        
+        // Don't auto-close on error - let it reconnect
+        // The browser will automatically attempt to reconnect
+      };
+
+      this.eventSource.onopen = () => {
+        console.log('SSE connection established for user:', userId);
+      };
+
+    } catch (error) {
+      console.error('Failed to establish SSE connection:', error);
+      if (this.onError) {
+        this.onError('Failed to establish real-time connection');
       }
-    }, pollInterval);
+    }
   }
 
-  stopPolling() {
-    if (this.pollInterval) {
-      clearInterval(this.pollInterval);
-      this.pollInterval = null;
+  stopTracking() {
+    if (this.eventSource) {
+      this.eventSource.close();
+      this.eventSource = null;
     }
   }
 
@@ -156,12 +184,12 @@ export class AnalysisProgressService {
     throw new Error('Failed to fetch final result');
   }
 
-  isPolling(): boolean {
-    return this.pollInterval !== null;
+  isTracking(): boolean {
+    return this.eventSource !== null;
   }
 
   cleanup() {
-    this.stopPolling();
+    this.stopTracking();
     this.onProgressUpdate = null;
     this.onComplete = null;
     this.onError = null;

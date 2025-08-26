@@ -146,8 +146,8 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
       setProgress(0);
       setIsPolling(true);
 
-      // Start real-time progress tracking
-      analysisProgressService.startPolling(userId, {
+      // Start real-time progress tracking with SSE
+      analysisProgressService.startRealTimeTracking(userId, {
         onProgressUpdate: (progressData: AnalysisProgress) => {
           setProgress(progressData.percent);
           setProgressMessage(progressData.message);
@@ -177,8 +177,7 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
         onError: (error: string) => {
           console.error('Progress tracking error:', error);
           setError(error);
-        },
-        interval: 2000 // Poll every 2 seconds
+        }
       });
 
     } catch (err) {
@@ -321,10 +320,10 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
                 <span>{progressMessage || "AI is analyzing your Twitter content and engagement patterns..."}</span>
               </div>
             )}
-            {lastUpdate && isPolling && (
+            {lastUpdate && analysisProgressService.isTracking() && (
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Loader2 className="w-3 h-3 animate-spin" />
-                <span>Last updated: {new Date(lastUpdate).toLocaleTimeString()}</span>
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span>Live updates - Last: {new Date(lastUpdate).toLocaleTimeString()}</span>
               </div>
             )}
           </div>

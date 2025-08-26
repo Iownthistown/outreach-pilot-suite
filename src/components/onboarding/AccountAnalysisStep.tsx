@@ -173,8 +173,8 @@ const AccountAnalysisStep = ({
         duration: 5000
       });
 
-      // Start real-time progress tracking
-      analysisProgressService.startPolling(userIdValue, {
+      // Start real-time progress tracking with SSE
+      analysisProgressService.startRealTimeTracking(userIdValue, {
         onProgressUpdate: (progressData: AnalysisProgress) => {
           setProgress(progressData.percent);
           setProgressMessage(progressData.message);
@@ -213,8 +213,7 @@ const AccountAnalysisStep = ({
               setCanContinue(true);
             }, 10000);
           }
-        },
-        interval: 1500 // Poll every 1.5 seconds
+        }
       });
       
     } catch (error) {
@@ -238,7 +237,7 @@ const AccountAnalysisStep = ({
     setProgressMessage('');
     
     // Stop any existing polling
-    analysisProgressService.stopPolling();
+    analysisProgressService.stopTracking();
     
     startAnalysis();
   };
