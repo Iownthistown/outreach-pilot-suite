@@ -4,15 +4,18 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 import { 
   Brain, 
   CheckCircle, 
   Loader2, 
   AlertCircle, 
   RefreshCw,
-  Sparkles 
+  Sparkles,
+  ArrowRight 
 } from "lucide-react";
 import { analysisProgressService, AnalysisProgress } from "@/services/analysisProgressService";
+import { accountAnalysisService, AccountAnalysisData } from "@/services/accountAnalysisService";
 
 interface AccountAnalysisCardProps {
   userId?: string;
@@ -29,6 +32,7 @@ interface AnalysisStatus {
 
 const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps) => {
   const [analysisStatus, setAnalysisStatus] = useState<AnalysisStatus | null>(null);
+  const [supabaseAnalysis, setSupabaseAnalysis] = useState<AccountAnalysisData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
@@ -36,14 +40,40 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
   const [lastUpdate, setLastUpdate] = useState<string>('');
   const [isPolling, setIsPolling] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const checkAnalysisStatus = useCallback(async () => {
-    if (!userId || !twitterHandle) {
+    if (!userId) {
       setLoading(false);
       return;
     }
 
     try {
+      // First check Supabase for existing analysis
+      const supabaseData = await accountAnalysisService.getAnalysis(userId);
+      
+      if (supabaseData) {
+        setSupabaseAnalysis(supabaseData);
+        setAnalysisStatus({ 
+          status: 'complete', 
+          twitter_handle: supabaseData.twitter_handle,
+          niche: supabaseData.niche,
+          confidence_score: supabaseData.confidence_score
+        });
+        setProgress(100);
+        setError(null);
+        setLoading(false);
+        return;
+      }
+
+      // If no Supabase data, check the external API
+      if (!twitterHandle) {
+        setAnalysisStatus({ status: 'not_started', twitter_handle: '' });
+        setProgress(0);
+        setLoading(false);
+        return;
+      }
+
       const response = await fetch(
         `https://api.costras.com/api/custom-prompt/${userId}/${twitterHandle}`,
         {
@@ -89,6 +119,10 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
         } catch (parseError) {
           console.error('Failed to parse cached analysis:', parseError);
         }
+      } else {
+        // No data found anywhere, show not started
+        setAnalysisStatus({ status: 'not_started', twitter_handle: twitterHandle || '' });
+        setProgress(0);
       }
     } finally {
       setLoading(false);
@@ -219,6 +253,16 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
     
     switch (analysisStatus.status) {
       case 'complete':
+        if (supabaseAnalysis) {
+          let description = "Your account has been successfully analyzed";
+          if (supabaseAnalysis.niche) {
+            description = `Detected as ${supabaseAnalysis.niche} creator`;
+            if (supabaseAnalysis.confidence_score) {
+              description += ` with ${supabaseAnalysis.confidence_score}% confidence`;
+            }
+          }
+          return description;
+        }
         return analysisStatus.niche 
           ? `Detected as ${analysisStatus.niche} creator with ${analysisStatus.confidence_score}% confidence`
           : "Your account has been successfully analyzed";
@@ -227,7 +271,7 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
       case 'pending':
         return "Analysis request submitted and will begin processing shortly";
       case 'not_started':
-        return "Start analyzing your account to get personalized bot settings";
+        return "Complete your account analysis to unlock personalized bot settings and get started";
       case 'failed':
       case 'error':
         return "The analysis could not be completed. Click retry to try again.";
@@ -340,73 +384,116 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
         )}
 
         {/* Analysis Details */}
-        {analysisStatus?.status === 'complete' && analysisStatus.niche && (
-          <div className="p-3 rounded-lg bg-primary/10 border border-primary/20">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-primary" />
-              <span className="text-sm font-medium">Analysis Complete</span>
+        {analysisStatus?.status === 'complete' && (supabaseAnalysis || analysisStatus.niche) && (
+          <div className="space-y-3">
+            <div className="p-4 rounded-lg bg-primary/10 border border-primary/20">
+              <div className="flex items-center gap-2 mb-2">
+                <CheckCircle className="w-4 h-4 text-primary" />
+                <span className="text-sm font-medium">Analysis Complete</span>
+              </div>
+              
+              {supabaseAnalysis ? (
+                <div className="space-y-2">
+                  {supabaseAnalysis.niche && (
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs text-muted-foreground">Niche:</span>
+                      <span className="text-xs font-medium">{supabaseAnalysis.niche}</span>
+                    </div>
+                  )}
+                  {supabaseAnalysis.confidence_score && (
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs text-muted-foreground">Confidence:</span>
+                      <span className="text-xs font-medium">{supabaseAnalysis.confidence_score}%</span>
+                    </div>
+                  )}
+                  {supabaseAnalysis.tone && (
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs text-muted-foreground">Tone:</span>
+                      <span className="text-xs font-medium">{supabaseAnalysis.tone}</span>
+                    </div>
+                  )}
+                  {supabaseAnalysis.engagement_style && (
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs text-muted-foreground">Style:</span>
+                      <span className="text-xs font-medium">{supabaseAnalysis.engagement_style}</span>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <p className="text-xs text-muted-foreground">
+                  Niche: {analysisStatus.niche} • Confidence: {analysisStatus.confidence_score}%
+                </p>
+              )}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Niche: {analysisStatus.niche} • Confidence: {analysisStatus.confidence_score}%
-            </p>
           </div>
         )}
 
         {/* Action Buttons */}
         <div className="flex gap-2">
           {analysisStatus?.status === 'not_started' && (
-            <Button 
-              onClick={startAnalysis} 
-              disabled={loading}
-              className="flex-1"
-            >
-              {loading ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              ) : (
+            <div className="flex gap-2 w-full">
+              <Button 
+                onClick={() => navigate('/onboarding')}
+                variant="default" 
+                className="flex-1"
+              >
                 <Brain className="w-4 h-4 mr-2" />
-              )}
-              Start Analysis
-            </Button>
+                Start Account Analysis
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </div>
           )}
           
           {analysisStatus?.status === 'complete' && (
-            <Button 
-              onClick={startAnalysis} 
-              variant="outline" 
-              size="sm"
-              disabled={loading}
-            >
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Re-analyze
-            </Button>
+            <div className="flex gap-2 w-full">
+              <Button 
+                onClick={() => navigate('/onboarding')} 
+                variant="outline" 
+                size="sm"
+                className="flex-1"
+              >
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Re-analyze Account
+              </Button>
+            </div>
           )}
           
           {(analysisStatus?.status === 'failed' || analysisStatus?.status === 'error') && (
             <Button 
-              onClick={startAnalysis} 
+              onClick={() => navigate('/onboarding')} 
               variant="destructive" 
               size="sm"
               disabled={loading}
               className="flex-1"
             >
-              {loading ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              ) : (
-                <RefreshCw className="w-4 h-4 mr-2" />
-              )}
+              <RefreshCw className="w-4 h-4 mr-2" />
               Retry Analysis
+              <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           )}
           
           {error && !analysisStatus?.status && (
-            <Button 
-              onClick={checkAnalysisStatus} 
-              variant="outline" 
-              size="sm"
-            >
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Check Status
-            </Button>
+            <div className="flex gap-2 w-full">
+              <Button 
+                onClick={checkAnalysisStatus} 
+                variant="outline" 
+                size="sm"
+                className="flex-1"
+              >
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Check Status
+              </Button>
+              <Button 
+                onClick={() => navigate('/onboarding')} 
+                variant="default" 
+                size="sm"
+                className="flex-1"
+              >
+                <Brain className="w-4 h-4 mr-2" />
+                Start Analysis
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </div>
           )}
         </div>
       </CardContent>
