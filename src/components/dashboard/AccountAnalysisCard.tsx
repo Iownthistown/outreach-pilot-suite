@@ -233,16 +233,16 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
     
     switch (analysisStatus.status) {
       case 'complete':
-        return "✅ Analysis Complete";
+        return "Analysis Complete";
       case 'in_progress':
-        return "🔄 Analyzing Account...";
+        return "Analyzing Account";
       case 'pending':
-        return "⏳ Analysis Pending...";
+        return "Analysis Pending";
       case 'not_started':
-        return "🔍 Ready to Analyze";
+        return "Ready to Analyze";
       case 'failed':
       case 'error':
-        return "❌ Analysis Failed";
+        return "Analysis Failed";
       default:
         return "Analysis Status Unknown";
     }
@@ -318,18 +318,27 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
   }
 
   return (
-    <Card className="transition-all duration-300 hover:shadow-lg">
-      <CardHeader>
+    <Card className="transition-all duration-300 hover:shadow-lg border-muted/40">
+      <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             {getStatusIcon()}
             <div>
-              <CardTitle className="text-lg">Account Analysis Status</CardTitle>
-              <CardDescription>{getStatusText()}</CardDescription>
+              <CardTitle className="text-lg font-semibold">Account Analysis</CardTitle>
+              <CardDescription className="text-sm">
+                <span className={`inline-flex items-center gap-1 ${
+                  analysisStatus?.status === 'complete' ? 'text-success' :
+                  analysisStatus?.status === 'in_progress' ? 'text-primary' :
+                  analysisStatus?.status === 'failed' || analysisStatus?.status === 'error' ? 'text-destructive' :
+                  'text-muted-foreground'
+                }`}>
+                  {getStatusText()}
+                </span>
+              </CardDescription>
             </div>
           </div>
           {analysisStatus?.custom_prompts && (
-            <Badge variant="secondary" className="bg-primary/10 text-primary">
+            <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
               <Sparkles className="w-3 h-3 mr-1" />
               Custom Prompts
             </Badge>
@@ -337,37 +346,43 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
         </div>
       </CardHeader>
       
-      <CardContent className="space-y-4">
-        <p className="text-sm text-muted-foreground">
-          {getStatusDescription()}
-        </p>
+      <CardContent className="space-y-6">
+        <div className="space-y-3">
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            {getStatusDescription()}
+          </p>
+        </div>
 
         {/* Progress Bar */}
         {analysisStatus && analysisStatus.status !== 'not_started' && (
-          <div className="space-y-3">
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <span>
-                {progressMessage || 
-                 (analysisStatus.status === 'in_progress' ? 'Analyzing...' : 
-                  analysisStatus.status === 'pending' ? 'Starting analysis...' : 
-                  'Progress')}
-              </span>
-              <span>{progress}%</span>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-muted-foreground font-medium">
+                  {progressMessage || 
+                   (analysisStatus.status === 'in_progress' ? 'Analyzing your content...' : 
+                    analysisStatus.status === 'pending' ? 'Starting analysis...' : 
+                    'Progress')}
+                </span>
+                <span className="text-primary font-semibold">{progress}%</span>
+              </div>
+              <Progress 
+                value={progress} 
+                className="h-2 bg-muted/30"
+              />
             </div>
-            <Progress 
-              value={progress} 
-              className="h-3 bg-muted/20 transition-all duration-300"
-            />
+            
             {(analysisStatus.status === 'in_progress' || analysisStatus.status === 'pending') && (
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/30 rounded-lg p-3">
                 <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
                 <span>{progressMessage || "AI is analyzing your Twitter content and engagement patterns..."}</span>
               </div>
             )}
+            
             {lastUpdate && analysisProgressService.isTracking() && (
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span>Live updates - Last: {new Date(lastUpdate).toLocaleTimeString()}</span>
+              <div className="flex items-center gap-2 text-xs text-muted-foreground bg-success/10 rounded-lg p-3 border border-success/20">
+                <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
+                <span>Live tracking active - Last update: {new Date(lastUpdate).toLocaleTimeString()}</span>
               </div>
             )}
           </div>
@@ -375,10 +390,13 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
 
         {/* Error Display */}
         {error && (
-          <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20">
-            <div className="flex items-center gap-2 text-destructive text-sm">
-              <AlertCircle className="w-4 h-4" />
-              <span>Error: {error}</span>
+          <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/20">
+            <div className="flex items-start gap-3 text-destructive">
+              <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-sm font-medium">Connection Error</p>
+                <p className="text-xs mt-1 opacity-90">{error}</p>
+              </div>
             </div>
           </div>
         )}
@@ -386,76 +404,75 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
         {/* Analysis Details */}
         {analysisStatus?.status === 'complete' && (supabaseAnalysis || analysisStatus.niche) && (
           <div className="space-y-3">
-            <div className="p-4 rounded-lg bg-primary/10 border border-primary/20">
-              <div className="flex items-center gap-2 mb-2">
-                <CheckCircle className="w-4 h-4 text-primary" />
-                <span className="text-sm font-medium">Analysis Complete</span>
+            <div className="p-4 rounded-lg bg-success/10 border border-success/20">
+              <div className="flex items-center gap-2 mb-3">
+                <CheckCircle className="w-4 h-4 text-success" />
+                <span className="text-sm font-semibold text-success">Analysis Complete</span>
               </div>
               
               {supabaseAnalysis ? (
-                <div className="space-y-2">
+                <div className="grid grid-cols-1 gap-3">
                   {supabaseAnalysis.niche && (
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs text-muted-foreground">Niche:</span>
-                      <span className="text-xs font-medium">{supabaseAnalysis.niche}</span>
+                    <div className="flex justify-between items-center py-2 border-b border-success/20 last:border-b-0">
+                      <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Niche</span>
+                      <span className="text-sm font-semibold text-foreground">{supabaseAnalysis.niche}</span>
                     </div>
                   )}
                   {supabaseAnalysis.confidence_score && (
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs text-muted-foreground">Confidence:</span>
-                      <span className="text-xs font-medium">{supabaseAnalysis.confidence_score}%</span>
+                    <div className="flex justify-between items-center py-2 border-b border-success/20 last:border-b-0">
+                      <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Confidence</span>
+                      <span className="text-sm font-semibold text-foreground">{supabaseAnalysis.confidence_score}%</span>
                     </div>
                   )}
                   {supabaseAnalysis.tone && (
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs text-muted-foreground">Tone:</span>
-                      <span className="text-xs font-medium">{supabaseAnalysis.tone}</span>
+                    <div className="flex justify-between items-center py-2 border-b border-success/20 last:border-b-0">
+                      <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Tone</span>
+                      <span className="text-sm font-semibold text-foreground">{supabaseAnalysis.tone}</span>
                     </div>
                   )}
                   {supabaseAnalysis.engagement_style && (
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs text-muted-foreground">Style:</span>
-                      <span className="text-xs font-medium">{supabaseAnalysis.engagement_style}</span>
+                    <div className="flex justify-between items-center py-2 border-b border-success/20 last:border-b-0">
+                      <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Style</span>
+                      <span className="text-sm font-semibold text-foreground">{supabaseAnalysis.engagement_style}</span>
                     </div>
                   )}
                 </div>
               ) : (
-                <p className="text-xs text-muted-foreground">
-                  Niche: {analysisStatus.niche} • Confidence: {analysisStatus.confidence_score}%
-                </p>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs font-medium text-muted-foreground">Results</span>
+                  <span className="text-sm font-semibold text-foreground">
+                    {analysisStatus.niche} • {analysisStatus.confidence_score}%
+                  </span>
+                </div>
               )}
             </div>
           </div>
         )}
 
         {/* Action Buttons */}
-        <div className="flex gap-2">
+        <div className="flex gap-3 pt-2">
           {analysisStatus?.status === 'not_started' && (
-            <div className="flex gap-2 w-full">
-              <Button 
-                onClick={() => navigate('/onboarding')}
-                variant="default" 
-                className="flex-1"
-              >
-                <Brain className="w-4 h-4 mr-2" />
-                Start Account Analysis
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </div>
+            <Button 
+              onClick={() => navigate('/onboarding')}
+              variant="default" 
+              className="flex-1 gap-2"
+            >
+              <Brain className="w-4 h-4" />
+              Start Account Analysis
+              <ArrowRight className="w-4 h-4" />
+            </Button>
           )}
           
           {analysisStatus?.status === 'complete' && (
-            <div className="flex gap-2 w-full">
-              <Button 
-                onClick={() => navigate('/onboarding')} 
-                variant="outline" 
-                size="sm"
-                className="flex-1"
-              >
-                <RefreshCw className="w-4 h-4 mr-2" />
-                Re-analyze Account
-              </Button>
-            </div>
+            <Button 
+              onClick={() => navigate('/onboarding')} 
+              variant="outline" 
+              size="sm"
+              className="flex-1 gap-2"
+            >
+              <RefreshCw className="w-4 h-4" />
+              Re-analyze Account
+            </Button>
           )}
           
           {(analysisStatus?.status === 'failed' || analysisStatus?.status === 'error') && (
@@ -464,11 +481,11 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
               variant="destructive" 
               size="sm"
               disabled={loading}
-              className="flex-1"
+              className="flex-1 gap-2"
             >
-              <RefreshCw className="w-4 h-4 mr-2" />
+              <RefreshCw className="w-4 h-4" />
               Retry Analysis
-              <ArrowRight className="w-4 h-4 ml-2" />
+              <ArrowRight className="w-4 h-4" />
             </Button>
           )}
           
@@ -478,20 +495,20 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
                 onClick={checkAnalysisStatus} 
                 variant="outline" 
                 size="sm"
-                className="flex-1"
+                className="flex-1 gap-2"
               >
-                <RefreshCw className="w-4 h-4 mr-2" />
+                <RefreshCw className="w-4 h-4" />
                 Check Status
               </Button>
               <Button 
                 onClick={() => navigate('/onboarding')} 
                 variant="default" 
                 size="sm"
-                className="flex-1"
+                className="flex-1 gap-2"
               >
-                <Brain className="w-4 h-4 mr-2" />
+                <Brain className="w-4 h-4" />
                 Start Analysis
-                <ArrowRight className="w-4 h-4 ml-2" />
+                <ArrowRight className="w-4 h-4" />
               </Button>
             </div>
           )}

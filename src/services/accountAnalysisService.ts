@@ -1,3 +1,5 @@
+import { supabase } from "@/integrations/supabase/client";
+
 export interface AccountAnalysisData {
   id: string;
   user_id: string;
@@ -16,33 +18,20 @@ export interface AccountAnalysisData {
 export class AccountAnalysisService {
   async getAnalysis(userId: string): Promise<AccountAnalysisData | null> {
     try {
-      // For now, check localStorage for cached analysis data
-      const cachedAnalysis = localStorage.getItem('analysis_data');
-      const analysisComplete = localStorage.getItem('analysis_complete');
-      
-      if (cachedAnalysis && analysisComplete === 'true') {
-        try {
-          const data = JSON.parse(cachedAnalysis);
-          return {
-            id: data.id || userId,
-            user_id: userId,
-            twitter_handle: data.twitter_handle || '',
-            niche: data.niche,
-            confidence_score: data.confidence_score,
-            tone: data.tone,
-            engagement_style: data.engagement_style,
-            key_topics: data.key_topics,
-            content_patterns: data.content_patterns,
-            analysis_data: data.analysis_data,
-            created_at: data.created_at || new Date().toISOString(),
-            updated_at: data.updated_at || new Date().toISOString()
-          };
-        } catch (parseError) {
-          console.error('Failed to parse cached analysis:', parseError);
-        }
+      const { data, error } = await supabase
+        .from('account_analyses')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (error) {
+        console.error('Supabase query error:', error);
+        return null;
       }
 
-      return null;
+      return data;
     } catch (error) {
       console.error('Error fetching account analysis:', error);
       return null;
