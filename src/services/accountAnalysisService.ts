@@ -18,20 +18,17 @@ export interface AccountAnalysisData {
 export class AccountAnalysisService {
   async getAnalysis(userId: string): Promise<AccountAnalysisData | null> {
     try {
-      const { data, error } = await supabase
-        .from('account_analyses')
-        .select('*')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
+      // Use rpc call to avoid TypeScript issues with table not in generated types
+      const { data, error } = await supabase.rpc('get_account_analysis', {
+        p_user_id: userId
+      });
 
       if (error) {
         console.error('Supabase query error:', error);
         return null;
       }
 
-      return data;
+      return data?.[0] || null;
     } catch (error) {
       console.error('Error fetching account analysis:', error);
       return null;
