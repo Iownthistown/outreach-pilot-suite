@@ -53,8 +53,8 @@ const AuthCallback = () => {
                 twitter_handle: user.user_metadata?.preferred_username || null,
                 twitter_display_name: user.user_metadata?.full_name || null,
                 twitter_profile_image_url: user.user_metadata?.avatar_url || null,
-                connection_method: 'oauth',
-                session_origin: 'oauth'
+                connection_method: 'google',
+                session_origin: 'google_oauth'
               });
 
             if (insertError) {
