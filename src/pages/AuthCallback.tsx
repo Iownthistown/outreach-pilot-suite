@@ -12,11 +12,18 @@ const AuthCallback = () => {
 
   useEffect(() => {
     const handleOAuthCallback = async () => {
-      if (loading || processing) return;
+      console.log('AuthCallback useEffect triggered - loading:', loading, 'processing:', processing, 'user:', !!user);
+      
+      if (loading || processing) {
+        console.log('Skipping callback handler - loading or processing');
+        return;
+      }
       
       if (user) {
         setProcessing(true);
         console.log('OAuth successful, user authenticated:', user.id);
+        console.log('User metadata:', user.user_metadata);
+        console.log('User email:', user.email);
         
         try {
           // Check if user already exists in our users table
