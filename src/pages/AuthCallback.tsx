@@ -26,14 +26,21 @@ const AuthCallback = () => {
         console.log('User email:', user.email);
         
         try {
+          // Wait a bit for the auth session to fully settle
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          
           // Check if user already exists in our users table
+          console.log('Checking if user exists in users table...');
           const { data: existingUser, error: userError } = await supabase
             .from('users')
             .select('*')
             .eq('id', user.id)
             .maybeSingle();
 
+          console.log('User lookup result:', { existingUser, userError });
+
           if (userError && userError.code !== 'PGRST116') {
+            console.error('Error checking existing user:', userError);
             throw userError;
           }
 
@@ -45,24 +52,36 @@ const AuthCallback = () => {
             // New user - create account and go to onboarding
             console.log('New user, creating account and starting onboarding');
             
-            const { error: insertError } = await supabase
+            const userData = {
+              id: user.id,
+              email: user.email!,
+              twitter_handle: user.user_metadata?.preferred_username || null,
+              twitter_display_name: user.user_metadata?.full_name || null,
+              twitter_profile_image_url: user.user_metadata?.avatar_url || null,
+              connection_method: 'google',
+              session_origin: 'google_oauth'
+            };
+            
+            console.log('Inserting user data:', userData);
+            
+            const { data: insertData, error: insertError } = await supabase
               .from('users')
-              .insert({
-                id: user.id,
-                email: user.email!,
-                twitter_handle: user.user_metadata?.preferred_username || null,
-                twitter_display_name: user.user_metadata?.full_name || null,
-                twitter_profile_image_url: user.user_metadata?.avatar_url || null,
-                connection_method: 'google',
-                session_origin: 'google_oauth'
-              });
+              .insert(userData)
+              .select()
+              .single();
 
             if (insertError) {
               console.error('Error creating user account:', insertError);
+              console.error('Insert error details:', {
+                code: insertError.code,
+                message: insertError.message,
+                details: insertError.details,
+                hint: insertError.hint
+              });
               throw insertError;
             }
 
-            console.log('User account created successfully');
+            console.log('User account created successfully:', insertData);
             navigate("/onboarding", { replace: true });
           }
         } catch (error) {
