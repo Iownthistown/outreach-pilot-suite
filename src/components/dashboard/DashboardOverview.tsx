@@ -128,6 +128,8 @@ const DashboardOverview = () => {
   const isConnected = !error || dashboardData !== null;
   const botIsActive = dashboardData?.bot_status === 'running';
   const analysisComplete = localStorage.getItem('analysis_complete') === 'true';
+  
+  // Get twitter handle from localStorage, we'll fetch it from Supabase in AccountAnalysisCard
   const twitterHandle = localStorage.getItem('costras_twitter_handle');
 
   return (

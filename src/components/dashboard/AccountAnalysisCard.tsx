@@ -40,6 +40,7 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
   const [progressMessage, setProgressMessage] = useState('');
   const [lastUpdate, setLastUpdate] = useState<string>('');
   const [isPolling, setIsPolling] = useState(false);
+  const [actualTwitterHandle, setActualTwitterHandle] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -50,6 +51,28 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
     }
 
     try {
+      // First, fetch the user's Twitter handle from Supabase if not provided
+      let effectiveTwitterHandle = twitterHandle;
+      
+      if (!effectiveTwitterHandle) {
+        console.log('No twitter handle provided, fetching from Supabase...');
+        const { data: userData, error: userError } = await supabase
+          .from('users')
+          .select('twitter_handle')
+          .eq('id', userId)
+          .single();
+          
+        if (userError) {
+          console.error('Error fetching user data:', userError);
+        } else if (userData?.twitter_handle) {
+          effectiveTwitterHandle = userData.twitter_handle;
+          setActualTwitterHandle(effectiveTwitterHandle);
+          console.log('Found twitter handle in Supabase:', effectiveTwitterHandle);
+        }
+      } else {
+        setActualTwitterHandle(effectiveTwitterHandle);
+      }
+
       // First check Supabase for existing analysis
       const supabaseData = await accountAnalysisService.getAnalysis(userId);
       
@@ -67,16 +90,17 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
         return;
       }
 
-      // If no Supabase data, check the external API
-      if (!twitterHandle) {
+      // If no Supabase data and no Twitter handle, can't proceed
+      if (!effectiveTwitterHandle) {
         setAnalysisStatus({ status: 'not_started', twitter_handle: '' });
         setProgress(0);
         setLoading(false);
         return;
       }
 
+      // If no Supabase data, check the external API
       const response = await fetch(
-        `https://api.costras.com/api/custom-prompt/${userId}/${twitterHandle}`,
+        `https://api.costras.com/api/custom-prompt/${userId}/${effectiveTwitterHandle}`,
         {
           headers: {
             'Authorization': `Bearer ${userId}`
@@ -101,7 +125,7 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
         }
       } else if (response.status === 404) {
         // Analysis not started yet
-        setAnalysisStatus({ status: 'not_started', twitter_handle: twitterHandle });
+        setAnalysisStatus({ status: 'not_started', twitter_handle: effectiveTwitterHandle });
         setProgress(0);
       } else {
         throw new Error(`API returned ${response.status}`);
@@ -122,13 +146,13 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
         }
       } else {
         // No data found anywhere, show not started
-        setAnalysisStatus({ status: 'not_started', twitter_handle: twitterHandle || '' });
+        setAnalysisStatus({ status: 'not_started', twitter_handle: actualTwitterHandle || '' });
         setProgress(0);
       }
     } finally {
       setLoading(false);
     }
-  }, [userId, twitterHandle]);
+  }, [userId, twitterHandle, actualTwitterHandle]);
 
   // Initial status check and cleanup
   useEffect(() => {
@@ -140,7 +164,10 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
   }, [checkAnalysisStatus]);
 
   const startAnalysis = async () => {
-    if (!userId || !twitterHandle) {
+    // Use the effective twitter handle (either from props or fetched from Supabase)
+    const effectiveTwitterHandle = actualTwitterHandle || twitterHandle;
+    
+    if (!userId || !effectiveTwitterHandle) {
       toast({
         title: "Missing Information",
         description: "User ID or Twitter handle not found. Please complete onboarding first.",
@@ -179,7 +206,7 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
           'Authorization': `Bearer ${accessToken}`
         },
         body: JSON.stringify({
-          twitter_handle: twitterHandle,
+          twitter_handle: effectiveTwitterHandle,
           user_id: userId,
           user_email: user.email
         })
@@ -196,7 +223,7 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
       });
 
       // Update status to show analysis is starting
-      setAnalysisStatus({ status: 'pending', twitter_handle: twitterHandle });
+      setAnalysisStatus({ status: 'pending', twitter_handle: effectiveTwitterHandle });
       setProgress(0);
       setIsPolling(true);
 
@@ -209,7 +236,7 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
           
           // Update status based on progress
           if (progressData.percent < 100) {
-            setAnalysisStatus({ status: 'in_progress', twitter_handle: twitterHandle });
+            setAnalysisStatus({ status: 'in_progress', twitter_handle: effectiveTwitterHandle });
           }
         },
         onComplete: (result: any) => {
