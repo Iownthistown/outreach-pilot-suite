@@ -26,8 +26,17 @@ const AuthCallback = () => {
         console.log('User email:', user.email);
         
         try {
-          // Wait a bit for the auth session to fully settle
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          // Wait longer for the auth session to fully settle and RLS context to be established
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          
+          // Verify auth context is properly set
+          const { data: { session } } = await supabase.auth.getSession();
+          console.log('Current session after waiting:', !!session, session?.user?.id);
+          
+          if (!session || session.user.id !== user.id) {
+            console.log('Session mismatch, waiting longer...');
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          }
           
           // Check if user already exists in our users table
           console.log('Checking if user exists in users table...');
