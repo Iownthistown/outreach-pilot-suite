@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { analysisProgressService, AnalysisProgress } from "@/services/analysisProgressService";
 import { accountAnalysisService, AccountAnalysisData } from "@/services/accountAnalysisService";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AccountAnalysisCardProps {
   userId?: string;
@@ -153,15 +154,34 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
     setProgressMessage('Starting analysis...');
 
     try {
+      // Get current session and access token like in onboarding
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) {
+        throw new Error('No active session found. Please login again.');
+      }
+
+      const accessToken = session.access_token;
+      const user = session.user;
+      
+      if (!user?.email) {
+        throw new Error('User email not found. Please ensure you are properly logged in.');
+      }
+
+      console.log('Making API call with headers:', {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      });
+
       const response = await fetch('https://api.costras.com/api/analyze-account', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${userId}`
+          'Authorization': `Bearer ${accessToken}`
         },
         body: JSON.stringify({
           twitter_handle: twitterHandle,
-          user_id: userId
+          user_id: userId,
+          user_email: user.email
         })
       });
 
@@ -465,12 +485,13 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
           
           {analysisStatus?.status === 'complete' && (
             <Button 
-              onClick={() => navigate('/onboarding')} 
+              onClick={startAnalysis} 
               variant="outline" 
               size="sm"
+              disabled={loading}
               className="flex-1 gap-2"
             >
-              <RefreshCw className="w-4 h-4" />
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
               Re-analyze Account
             </Button>
           )}
