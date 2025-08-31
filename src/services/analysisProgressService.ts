@@ -92,13 +92,41 @@ export class AnalysisProgressService {
     // Close existing connection if any
     this.stopTracking();
 
+    console.log('🚀 Starting SSE connection for user:', userId);
+
     try {
-      // Use SSE for real-time progress updates
-      const eventSourceUrl = `https://api.costras.com/api/analysis-progress-stream/${userId}`;
+      // Try SSE first with auth token
+      this.establishSSEConnection(userId);
+    } catch (error) {
+      console.error('❌ Failed to establish SSE connection:', error);
+      console.log('🔄 Falling back to polling...');
+      this.startPolling(userId);
+    }
+  }
+
+  private async establishSSEConnection(userId: string) {
+    try {
+      // Get auth token for SSE
+      const { data: { session } } = await supabase.auth.getSession();
+      let eventSourceUrl = `https://api.costras.com/api/analysis-progress-stream/${userId}`;
+      
+      // Add auth token if available
+      if (session?.access_token) {
+        eventSourceUrl += `?token=${encodeURIComponent(session.access_token)}`;
+        console.log('🔐 Adding auth token to SSE connection');
+      }
+      
+      console.log('🔗 SSE URL:', eventSourceUrl.replace(/token=[^&]+/, 'token=***'));
+      
       this.eventSource = new EventSource(eventSourceUrl);
+
+      this.eventSource.onopen = () => {
+        console.log('✅ SSE connection established for user:', userId);
+      };
 
       this.eventSource.onmessage = (event) => {
         try {
+          console.log('📨 SSE message received:', event.data);
           const progressData = JSON.parse(event.data);
           
           const progress: AnalysisProgress = {
@@ -108,12 +136,15 @@ export class AnalysisProgressService {
             updated_at: progressData.updated_at || new Date().toISOString()
           };
 
+          console.log('🔄 Progress update:', progress);
+
           if (this.onProgressUpdate) {
             this.onProgressUpdate(progress);
           }
 
           // Check if analysis is complete
           if (progress.percent >= 100) {
+            console.log('✅ Analysis complete, fetching final results...');
             this.stopTracking();
             if (this.onComplete) {
               // Fetch final analysis result
@@ -123,7 +154,7 @@ export class AnalysisProgressService {
             }
           }
         } catch (error) {
-          console.error('Error parsing SSE data:', error);
+          console.error('❌ Error parsing SSE data:', error);
           if (this.onError) {
             this.onError('Error processing progress update');
           }
@@ -131,31 +162,75 @@ export class AnalysisProgressService {
       };
 
       this.eventSource.onerror = (event) => {
-        console.error('SSE connection error:', event);
-        if (this.onError) {
-          this.onError('Connection error - real-time updates may be delayed');
-        }
+        console.error('❌ SSE connection error:', event);
+        console.log('🔄 SSE failed, switching to polling fallback...');
         
-        // Don't auto-close on error - let it reconnect
-        // The browser will automatically attempt to reconnect
-      };
-
-      this.eventSource.onopen = () => {
-        console.log('SSE connection established for user:', userId);
+        // Close SSE and fallback to polling
+        this.stopTracking();
+        this.startPolling(userId);
       };
 
     } catch (error) {
-      console.error('Failed to establish SSE connection:', error);
-      if (this.onError) {
-        this.onError('Failed to establish real-time connection');
-      }
+      console.error('❌ Failed to establish SSE connection:', error);
+      throw error;
     }
+  }
+
+  private startPolling(userId: string) {
+    console.log('🔄 Starting polling fallback for user:', userId);
+    
+    const pollInterval = setInterval(async () => {
+      try {
+        console.log('📡 Polling for progress updates...');
+        const progressResponse = await this.getProgress(userId);
+        
+        if (progressResponse.progress) {
+          console.log('📊 Polling progress:', progressResponse.progress);
+          
+          if (this.onProgressUpdate) {
+            this.onProgressUpdate(progressResponse.progress);
+          }
+          
+          if (progressResponse.status === 'complete' || progressResponse.progress.percent >= 100) {
+            console.log('✅ Analysis complete via polling');
+            clearInterval(pollInterval);
+            
+            if (this.onComplete) {
+              try {
+                const result = await this.getFinalResult(userId);
+                this.onComplete(result);
+              } catch (error) {
+                console.error('Failed to fetch final result:', error);
+                this.onError?.('Analysis complete but failed to fetch results');
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error('❌ Polling error:', error);
+        // Continue polling on error, but notify
+        if (this.onError) {
+          this.onError('Connection issues - retrying...');
+        }
+      }
+    }, 3000); // Poll every 3 seconds
+
+    // Store polling interval for cleanup
+    (this as any).pollInterval = pollInterval;
   }
 
   stopTracking() {
     if (this.eventSource) {
+      console.log('🛑 Closing SSE connection');
       this.eventSource.close();
       this.eventSource = null;
+    }
+    
+    // Clear polling interval if exists
+    if ((this as any).pollInterval) {
+      console.log('🛑 Stopping polling');
+      clearInterval((this as any).pollInterval);
+      (this as any).pollInterval = null;
     }
   }
 
@@ -189,6 +264,7 @@ export class AnalysisProgressService {
   }
 
   cleanup() {
+    console.log('🧹 Cleaning up progress service');
     this.stopTracking();
     this.onProgressUpdate = null;
     this.onComplete = null;
