@@ -178,7 +178,9 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
 
     setLoading(true);
     setError(null);
+    setProgress(0); // Reset progress to 0 immediately
     setProgressMessage('Starting analysis...');
+    setLastUpdate('');
 
     try {
       // Get current session and access token like in onboarding
@@ -224,7 +226,8 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
 
       // Update status to show analysis is starting
       setAnalysisStatus({ status: 'pending', twitter_handle: effectiveTwitterHandle });
-      setProgress(0);
+      setProgress(0); // Ensure progress starts at 0
+      setProgressMessage('Analysis starting...');
       setIsPolling(true);
 
       // Start real-time progress tracking with SSE
