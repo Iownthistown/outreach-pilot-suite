@@ -257,7 +257,16 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
         },
         onError: (error: string) => {
           console.error('Progress tracking error:', error);
-          setError(error);
+          setError(`Progress tracking: ${error}`);
+          
+          // Don't show every connection error, only significant ones
+          if (!error.includes('Connection issues')) {
+            toast({
+              title: "Progress Tracking Issue",
+              description: error,
+              variant: "destructive"
+            });
+          }
         }
       });
 

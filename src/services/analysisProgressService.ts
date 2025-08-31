@@ -94,14 +94,8 @@ export class AnalysisProgressService {
 
     console.log('🚀 Starting SSE connection for user:', userId);
 
-    try {
-      // Try SSE first with auth token
-      this.establishSSEConnection(userId);
-    } catch (error) {
-      console.error('❌ Failed to establish SSE connection:', error);
-      console.log('🔄 Falling back to polling...');
-      this.startPolling(userId);
-    }
+    // Always try SSE first, with automatic fallback
+    this.establishSSEConnection(userId);
   }
 
   private async establishSSEConnection(userId: string) {
@@ -118,14 +112,23 @@ export class AnalysisProgressService {
       
       console.log('🔗 SSE URL:', eventSourceUrl.replace(/token=[^&]+/, 'token=***'));
       
+      // Set up timeout for SSE connection
+      const sseTimeout = setTimeout(() => {
+        console.log('⏰ SSE connection timeout, falling back to polling...');
+        this.stopTracking();
+        this.startPolling(userId);
+      }, 5000); // 5 second timeout
+      
       this.eventSource = new EventSource(eventSourceUrl);
 
       this.eventSource.onopen = () => {
         console.log('✅ SSE connection established for user:', userId);
+        clearTimeout(sseTimeout);
       };
 
       this.eventSource.onmessage = (event) => {
         try {
+          clearTimeout(sseTimeout);
           console.log('📨 SSE message received:', event.data);
           const progressData = JSON.parse(event.data);
           
@@ -164,6 +167,7 @@ export class AnalysisProgressService {
       this.eventSource.onerror = (event) => {
         console.error('❌ SSE connection error:', event);
         console.log('🔄 SSE failed, switching to polling fallback...');
+        clearTimeout(sseTimeout);
         
         // Close SSE and fallback to polling
         this.stopTracking();
@@ -172,12 +176,18 @@ export class AnalysisProgressService {
 
     } catch (error) {
       console.error('❌ Failed to establish SSE connection:', error);
-      throw error;
+      // Immediately fall back to polling
+      this.startPolling(userId);
     }
   }
 
   private startPolling(userId: string) {
     console.log('🔄 Starting polling fallback for user:', userId);
+    
+    // Clear any existing polling interval
+    if ((this as any).pollInterval) {
+      clearInterval((this as any).pollInterval);
+    }
     
     const pollInterval = setInterval(async () => {
       try {
@@ -194,6 +204,7 @@ export class AnalysisProgressService {
           if (progressResponse.status === 'complete' || progressResponse.progress.percent >= 100) {
             console.log('✅ Analysis complete via polling');
             clearInterval(pollInterval);
+            (this as any).pollInterval = null;
             
             if (this.onComplete) {
               try {
@@ -208,12 +219,12 @@ export class AnalysisProgressService {
         }
       } catch (error) {
         console.error('❌ Polling error:', error);
-        // Continue polling on error, but notify
-        if (this.onError) {
+        // Continue polling on error, but only notify occasionally
+        if (this.onError && Math.random() < 0.1) { // Only 10% of errors to avoid spam
           this.onError('Connection issues - retrying...');
         }
       }
-    }, 3000); // Poll every 3 seconds
+    }, 2000); // Poll every 2 seconds for faster updates
 
     // Store polling interval for cleanup
     (this as any).pollInterval = pollInterval;
