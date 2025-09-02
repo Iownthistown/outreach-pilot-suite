@@ -94,23 +94,13 @@ const Footer = () => {
             <h3 className="font-semibold text-foreground mb-4">Support</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+                <Link to="/contact" onClick={scrollToTop} className="text-muted-foreground hover:text-foreground transition-colors">
                   Help Center
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Documentation
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                  API
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Status
+                <a href="/#faq" onClick={scrollToTop} className="text-muted-foreground hover:text-foreground transition-colors">
+                  FAQ
                 </a>
               </li>
               <li>
