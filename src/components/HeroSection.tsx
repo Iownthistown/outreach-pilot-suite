@@ -1,18 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ArrowRight, Star, Twitter, Users, TrendingUp, Play } from "lucide-react";
+import { ArrowRight, Star, Twitter, Users, TrendingUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+
 const HeroSection = () => {
   const navigate = useNavigate();
-  const [showVideoDialog, setShowVideoDialog] = useState(false);
   
   const handleGetStarted = () => {
     navigate("/signup");
-  };
-  
-  const handleWatchDemo = () => {
-    setShowVideoDialog(true);
   };
   return <section className="relative min-h-screen flex items-center justify-center bg-gradient-hero overflow-hidden">
       {/* Background decorations */}
@@ -58,19 +52,15 @@ const HeroSection = () => {
                  </div>
                </div>
 
-              {/* CTA Buttons */}
-              <div className="space-y-4">
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Button variant="hero" size="lg" onClick={handleGetStarted} className="group">
-                    Get Started For FREE
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                  <Button variant="outline" size="lg" onClick={handleWatchDemo} className="group">
-                    <Play className="w-4 h-4 mr-2" />
-                    Watch Demo
-                  </Button>
-                </div>
-              </div>
+               {/* CTA Buttons */}
+               <div className="space-y-4">
+                 <div className="flex flex-col sm:flex-row gap-4">
+                   <Button variant="hero" size="lg" onClick={handleGetStarted} className="group">
+                     Get Started For FREE
+                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                   </Button>
+                 </div>
+               </div>
             </div>
 
             {/* Right side - Dashboard Preview */}
@@ -136,23 +126,6 @@ const HeroSection = () => {
           </div>
         </div>
       </div>
-      
-      {/* Video Dialog */}
-      <Dialog open={showVideoDialog} onOpenChange={setShowVideoDialog}>
-        <DialogContent className="sm:max-w-4xl">
-          <DialogHeader>
-            <DialogTitle>Costras Demo Video</DialogTitle>
-          </DialogHeader>
-          <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
-            <div className="text-center space-y-4">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                <Play className="w-8 h-8 text-primary" />
-              </div>
-              <p className="text-muted-foreground">Demo video will be uploaded here</p>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
     </section>;
 };
 export default HeroSection;
