@@ -1,12 +1,28 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { X, Instagram, Mail } from "lucide-react";
 
 const Footer = () => {
+  const navigate = useNavigate();
+  
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
       behavior: 'smooth'
     });
+  };
+
+  const scrollToFAQ = () => {
+    // Navigate to homepage first, then scroll to FAQ
+    navigate("/");
+    setTimeout(() => {
+      const faqElement = document.getElementById('faq');
+      if (faqElement) {
+        faqElement.scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    }, 100);
   };
   return (
     <footer className="bg-card border-t border-primary/20">
@@ -99,9 +115,12 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/#faq" className="text-muted-foreground hover:text-foreground transition-colors">
+                <button 
+                  onClick={scrollToFAQ} 
+                  className="text-muted-foreground hover:text-foreground transition-colors text-left"
+                >
                   FAQ
-                </Link>
+                </button>
               </li>
               <li>
                 <Link to="/privacy" onClick={scrollToTop} className="text-muted-foreground hover:text-foreground transition-colors">
