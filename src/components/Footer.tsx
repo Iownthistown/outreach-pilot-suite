@@ -99,9 +99,9 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <a href="/#faq" onClick={scrollToTop} className="text-muted-foreground hover:text-foreground transition-colors">
+                <Link to="/#faq" onClick={scrollToTop} className="text-muted-foreground hover:text-foreground transition-colors">
                   FAQ
-                </a>
+                </Link>
               </li>
               <li>
                 <Link to="/privacy" onClick={scrollToTop} className="text-muted-foreground hover:text-foreground transition-colors">
