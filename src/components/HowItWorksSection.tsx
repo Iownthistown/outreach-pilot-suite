@@ -17,9 +17,9 @@ const HowItWorksSection = () => {
     {
       number: "2", 
       icon: Workflow,
-      title: "Build Automation",
-      description: "Select templates & activate",
-      details: "Pick from proven automation templates or build custom flows. Define your engagement strategy, set response preferences, and let our AI execute your vision."
+      title: "AI Automation",
+      description: "Intelligent responses running 24/7",
+      details: "Our advanced AI continuously monitors your social channels, engaging with your audience using your unique voice and style. Smart automation handles conversations naturally while you focus on growing your business."
     },
     {
       number: "3",
@@ -95,19 +95,28 @@ const HowItWorksSection = () => {
                     {index === 1 && (
                       <div className="space-y-4">
                         <div className="bg-muted/30 rounded-lg p-4">
-                          <p className="text-foreground font-medium mb-3">Workflow Templates</p>
-                          <div className="space-y-2">
-                            <div className="flex items-center justify-between p-2 bg-primary/10 rounded border border-primary/20">
-                              <span className="text-sm text-foreground">Lead Generation</span>
-                              <span className="text-xs text-primary">Active</span>
+                          <p className="text-foreground font-medium mb-3">AI Automation Status</p>
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-3 p-3 bg-primary/10 rounded border border-primary/20">
+                              <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
+                              <div className="flex-1">
+                                <span className="text-sm text-foreground">Monitoring Twitter mentions</span>
+                                <p className="text-xs text-muted-foreground">3 replies sent in last hour</p>
+                              </div>
                             </div>
-                            <div className="flex items-center justify-between p-2 bg-muted/20 rounded">
-                              <span className="text-sm text-muted-foreground">Customer Support</span>
-                              <span className="text-xs text-muted-foreground">Draft</span>
+                            <div className="flex items-center gap-3 p-3 bg-primary/10 rounded border border-primary/20">
+                              <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
+                              <div className="flex-1">
+                                <span className="text-sm text-foreground">Engaging with prospects</span>
+                                <p className="text-xs text-muted-foreground">5 new conversations started</p>
+                              </div>
                             </div>
-                            <div className="flex items-center justify-between p-2 bg-muted/20 rounded">
-                              <span className="text-sm text-muted-foreground">Brand Mention</span>
-                              <span className="text-xs text-muted-foreground">Draft</span>
+                            <div className="flex items-center gap-3 p-3 bg-muted/20 rounded">
+                              <div className="w-2 h-2 bg-warning rounded-full"></div>
+                              <div className="flex-1">
+                                <span className="text-sm text-muted-foreground">Content analysis</span>
+                                <p className="text-xs text-muted-foreground">Learning from interactions</p>
+                              </div>
                             </div>
                           </div>
                         </div>
