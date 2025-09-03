@@ -7,37 +7,37 @@ const TestimonialsSection = () => {
       name: "Marcus Rodriguez",
       role: "CEO at TechFlow Solutions",
       rating: 5,
-      text: "Initially hesitant, but COSTRAS completely transformed my approach. Engagement increased 40% while reclaiming hours weekly. It's like having a digital twin managing my presence, only smarter. Absolutely remarkable."
+      text: "Initially hesitant, but this platform completely transformed my approach. Engagement increased 40% while reclaiming hours weekly. It's like having a digital twin managing my presence, only smarter. Absolutely remarkable."
     },
     {
       name: "Jennifer Walsh",
       role: "Marketing Director at InnovateCorp",
       rating: 5,
-      text: "COSTRAS revolutionized my client communication strategy. Automated responses recovered countless hours daily."
+      text: "This tool revolutionized my client communication strategy. The automated responses have saved me countless hours daily while maintaining authentic engagement."
     },
     {
       name: "David Thompson",
       role: "Founder of CreativeHub",
       rating: 5,
-      text: "Creating content without COSTRAS feels impossible now. It's like having an intelligent assistant who understands my audience intuitively. The automation capabilities are extraordinary."
+      text: "Creating content without this assistance feels impossible now. It's like having an intelligent assistant who understands my audience intuitively. The automation capabilities are extraordinary."
     },
     {
       name: "Rachel Anderson",
       role: "VP Marketing at NextGen Media",
       rating: 5,
-      text: "COSTRAS transformed my customer relationships. The intelligent content generation established deeper connections with my audience."
+      text: "This platform transformed my customer relationships. The intelligent content generation helps me establish deeper connections with my audience in ways I never thought possible."
     },
     {
       name: "Kevin Liu",
       role: "Head of Growth at StartupLab",
       rating: 5,
-      text: "COSTRAS delivers incredible Twitter/X automation. Smart, compelling interactions that save significant time. Strongly recommended."
+      text: "The Twitter automation features are incredible. Smart, compelling interactions that save significant time while feeling completely natural. Strongly recommended for any growth-focused professional."
     },
     {
       name: "Amanda Foster",
       role: "Brand Manager at GlobalReach",
       rating: 5,
-      text: "COSTRAS is essential for digital marketing professionals. Intuitive interface with measurable, impressive outcomes."
+      text: "This is essential for digital marketing professionals. The intuitive interface delivers measurable, impressive outcomes that have exceeded all my expectations."
     }
   ];
 
@@ -48,7 +48,7 @@ const TestimonialsSection = () => {
         <ScrollAnimationWrapper>
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
-              Empowering 1500+ professionals
+              Empowering 500+ professionals
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Discover how professionals are transforming their social strategy with COSTRAS
