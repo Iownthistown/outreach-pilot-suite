@@ -3,15 +3,15 @@ import { ScrollAnimationWrapper } from "@/hooks/useScrollAnimation";
 const StatsSection = () => {
   const stats = [
     {
-      number: "25M+",
+      number: "10M+",
       label: "Social Interactions",
     },
     {
-      number: "75K+",
+      number: "30K+",
       label: "Automated Responses",
     },
     {
-      number: "1.5K+",
+      number: "1K+",
       label: "Active Users",
     },
     {
