@@ -111,14 +111,14 @@ const HeroSection = () => {
               {/* Floating stats */}
               <div className="absolute -top-6 -right-6 bg-card border border-primary/20 rounded-xl p-4 shadow-card backdrop-blur-sm">
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-foreground">25M+</p>
+                  <p className="text-2xl font-bold text-foreground">10M+</p>
                   <p className="text-sm text-muted-foreground">Social Interactions</p>
                 </div>
               </div>
 
               <div className="absolute -bottom-6 -left-6 bg-card border border-primary/20 rounded-xl p-4 shadow-card backdrop-blur-sm">
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-foreground">75K+</p>
+                  <p className="text-2xl font-bold text-foreground">30K+</p>
                   <p className="text-sm text-muted-foreground">Automated Responses</p>
                 </div>
               </div>
