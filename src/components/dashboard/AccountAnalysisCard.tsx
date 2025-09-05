@@ -204,43 +204,11 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
         throw new Error('User email not found. Please ensure you are properly logged in.');
       }
 
-      console.log('Making API call with headers:', {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`
-      });
-
-      const response = await fetch('https://api.costras.com/api/analyze-account', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
-        },
-        body: JSON.stringify({
-          twitter_handle: effectiveTwitterHandle,
-          user_id: userId,
-          user_email: user.email
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to start analysis: ${response.status}`);
-      }
-
-      toast({
-        title: "Analysis Started",
-        description: "Your account analysis has been started and will complete shortly.",
-        duration: 3000
-      });
-
-      // Update status to show analysis is starting
-      setAnalysisStatus({ status: 'pending', twitter_handle: effectiveTwitterHandle });
-      setProgress(0); // Ensure progress starts at 0
-      setProgressMessage('Analysis starting...');
-      setIsPolling(true);
-
-      // Start real-time progress tracking with SSE
+      // CRITICAL FIX: Start SSE connection FIRST before making the API call
+      console.log('🚀 Starting SSE connection BEFORE API call...');
       analysisProgressService.startRealTimeTracking(userId, {
         onProgressUpdate: (progressData: AnalysisProgress) => {
+          console.log('📊 Progress update received:', progressData);
           setProgress(progressData.percent);
           setProgressMessage(progressData.message);
           setLastUpdate(progressData.updated_at);
@@ -280,6 +248,43 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
           }
         }
       });
+
+      // Small delay to ensure SSE connection is established
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      console.log('Making API call with headers:', {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      });
+
+      const response = await fetch('https://api.costras.com/api/analyze-account', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({
+          twitter_handle: effectiveTwitterHandle,
+          user_id: userId,
+          user_email: user.email
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to start analysis: ${response.status}`);
+      }
+
+      toast({
+        title: "Analysis Started",
+        description: "Your account analysis has been started and will complete shortly.",
+        duration: 3000
+      });
+
+      // Update status to show analysis is starting
+      setAnalysisStatus({ status: 'pending', twitter_handle: effectiveTwitterHandle });
+      setProgress(0); // Ensure progress starts at 0
+      setProgressMessage('Analysis starting...');
+      setIsPolling(true);
 
     } catch (err) {
       console.error('Start analysis error:', err);

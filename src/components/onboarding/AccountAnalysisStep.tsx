@@ -141,41 +141,11 @@ const AccountAnalysisStep = ({
         throw new Error('User email not found. Please ensure you are properly logged in.');
       }
 
-      console.log('Making API call with headers:', {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`
-      });
-
-      // Start analysis via API with JWT token
-      const response = await fetch('https://api.costras.com/api/analyze-account', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
-        },
-        body: JSON.stringify({
-          twitter_handle: handleValue,
-          user_id: userIdValue,
-          user_email: userEmail
-        })
-      });
-
-      console.log('API Response status:', response.status);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`API returned ${response.status}: ${errorText}`);
-      }
-
-      toast({
-        title: "Analysis Started",
-        description: "This might take a few minutes. You can continue to the next step while analysis runs in the background.",
-        duration: 5000
-      });
-
-      // Start real-time progress tracking with SSE
+      // CRITICAL FIX: Start SSE connection FIRST before making the API call
+      console.log('🚀 Starting SSE connection BEFORE API call...');
       analysisProgressService.startRealTimeTracking(userIdValue, {
         onProgressUpdate: (progressData: AnalysisProgress) => {
+          console.log('📊 Progress update received:', progressData);
           setProgress(progressData.percent);
           setProgressMessage(progressData.message);
           setCurrentStage(progressData.stage);
@@ -214,6 +184,41 @@ const AccountAnalysisStep = ({
             }, 10000);
           }
         }
+      });
+
+      // Small delay to ensure SSE connection is established
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      console.log('Making API call with headers:', {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      });
+
+      // Start analysis via API with JWT token
+      const response = await fetch('https://api.costras.com/api/analyze-account', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({
+          twitter_handle: handleValue,
+          user_id: userIdValue,
+          user_email: userEmail
+        })
+      });
+
+      console.log('API Response status:', response.status);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`API returned ${response.status}: ${errorText}`);
+      }
+
+      toast({
+        title: "Analysis Started",
+        description: "This might take a few minutes. You can continue to the next step while analysis runs in the background.",
+        duration: 5000
       });
       
     } catch (error) {
