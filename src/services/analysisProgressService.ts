@@ -30,6 +30,7 @@ export class AnalysisProgressService {
   private onProgressUpdate: ((progress: AnalysisProgress) => void) | null = null;
   private onComplete: ((result: any) => void) | null = null;
   private onError: ((error: string) => void) | null = null;
+  private lastProgressPercent: number | null = null;
 
   async getProgress(userId: string): Promise<AnalysisProgressResponse> {
     try {
@@ -145,6 +146,15 @@ export class AnalysisProgressService {
             this.onProgressUpdate(progress);
           }
 
+          // Detect if progress unexpectedly drops (backend cleared data too early)
+          if (progress.percent === 0 && this.lastProgressPercent && this.lastProgressPercent > 60) {
+            console.warn('⚠️ Progress dropped to 0% - backend cleared data too early, continuing polling...');
+            // Don't update UI with 0%, keep last known progress and switch to polling
+            return;
+          }
+          
+          this.lastProgressPercent = progress.percent;
+
           // Check if analysis is complete
           if (progress.percent >= 100) {
             console.log('✅ Analysis complete, fetching final results...');
@@ -196,6 +206,15 @@ export class AnalysisProgressService {
         
         if (progressResponse.progress) {
           console.log('📊 Polling progress:', progressResponse.progress);
+          
+          // Detect backend progress clearing issue
+          if (progressResponse.progress.percent === 0 && this.lastProgressPercent && this.lastProgressPercent > 60) {
+            console.warn('⚠️ Backend cleared progress data too early, keeping last known progress');
+            // Don't reset to 0%, continue polling for actual completion
+            return;
+          }
+          
+          this.lastProgressPercent = progressResponse.progress.percent;
           
           if (this.onProgressUpdate) {
             this.onProgressUpdate(progressResponse.progress);
@@ -280,6 +299,7 @@ export class AnalysisProgressService {
     this.onProgressUpdate = null;
     this.onComplete = null;
     this.onError = null;
+    this.lastProgressPercent = null;
   }
 }
 
