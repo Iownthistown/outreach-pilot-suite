@@ -51,6 +51,14 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
     }
 
     try {
+      // Get current session and access token
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) {
+        throw new Error('No active session found. Please login again.');
+      }
+
+      const accessToken = session.access_token;
+
       // First, fetch the user's Twitter handle from Supabase if not provided
       let effectiveTwitterHandle = twitterHandle;
       
@@ -103,7 +111,7 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
         `https://api.costras.com/api/custom-prompt/${userId}/${effectiveTwitterHandle}`,
         {
           headers: {
-            'Authorization': `Bearer ${userId}`
+            'Authorization': `Bearer ${accessToken}`
           }
         }
       );
