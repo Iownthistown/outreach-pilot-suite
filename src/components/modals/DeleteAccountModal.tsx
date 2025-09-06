@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -15,6 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import { deleteAccount } from "@/services/accountService";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/lib/supabase";
 
 interface DeleteAccountModalProps {
   open: boolean;
@@ -25,9 +26,26 @@ export function DeleteAccountModal({ open, onOpenChange }: DeleteAccountModalPro
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [userProvider, setUserProvider] = useState<string>("");
   const { toast } = useToast();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const getUserProvider = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        const provider = session.user.app_metadata?.provider || 'email';
+        setUserProvider(provider);
+      }
+    };
+    
+    if (open && user) {
+      getUserProvider();
+    }
+  }, [open, user]);
+
+  const isGoogleUser = userProvider === 'google';
 
   const handleClose = () => {
     setPassword("");
@@ -37,7 +55,8 @@ export function DeleteAccountModal({ open, onOpenChange }: DeleteAccountModalPro
   };
 
   const handleDeleteAccount = async () => {
-    if (!password.trim()) {
+    // Only check password for non-Google users
+    if (!isGoogleUser && !password.trim()) {
       setError("Password is required");
       return;
     }
@@ -51,7 +70,7 @@ export function DeleteAccountModal({ open, onOpenChange }: DeleteAccountModalPro
     setError("");
 
     try {
-      await deleteAccount(user.id, password);
+      await deleteAccount(user.id, isGoogleUser ? undefined : password);
       
       // Clear local storage and sign out
       localStorage.clear();
@@ -99,26 +118,34 @@ export function DeleteAccountModal({ open, onOpenChange }: DeleteAccountModalPro
         </DialogHeader>
         
         <div className="space-y-4 py-4">
-          <div className="space-y-2">
-            <Label htmlFor="delete-password">
-              Enter your password to confirm deletion
-            </Label>
-            <Input
-              id="delete-password"
-              type="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-                setError("");
-              }}
-              disabled={isLoading}
-              className={error ? "border-destructive" : ""}
-            />
-            {error && (
+          {!isGoogleUser && (
+            <div className="space-y-2">
+              <Label htmlFor="delete-password">
+                Enter your password to confirm deletion
+              </Label>
+              <Input
+                id="delete-password"
+                type="password"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setError("");
+                }}
+                disabled={isLoading}
+                className={error ? "border-destructive" : ""}
+              />
+              {error && (
+                <p className="text-sm text-destructive">{error}</p>
+              )}
+            </div>
+          )}
+          
+          {isGoogleUser && error && (
+            <div className="space-y-2">
               <p className="text-sm text-destructive">{error}</p>
-            )}
-          </div>
+            </div>
+          )}
           
           <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3">
             <p className="text-sm text-destructive font-medium">Warning:</p>
@@ -143,7 +170,7 @@ export function DeleteAccountModal({ open, onOpenChange }: DeleteAccountModalPro
           <Button
             variant="destructive"
             onClick={handleDeleteAccount}
-            disabled={isLoading || !password.trim()}
+            disabled={isLoading || (!isGoogleUser && !password.trim())}
             className="flex-1 sm:flex-none"
           >
             {isLoading ? (

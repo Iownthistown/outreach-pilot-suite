@@ -4,13 +4,9 @@ export interface DeleteAccountError extends Error {
   status?: number;
 }
 
-export const deleteAccount = async (userId: string, password: string): Promise<void> => {
+export const deleteAccount = async (userId: string, password?: string): Promise<void> => {
   if (!userId) {
     throw new Error("User ID is required");
-  }
-
-  if (!password) {
-    throw new Error("Password is required");
   }
 
   try {
@@ -24,13 +20,14 @@ export const deleteAccount = async (userId: string, password: string): Promise<v
     }
 
     // Make the API call to delete the account
+    const requestBody = password ? { password } : {};
     const response = await fetch(`/api/delete-account/${userId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${session.access_token}`,
       },
-      body: JSON.stringify({ password }),
+      body: JSON.stringify(requestBody),
     });
 
     if (!response.ok) {
