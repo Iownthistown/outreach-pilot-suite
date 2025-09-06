@@ -24,6 +24,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useTwitter } from "@/hooks/useTwitter";
 import { supabase } from "@/lib/supabase";
+import { DeleteAccountModal } from "@/components/modals/DeleteAccountModal";
+import { exportUserData } from "@/services/accountService";
 
 const DashboardSettings = () => {
   const { user } = useAuth();
@@ -45,6 +47,7 @@ const DashboardSettings = () => {
     dailySummary: false,
     errorAlerts: true
   });
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const { toast } = useToast();
 
   const handleChangePassword = async () => {
@@ -116,11 +119,29 @@ const DashboardSettings = () => {
     return `Last synced ${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
   };
 
-  const handleExportData = () => {
-    toast({
-      title: "Export started",
-      description: "Your data export will be ready shortly. We'll send you an email when it's ready.",
-    });
+  const handleExportData = async () => {
+    if (!user?.id) {
+      toast({
+        title: "Error",
+        description: "Unable to export data. Please try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      await exportUserData(user.id);
+      toast({
+        title: "Export started",
+        description: "Your data export will be ready shortly. We'll send you an email when it's ready.",
+      });
+    } catch (error) {
+      toast({
+        title: "Export failed",
+        description: "Failed to start data export. Please try again later.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -383,7 +404,10 @@ const DashboardSettings = () => {
                 <p className="font-medium text-foreground">Delete Account</p>
                 <p className="text-sm text-muted-foreground">Permanently delete your account and all data</p>
               </div>
-              <Button variant="destructive">
+              <Button 
+                variant="destructive"
+                onClick={() => setShowDeleteModal(true)}
+              >
                 <Trash2 className="w-4 h-4 mr-2" />
                 Delete Account
               </Button>
@@ -391,6 +415,12 @@ const DashboardSettings = () => {
           </div>
         </Card>
       </div>
+
+      {/* Delete Account Modal */}
+      <DeleteAccountModal 
+        open={showDeleteModal} 
+        onOpenChange={setShowDeleteModal} 
+      />
     </DashboardLayout>
   );
 };
