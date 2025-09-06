@@ -302,9 +302,9 @@ const DashboardSettings = () => {
 
             {isConnected && (
               <div className="text-sm text-muted-foreground">
-                <p>✓ OAuth authentication active</p>
+                <p>✓ Chrome Extension connected</p>
                 <p>✓ API permissions granted</p>
-                <p>✓ Real-time sync enabled</p>
+                <p>✓ Extension sync active</p>
               </div>
             )}
           </div>
