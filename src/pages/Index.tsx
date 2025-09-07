@@ -18,11 +18,26 @@ const Index = () => {
     script.async = true;
     document.head.appendChild(script);
 
+    // Add CSS to hide "Free AI Chatbot Widget" text
+    const style = document.createElement('style');
+    style.textContent = `
+      .elfsight-app-2aed6db9-a8cb-4905-aed1-facaec2377a8 [data-elfsight-widget-branding],
+      .elfsight-app-2aed6db9-a8cb-4905-aed1-facaec2377a8 .eapp-widget-branding,
+      .elfsight-app-2aed6db9-a8cb-4905-aed1-facaec2377a8 .eapps-widget-branding {
+        display: none !important;
+      }
+    `;
+    document.head.appendChild(style);
+
     return () => {
       // Cleanup script on unmount
       const existingScript = document.querySelector('script[src="https://elfsightcdn.com/platform.js"]');
       if (existingScript) {
         document.head.removeChild(existingScript);
+      }
+      // Cleanup style
+      if (style && style.parentNode) {
+        style.parentNode.removeChild(style);
       }
     };
   }, []);
