@@ -23,8 +23,21 @@ const Index = () => {
     style.textContent = `
       .elfsight-app-2aed6db9-a8cb-4905-aed1-facaec2377a8 [data-elfsight-widget-branding],
       .elfsight-app-2aed6db9-a8cb-4905-aed1-facaec2377a8 .eapp-widget-branding,
-      .elfsight-app-2aed6db9-a8cb-4905-aed1-facaec2377a8 .eapps-widget-branding {
+      .elfsight-app-2aed6db9-a8cb-4905-aed1-facaec2377a8 .eapps-widget-branding,
+      .elfsight-app-2aed6db9-a8cb-4905-aed1-facaec2377a8 [class*="branding"],
+      .elfsight-app-2aed6db9-a8cb-4905-aed1-facaec2377a8 [class*="widget-branding"],
+      .elfsight-app-2aed6db9-a8cb-4905-aed1-facaec2377a8 [class*="powered"],
+      .elfsight-app-2aed6db9-a8cb-4905-aed1-facaec2377a8 a[href*="elfsight"],
+      .elfsight-app-2aed6db9-a8cb-4905-aed1-facaec2377a8 * {
+        font-size: 0 !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
         display: none !important;
+      }
+      .elfsight-app-2aed6db9-a8cb-4905-aed1-facaec2377a8 iframe {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
       }
     `;
     document.head.appendChild(style);
