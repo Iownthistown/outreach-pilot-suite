@@ -80,10 +80,14 @@ const Index = () => {
       <Footer />
       
       {/* Elfsight AI Chatbot - Fixed position bottom right */}
-      <div 
-        className="elfsight-app-2aed6db9-a8cb-4905-aed1-facaec2377a8 fixed bottom-4 right-4 z-50" 
-        data-elfsight-app-lazy
-      />
+      <div className="fixed bottom-4 right-4 z-50">
+        <div 
+          className="elfsight-app-2aed6db9-a8cb-4905-aed1-facaec2377a8" 
+          data-elfsight-app-lazy
+        />
+        {/* Rectangle overlay to cover branding text */}
+        <div className="absolute bottom-0 left-0 w-full h-6 bg-background z-10"></div>
+      </div>
     </div>
   );
 };
