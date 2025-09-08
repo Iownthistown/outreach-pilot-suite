@@ -233,9 +233,11 @@ serve(async (req) => {
       headers: {
         'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json',
+        'HTTP-Referer': 'https://costras.com',
+        'X-Title': 'Costras Chatbot'
       },
       body: JSON.stringify({
-        model: 'deepseek/deepseek-r1',
+        model: 'deepseek/deepseek-r1-distill-llama-70b',
         messages: [
           {
             role: 'system',
@@ -266,8 +268,13 @@ Instructions:
       }),
     });
 
+    console.log('API Response Status:', response.status);
+    console.log('API Response Headers:', Object.fromEntries(response.headers.entries()));
+
     if (!response.ok) {
-      throw new Error(`API request failed: ${response.status}`);
+      const errorText = await response.text();
+      console.error('API Error Response:', errorText);
+      throw new Error(`API request failed: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
