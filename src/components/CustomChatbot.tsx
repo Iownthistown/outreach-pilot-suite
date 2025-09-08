@@ -103,6 +103,26 @@ const getBotResponse = (userMessage: string): string => {
     return "Yes! Costras supports multiple Twitter accounts:\n\n• Handle different accounts with unique niches\n• Each account gets personalized analysis and prompts\n• Separate tracking and analytics for each account\n• Easy switching between different strategies\n\nPerfect for agencies or users managing multiple brands!";
   }
   
+  // Technical troubleshooting
+  if (message.includes('dashboard') && (message.includes('not loading') || message.includes('loading') || message.includes('broken'))) {
+    return "If your dashboard isn't loading, try these steps:\n\n• Clear your browser cache and cookies\n• Disable browser extensions temporarily\n• Try opening in an incognito/private window\n• Check your internet connection\n• Log out and log back in\n\nIf the issue persists, contact our support team at costras.com for personalized assistance.";
+  }
+  
+  // Payment issues
+  if (message.includes('payment') && (message.includes('not go through') || message.includes('failed') || message.includes('error') || message.includes('problem'))) {
+    return "For payment issues, please try:\n\n• Check if your payment method is valid and has sufficient funds\n• Verify your billing information is correct\n• Try a different payment method\n• Check for any bank restrictions on your card\n• Clear browser cache and try again\n\nFor unresolved payment issues, contact our billing support at costras.com with your transaction details.";
+  }
+  
+  // Login/authentication issues
+  if (message.includes('login') || message.includes('sign in') || message.includes('authentication') || message.includes('password')) {
+    return "For login issues:\n\n• Try resetting your password\n• Check if caps lock is on\n• Clear browser cache and cookies\n• Disable browser extensions\n• Try a different browser\n\nIf you're still having trouble, use the 'Forgot Password' option or contact support at costras.com.";
+  }
+  
+  // Extension issues
+  if (message.includes('extension') && (message.includes('not working') || message.includes('broken') || message.includes('error'))) {
+    return "For Chrome extension issues:\n\n• Check if the extension is enabled in Chrome\n• Try disabling and re-enabling the extension\n• Remove and reinstall from Chrome Web Store\n• Check for Chrome browser updates\n• Restart your browser\n\nEnsure you're using the latest version from the official Chrome Web Store.";
+  }
+  
   // Contact/support
   if (message.includes('contact') || message.includes('support') || message.includes('help')) {
     return "For technical support or detailed questions, please:\n\n• Visit our website at costras.com\n• Use the official support channels\n• Contact our team for personalized assistance\n\nI'm here for general questions about Costras features and capabilities!";
@@ -176,7 +196,7 @@ export const CustomChatbot: React.FC = () => {
       {!isOpen && (
         <Button
           onClick={() => setIsOpen(true)}
-          className="h-14 w-14 rounded-full bg-gradient-primary shadow-glow hover:shadow-button transition-all duration-300 animate-pulse"
+          className="h-14 w-14 rounded-full bg-primary hover:bg-primary/90 shadow-glow hover:shadow-button transition-all duration-300"
         >
           <MessageCircle className="h-6 w-6" />
         </Button>
