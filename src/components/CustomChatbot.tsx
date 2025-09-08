@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { MessageCircle, X, Send, Bot, User } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Message {
   id: string;
@@ -45,91 +46,23 @@ const KNOWLEDGE_BASE = {
   ]
 };
 
-const getBotResponse = (userMessage: string): string => {
-  const message = userMessage.toLowerCase();
-  
-  // Greeting responses
-  if (message.includes('hello') || message.includes('hi') || message.includes('hey')) {
-    return "Hello! I'm here to help you learn about Costras - your AI-powered Twitter outreach automation platform. How can I assist you today?";
+// AI-powered response function using OpenRouter with DeepSeek R1
+const getBotResponse = async (userMessage: string): Promise<string> => {
+  try {
+    const { data, error } = await supabase.functions.invoke('costras-chatbot', {
+      body: { message: userMessage }
+    });
+
+    if (error) {
+      console.error('Error calling chatbot function:', error);
+      return "I'm having trouble processing your request right now. Please try again or contact support at costras.com.";
+    }
+
+    return data.response || "I'm sorry, I didn't get a response. Please try again or contact support at costras.com.";
+  } catch (error) {
+    console.error('Error in getBotResponse:', error);
+    return "I'm experiencing technical difficulties. Please try again or visit costras.com for support.";
   }
-  
-  // What is Costras
-  if (message.includes('what is costras') || message.includes('what does costras do')) {
-    return `${KNOWLEDGE_BASE.description}\n\nKey features include:\n• ${KNOWLEDGE_BASE.features.slice(0, 3).join('\n• ')}\n\nWould you like to know more about any specific feature?`;
-  }
-  
-  // Features
-  if (message.includes('feature') || message.includes('capabilities')) {
-    return `Costras offers powerful features:\n\n• ${KNOWLEDGE_BASE.features.join('\n• ')}\n\nWhich feature interests you most?`;
-  }
-  
-  // AI models
-  if (message.includes('ai model') || message.includes('gpt') || message.includes('analysis')) {
-    return "Costras uses 5 advanced AI models (GPT-5, Grok-4, Llama-4-Maverick, Gemini-2.5-Pro, Llama-3.3-70b) to:\n\n• Analyze your Twitter account and content\n• Detect your niche automatically\n• Create personalized prompts for your industry\n• Generate human-like responses that match your tone\n\nThis ensures authentic engagement that sounds like you!";
-  }
-  
-  // Pricing/cost
-  if (message.includes('price') || message.includes('cost') || message.includes('plan')) {
-    return "For detailed pricing information and to explore our plans, please visit our official website at costras.com. You'll find comprehensive pricing options tailored to different needs!";
-  }
-  
-  // How it works
-  if (message.includes('how') && (message.includes('work') || message.includes('setup'))) {
-    return "Getting started with Costras is simple:\n\n1. Install our Chrome extension\n2. Connect your Twitter account securely\n3. Our AI analyzes your account and niche\n4. System generates personalized prompts\n5. Automation begins with optimized engagement\n\nThe whole process takes just minutes to set up!";
-  }
-  
-  // Niches
-  if (message.includes('niche') || message.includes('industry')) {
-    return `Costras supports 8 specialized niches:\n\n• ${KNOWLEDGE_BASE.niches.join('\n• ')}\n\nOur AI automatically detects your niche and creates custom prompts for maximum engagement in your specific industry.`;
-  }
-  
-  // Results/benefits
-  if (message.includes('result') || message.includes('benefit') || message.includes('save')) {
-    return `Costras users typically see amazing results:\n\n• ${KNOWLEDGE_BASE.benefits.join('\n• ')}\n\nPlus, you'll free up time for strategic business activities while maintaining a professional 24/7 presence!`;
-  }
-  
-  // Security
-  if (message.includes('safe') || message.includes('secure') || message.includes('ban')) {
-    return "Security is our top priority! Costras features:\n\n• Enterprise-grade security with encrypted connections\n• Chrome Web Store approved extension\n• Advanced anti-detection technology\n• Secure authentication and data protection\n\nOur stealth technology helps prevent account suspension while maintaining authentic engagement.";
-  }
-  
-  // Chrome extension
-  if (message.includes('chrome') || message.includes('extension') || message.includes('install')) {
-    return "Our Chrome extension provides:\n\n• Seamless setup and Twitter account connection\n• Real-time monitoring and performance tracking\n• Secure authentication with encrypted connections\n• Automatic profile management and data extraction\n\nIt's available on the Chrome Web Store and installs in seconds!";
-  }
-  
-  // Multiple accounts
-  if (message.includes('multiple account') || message.includes('several account')) {
-    return "Yes! Costras supports multiple Twitter accounts:\n\n• Handle different accounts with unique niches\n• Each account gets personalized analysis and prompts\n• Separate tracking and analytics for each account\n• Easy switching between different strategies\n\nPerfect for agencies or users managing multiple brands!";
-  }
-  
-  // Technical troubleshooting
-  if (message.includes('dashboard') && (message.includes('not loading') || message.includes('loading') || message.includes('broken'))) {
-    return "If your dashboard isn't loading, try these steps:\n\n• Clear your browser cache and cookies\n• Disable browser extensions temporarily\n• Try opening in an incognito/private window\n• Check your internet connection\n• Log out and log back in\n\nIf the issue persists, contact our support team at costras.com for personalized assistance.";
-  }
-  
-  // Payment issues
-  if (message.includes('payment') && (message.includes('not go through') || message.includes('failed') || message.includes('error') || message.includes('problem'))) {
-    return "For payment issues, please try:\n\n• Check if your payment method is valid and has sufficient funds\n• Verify your billing information is correct\n• Try a different payment method\n• Check for any bank restrictions on your card\n• Clear browser cache and try again\n\nFor unresolved payment issues, contact our billing support at costras.com with your transaction details.";
-  }
-  
-  // Login/authentication issues
-  if (message.includes('login') || message.includes('sign in') || message.includes('authentication') || message.includes('password')) {
-    return "For login issues:\n\n• Try resetting your password\n• Check if caps lock is on\n• Clear browser cache and cookies\n• Disable browser extensions\n• Try a different browser\n\nIf you're still having trouble, use the 'Forgot Password' option or contact support at costras.com.";
-  }
-  
-  // Extension issues
-  if (message.includes('extension') && (message.includes('not working') || message.includes('broken') || message.includes('error'))) {
-    return "For Chrome extension issues:\n\n• Check if the extension is enabled in Chrome\n• Try disabling and re-enabling the extension\n• Remove and reinstall from Chrome Web Store\n• Check for Chrome browser updates\n• Restart your browser\n\nEnsure you're using the latest version from the official Chrome Web Store.";
-  }
-  
-  // Contact/support
-  if (message.includes('contact') || message.includes('support') || message.includes('help')) {
-    return "For technical support or detailed questions, please:\n\n• Visit our website at costras.com\n• Use the official support channels\n• Contact our team for personalized assistance\n\nI'm here for general questions about Costras features and capabilities!";
-  }
-  
-  // Default response
-  return "I'm here to help you learn about Costras! You can ask me about:\n\n• How Costras works and its features\n• Supported niches and AI capabilities\n• Benefits and results you can expect\n• Security and setup process\n• Multi-account management\n\nFor detailed information, pricing, or to get started, visit costras.com. What would you like to know?";
 };
 
 export const CustomChatbot: React.FC = () => {
@@ -165,22 +98,31 @@ export const CustomChatbot: React.FC = () => {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const messageToSend = inputValue;
     setInputValue('');
     setIsTyping(true);
 
-    // Simulate typing delay
-    setTimeout(() => {
-      const botResponse = getBotResponse(inputValue);
+    try {
+      const botResponseText = await getBotResponse(messageToSend);
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: botResponse,
+        text: botResponseText,
         isBot: true,
         timestamp: new Date()
       };
-
       setMessages(prev => [...prev, botMessage]);
+    } catch (error) {
+      console.error('Error getting bot response:', error);
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: "I'm sorry, I'm having trouble right now. Please try again or visit costras.com for support.",
+        isBot: true,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
       setIsTyping(false);
-    }, 1500);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
