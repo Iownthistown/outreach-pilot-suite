@@ -237,7 +237,7 @@ serve(async (req) => {
         'X-Title': 'Costras Chatbot'
       },
       body: JSON.stringify({
-        model: 'deepseek/deepseek-r1-distill-llama-70b',
+        model: 'deepseek/deepseek-v3.1',
         messages: [
           {
             role: 'system',
