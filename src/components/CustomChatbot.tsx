@@ -46,19 +46,28 @@ const KNOWLEDGE_BASE = {
   ]
 };
 
-// AI-powered response function using OpenRouter with DeepSeek R1
+// AI-powered response function using OpenRouter with DeepSeek V3.1
 const getBotResponse = async (userMessage: string): Promise<string> => {
   try {
+    console.log('Sending message to chatbot:', userMessage);
+    
     const { data, error } = await supabase.functions.invoke('costras-chatbot', {
       body: { message: userMessage }
     });
+
+    console.log('Chatbot response:', { data, error });
 
     if (error) {
       console.error('Error calling chatbot function:', error);
       return "I'm having trouble processing your request right now. Please try again or contact support at costras.com.";
     }
 
-    return data.response || "I'm sorry, I didn't get a response. Please try again or contact support at costras.com.";
+    if (data?.error) {
+      console.error('Error from chatbot function:', data.error);
+      return "I'm having trouble processing your request right now. Please try again or contact support at costras.com.";
+    }
+
+    return data?.response || "I'm sorry, I didn't get a response. Please try again or contact support at costras.com.";
   } catch (error) {
     console.error('Error in getBotResponse:', error);
     return "I'm experiencing technical difficulties. Please try again or visit costras.com for support.";
