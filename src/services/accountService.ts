@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/supabase";
 
-const API_BASE_URL = 'http://34.173.83.251:8080';
+const API_BASE_URL = 'https://api.costras.com';
 
 export interface DeleteAccountError extends Error {
   status?: number;
