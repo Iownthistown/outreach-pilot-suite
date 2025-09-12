@@ -188,7 +188,7 @@ export default function OnboardingProgressCard() {
   const completedSteps = ONBOARDING_STEPS.filter(step => getStepStatus(step.id) === 'completed').length;
 
   // Don't show card if onboarding is complete
-  if (progress?.is_completed) {
+  if (progress?.is_completed || progress?.completion_percentage === 100) {
     return null;
   }
 
