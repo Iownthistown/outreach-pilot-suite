@@ -40,88 +40,105 @@ const PlanSelectionStep = ({
     icon: Crown,
     popular: false
   }];
-  return <div className="w-full max-w-6xl mx-auto space-y-8">
-      <div className="text-center space-y-4">
-        <h1 className="text-3xl font-bold">
+  return <div className="w-full max-w-5xl mx-auto space-y-4 sm:space-y-6 h-full flex flex-col">
+      <div className="text-center space-y-2 sm:space-y-3 flex-shrink-0">
+        <h1 className="text-xl sm:text-2xl font-bold">
           {hasPlan ? `Your ${planName} Plan` : "Choose Your Plan"}
         </h1>
-        <p className="text-muted-foreground text-lg">
-          {hasPlan ? "Great! You've successfully purchased a plan. Continue with your setup." : "Select the plan that best fits your needs. You can upgrade or downgrade anytime."}
+        <p className="text-muted-foreground text-sm sm:text-base">
+          {hasPlan ? "Great! Continue with your setup." : "Select the plan that fits your needs."}
         </p>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 flex-1 overflow-auto">
         {plans.map(plan => {
         const Icon = plan.icon;
         const isPlanPurchased = hasPlan && planName?.toLowerCase() === plan.name.toLowerCase();
         const isDisabled = hasPlan && !isPlanPurchased;
-        return <Card key={plan.name} className={`relative ${isPlanPurchased ? 'border-green-500 ring-2 ring-green-500/20 bg-green-50/50' : plan.popular ? 'border-primary ring-2 ring-primary/20' : ''} ${isDisabled ? 'opacity-50' : ''}`}>
-              {isPlanPurchased && <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                  <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1">
+        return <Card key={plan.name} className={`relative h-full ${isPlanPurchased ? 'border-green-500 ring-2 ring-green-500/20 bg-green-50/50' : plan.popular ? 'border-primary ring-2 ring-primary/20' : ''} ${isDisabled ? 'opacity-50' : ''}`}>
+              {isPlanPurchased && <div className="absolute -top-2 left-1/2 transform -translate-x-1/2">
+                  <span className="bg-green-500 text-white px-2 py-0.5 rounded-full text-xs font-medium flex items-center gap-1">
                     <CheckCircle className="w-3 h-3" />
                     Purchased
                   </span>
                 </div>}
-              {plan.popular && !isPlanPurchased && !hasPlan && <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
-                  <span className="bg-primary text-primary-foreground py-1 rounded-full text-sm font-medium px-[7px]">
-                    Most Popular
+              {plan.popular && !isPlanPurchased && !hasPlan && <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 z-10">
+                  <span className="bg-primary text-primary-foreground py-0.5 px-2 rounded-full text-xs font-medium">
+                    Popular
                   </span>
                 </div>}
               
-              <CardHeader className="text-center pb-4">
-                <div className="mx-auto mb-4 w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <Icon className="w-6 h-6 text-primary" />
+              <CardHeader className="text-center pb-3">
+                <div className="mx-auto mb-2 w-8 h-8 sm:w-10 sm:h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                  <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                 </div>
-                <CardTitle className="text-xl">{plan.name}</CardTitle>
-                <div className="text-3xl font-bold">
+                <CardTitle className="text-lg sm:text-xl">{plan.name}</CardTitle>
+                <div className="text-xl sm:text-2xl font-bold">
                   {plan.price}
-                  <span className="text-base font-normal text-muted-foreground">
+                  <span className="text-xs sm:text-sm font-normal text-muted-foreground">
                     {plan.period}
                   </span>
                 </div>
-                <CardDescription>{plan.description}</CardDescription>
+                <CardDescription className="text-xs sm:text-sm">{plan.description}</CardDescription>
               </CardHeader>
               
-              <CardContent className="space-y-4">
-                <ul className="space-y-3">
-                  {plan.features.map((feature, index) => <li key={index} className="flex items-start gap-3">
-                      <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                      <span className="text-sm">{feature}</span>
+              <CardContent className="space-y-3 flex flex-col h-full">
+                <ul className="space-y-2 flex-1">
+                  {plan.features.slice(0, 4).map((feature, index) => <li key={index} className="flex items-start gap-2">
+                      <Check className="w-3 h-3 sm:w-4 sm:h-4 text-primary mt-0.5 flex-shrink-0" />
+                      <span className="text-xs sm:text-sm">{feature}</span>
                     </li>)}
+                  {plan.features.length > 4 && (
+                    <li className="text-xs text-muted-foreground">
+                      +{plan.features.length - 4} more features
+                    </li>
+                  )}
                 </ul>
                 
-                <Button className="w-full" variant={isPlanPurchased ? "secondary" : plan.popular ? "default" : "outline"} onClick={() => {
-              if (isPlanPurchased) {
-                onNext();
-                return;
-              }
-              const paymentLinks = {
-                Starter: "https://buy.stripe.com/28E7sMgAoaRJ6rAczd8AE00",
-                Pro: "https://buy.stripe.com/28EdRa4RG8JB2bk6aP8AE01"
-              };
-              const paymentLink = paymentLinks[plan.name as keyof typeof paymentLinks];
-              if (paymentLink) {
-                window.open(paymentLink, '_blank');
-              }
-            }} disabled={loading || plan.name === "Custom" || isDisabled}>
-                  {isPlanPurchased ? "Continue Setup" : plan.name === "Custom" ? "Coming Soon" : "Get Started"}
+                <Button 
+                  className="w-full" 
+                  variant={isPlanPurchased ? "secondary" : plan.popular ? "default" : "outline"} 
+                  size="sm"
+                  onClick={() => {
+                    if (isPlanPurchased) {
+                      onNext();
+                      return;
+                    }
+                    const paymentLinks = {
+                      Starter: "https://buy.stripe.com/28E7sMgAoaRJ6rAczd8AE00",
+                      Pro: "https://buy.stripe.com/28EdRa4RG8JB2bk6aP8AE01"
+                    };
+                    const paymentLink = paymentLinks[plan.name as keyof typeof paymentLinks];
+                    if (paymentLink) {
+                      window.open(paymentLink, '_blank');
+                    }
+                  }} 
+                  disabled={loading || plan.name === "Custom" || isDisabled}
+                >
+                  {isPlanPurchased ? "Continue" : plan.name === "Custom" ? "Coming Soon" : "Get Started"}
                 </Button>
               </CardContent>
             </Card>;
       })}
       </div>
 
-      {!hasPlan && <div className="text-center">
-          <Button variant="ghost" onClick={onNext} disabled={loading} className="text-muted-foreground">
-            Skip for now - I'll choose later
-          </Button>
-        </div>}
-      
-      {hasPlan && <div className="text-center">
-          <Button onClick={onNext} disabled={loading} className="w-full max-w-md">
-            Continue to Next Step
-          </Button>
-        </div>}
+      <div className="flex-shrink-0 space-y-3">
+        {!hasPlan && (
+          <div className="text-center">
+            <Button variant="ghost" onClick={onNext} disabled={loading} size="sm" className="text-muted-foreground">
+              Skip for now
+            </Button>
+          </div>
+        )}
+        
+        {hasPlan && (
+          <div className="text-center">
+            <Button onClick={onNext} disabled={loading} className="w-full max-w-sm">
+              Continue Setup
+            </Button>
+          </div>
+        )}
+      </div>
     </div>;
 };
 export default PlanSelectionStep;

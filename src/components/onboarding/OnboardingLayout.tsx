@@ -20,98 +20,87 @@ const OnboardingLayout = ({ children, currentStep, totalSteps, loading = false, 
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-hero flex items-center justify-center p-4">
-      <div className="max-w-3xl w-full">
-        {/* Back button */}
-        {currentStep > 0 && onGoBack && (
-          <div className="mb-6">
-            <Button
-              variant="ghost"
-              onClick={onGoBack}
-              className="text-muted-foreground hover:text-foreground"
-              disabled={loading}
-            >
-              <ChevronLeft className="w-4 h-4 mr-2" />
-              Go Back
-            </Button>
-          </div>
-        )}
-        
-        {/* Enhanced Progress indicator */}
-        <div className="mb-12">
-          {/* Progress bar */}
-          <div className="relative mb-8">
-            <div className="flex justify-between items-center">
-              {steps.map((step, i) => (
-                <button
-                  key={i}
-                  onClick={() => onGoBack && i < currentStep && onGoBack()}
-                  disabled={i >= currentStep || loading}
-                  className={`flex flex-col items-center relative z-10 ${
-                    i < currentStep && onGoBack ? 'cursor-pointer hover:opacity-80' : 'cursor-default'
-                  }`}
-                >
-                  <div
-                    className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-500 ${
-                      i < currentStep
-                        ? "bg-primary border-primary text-primary-foreground"
-                        : i === currentStep
-                        ? loading
-                          ? "bg-primary/20 border-primary text-primary animate-pulse"
-                          : "bg-primary/10 border-primary text-primary"
-                        : "bg-muted border-muted-foreground/30 text-muted-foreground"
-                    }`}
-                  >
-                    {i < currentStep ? (
-                      <CheckCircle className="w-6 h-6" />
-                    ) : i === currentStep && loading ? (
-                      <Clock className="w-6 h-6 animate-spin" />
-                    ) : (
-                      <Circle className="w-6 h-6" />
-                    )}
-                  </div>
-                  <div className="mt-3 text-center">
-                    <div
-                      className={`text-sm font-semibold transition-colors duration-300 ${
-                        i <= currentStep ? "text-foreground" : "text-muted-foreground"
-                      }`}
-                    >
-                      {step.title}
-                    </div>
-                    <div
-                      className={`text-xs transition-colors duration-300 ${
-                        i <= currentStep ? "text-muted-foreground" : "text-muted-foreground/50"
-                      }`}
-                    >
-                      {step.description}
-                    </div>
-                  </div>
-                </button>
-              ))}
-            </div>
-            
-            {/* Connecting lines */}
-            <div className="absolute top-6 left-6 right-6 h-0.5 bg-gradient-to-r from-muted via-muted to-muted -z-10">
-              <div
-                className="h-full bg-gradient-to-r from-primary to-primary transition-all duration-700 ease-out"
-                style={{
-                  width: `${(currentStep / (totalSteps - 1)) * 100}%`
-                }}
-              />
+    <div className="min-h-screen bg-gradient-hero flex flex-col items-center justify-center p-3 sm:p-4">
+      <div className="w-full max-w-4xl flex flex-col h-screen max-h-screen">
+        {/* Compact Header with Back Button and Progress */}
+        <div className="flex-shrink-0 mb-4 sm:mb-6">
+          {/* Back button and step indicator */}
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
+            {currentStep > 0 && onGoBack && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onGoBack}
+                className="text-muted-foreground hover:text-foreground"
+                disabled={loading}
+              >
+                <ChevronLeft className="w-4 h-4 mr-1" />
+                Back
+              </Button>
+            )}
+            <div className="text-xs text-muted-foreground ml-auto">
+              Step {currentStep + 1} of {totalSteps}
             </div>
           </div>
           
-          {/* Progress percentage */}
-          <div className="text-center">
-            <div className="text-xs text-muted-foreground">
-              Step {currentStep + 1} of {totalSteps} • {Math.round(((currentStep + 1) / totalSteps) * 100)}% Complete
+          {/* Compact Progress Bar */}
+          <div className="space-y-2">
+            {/* Visual progress bar */}
+            <div className="relative h-2 bg-muted/30 rounded-full overflow-hidden">
+              <div
+                className="absolute top-0 left-0 h-full bg-gradient-to-r from-primary to-primary/80 rounded-full transition-all duration-700 ease-out"
+                style={{
+                  width: `${((currentStep + 1) / totalSteps) * 100}%`
+                }}
+              />
+            </div>
+            
+            {/* Step indicators for mobile */}
+            <div className="flex justify-between sm:hidden">
+              {steps.map((step, i) => (
+                <div
+                  key={i}
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                    i < currentStep
+                      ? "bg-primary"
+                      : i === currentStep
+                      ? "bg-primary/60"
+                      : "bg-muted"
+                  }`}
+                />
+              ))}
+            </div>
+            
+            {/* Step labels for desktop */}
+            <div className="hidden sm:flex justify-between text-xs">
+              {steps.map((step, i) => (
+                <div
+                  key={i}
+                  className={`flex items-center transition-colors duration-300 ${
+                    i <= currentStep ? "text-foreground" : "text-muted-foreground/50"
+                  }`}
+                >
+                  <div
+                    className={`w-1.5 h-1.5 rounded-full mr-2 ${
+                      i < currentStep
+                        ? "bg-primary"
+                        : i === currentStep
+                        ? "bg-primary/60"
+                        : "bg-muted"
+                    }`}
+                  />
+                  {step.title}
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* Content */}
-        <div className="bg-card/80 backdrop-blur-sm rounded-2xl border border-border/50 shadow-card p-8 animate-fade-in">
-          {children}
+        {/* Main Content Area - Scrollable if needed */}
+        <div className="flex-1 overflow-auto">
+          <div className="bg-card/80 backdrop-blur-sm rounded-xl border border-border/50 shadow-card p-4 sm:p-6 lg:p-8 h-full min-h-0 animate-fade-in">
+            {children}
+          </div>
         </div>
       </div>
     </div>

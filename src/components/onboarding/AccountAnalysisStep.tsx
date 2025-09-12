@@ -256,20 +256,20 @@ const AccountAnalysisStep = ({
 
   if (!twitterConnected) {
     return (
-      <div className="max-w-md mx-auto space-y-6">
+      <div className="max-w-md mx-auto space-y-4 h-full flex flex-col justify-center">
         <div className="text-center space-y-2">
-          <h2 className="text-2xl font-bold text-foreground">Account Analysis</h2>
-          <p className="text-muted-foreground">
-            Connect your Twitter account first to analyze your content patterns
+          <h2 className="text-xl sm:text-2xl font-bold text-foreground">Account Analysis</h2>
+          <p className="text-sm sm:text-base text-muted-foreground">
+            Connect Twitter first to analyze your content
           </p>
         </div>
         
         <Card>
-          <CardContent className="pt-6">
-            <div className="text-center space-y-4">
-              <Twitter className="w-16 h-16 text-muted-foreground mx-auto" />
-              <p className="text-sm text-muted-foreground">
-                Please complete the Twitter connection step to continue
+          <CardContent className="pt-4 pb-4">
+            <div className="text-center space-y-3">
+              <Twitter className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground mx-auto" />
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                Complete Twitter connection step to continue
               </p>
             </div>
           </CardContent>
@@ -279,74 +279,77 @@ const AccountAnalysisStep = ({
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      <div className="text-center space-y-2">
-        <h2 className="text-2xl font-bold text-foreground">AI Account Analysis</h2>
-        <p className="text-muted-foreground">
-          We're analyzing your Twitter account to optimize your bot settings
+    <div className="max-w-2xl mx-auto space-y-4 h-full flex flex-col">
+      <div className="text-center space-y-2 flex-shrink-0">
+        <h2 className="text-xl sm:text-2xl font-bold text-foreground">AI Account Analysis</h2>
+        <p className="text-sm sm:text-base text-muted-foreground">
+          Analyzing your Twitter account to optimize bot settings
         </p>
         {canContinue && (
-          <div className="flex items-center gap-2 text-sm text-primary bg-primary/10 px-3 py-2 rounded-lg animate-fade-in">
+          <div className="flex items-center gap-2 text-xs sm:text-sm text-primary bg-primary/10 px-3 py-2 rounded-lg animate-fade-in">
             <Clock className="w-4 h-4" />
-            <span>This might take a few minutes. You can continue to the next step while analysis runs in the background.</span>
+            <span className="hidden sm:inline">Analysis continues in background. You can proceed to next step.</span>
+            <span className="sm:hidden">Can continue to next step</span>
           </div>
         )}
       </div>
 
       {analysisStatus === 'analyzing' && (
-        <Card>
-          <CardHeader className="text-center">
-            <div className="flex justify-center mb-4">
+        <Card className="flex-1 flex flex-col">
+          <CardHeader className="text-center pb-3 flex-shrink-0">
+            <div className="flex justify-center mb-2">
               <div className="relative">
-                <Brain className="w-16 h-16 text-primary animate-pulse" />
-                <Sparkles className="w-6 h-6 text-yellow-500 absolute -top-1 -right-1 animate-bounce" />
+                <Brain className="w-12 h-12 sm:w-16 sm:h-16 text-primary animate-pulse" />
+                <Sparkles className="w-4 h-4 sm:w-6 sm:h-6 text-yellow-500 absolute -top-1 -right-1 animate-bounce" />
               </div>
             </div>
-            <CardTitle>Analyzing Your Account</CardTitle>
-            <CardDescription>This may take a few moments...</CardDescription>
+            <CardTitle className="text-lg sm:text-xl">Analyzing Your Account</CardTitle>
+            <CardDescription className="text-xs sm:text-sm">This may take a few moments...</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-3">
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">{progressMessage || currentStage}</span>
+          <CardContent className="space-y-4 flex-1 flex flex-col">
+            <div className="space-y-2">
+              <div className="flex justify-between text-xs sm:text-sm">
+                <span className="text-muted-foreground truncate">{progressMessage || currentStage}</span>
                 <span className="text-primary font-medium">{Math.round(progress)}%</span>
               </div>
               <Progress 
                 value={progress} 
-                className="h-3 bg-muted/20 transition-all duration-300" 
+                className="h-2 sm:h-3 bg-muted/20 transition-all duration-300" 
               />
               {lastUpdate && (
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Loader2 className="w-3 h-3 animate-spin" />
-                  <span>Last updated: {new Date(lastUpdate).toLocaleTimeString()}</span>
+                  <span className="hidden sm:inline">Last updated: {new Date(lastUpdate).toLocaleTimeString()}</span>
+                  <span className="sm:hidden">Updating...</span>
                 </div>
               )}
             </div>
             
-            <div className="grid grid-cols-2 gap-4 text-center">
-              <div className="p-4 rounded-lg bg-muted/50 transition-all hover:bg-muted/70">
-                <TrendingUp className="w-8 h-8 mx-auto mb-2 text-blue-500" />
-                <p className="text-xs font-medium">Content Patterns</p>
+            <div className="grid grid-cols-2 gap-2 sm:gap-3 flex-1">
+              <div className="p-2 sm:p-3 rounded-lg bg-muted/50 transition-all hover:bg-muted/70">
+                <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 mx-auto mb-1 text-blue-500" />
+                <p className="text-xs font-medium">Content</p>
               </div>
-              <div className="p-4 rounded-lg bg-muted/50 transition-all hover:bg-muted/70">
-                <Users className="w-8 h-8 mx-auto mb-2 text-green-500" />
-                <p className="text-xs font-medium">Engagement Style</p>
+              <div className="p-2 sm:p-3 rounded-lg bg-muted/50 transition-all hover:bg-muted/70">
+                <Users className="w-5 h-5 sm:w-6 sm:h-6 mx-auto mb-1 text-green-500" />
+                <p className="text-xs font-medium">Engagement</p>
               </div>
-              <div className="p-4 rounded-lg bg-muted/50 transition-all hover:bg-muted/70">
-                <MessageCircle className="w-8 h-8 mx-auto mb-2 text-purple-500" />
-                <p className="text-xs font-medium">Communication Tone</p>
+              <div className="p-2 sm:p-3 rounded-lg bg-muted/50 transition-all hover:bg-muted/70">
+                <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6 mx-auto mb-1 text-purple-500" />
+                <p className="text-xs font-medium">Tone</p>
               </div>
-              <div className="p-4 rounded-lg bg-muted/50 transition-all hover:bg-muted/70">
-                <Hash className="w-8 h-8 mx-auto mb-2 text-orange-500" />
-                <p className="text-xs font-medium">Key Topics</p>
+              <div className="p-2 sm:p-3 rounded-lg bg-muted/50 transition-all hover:bg-muted/70">
+                <Hash className="w-5 h-5 sm:w-6 sm:h-6 mx-auto mb-1 text-orange-500" />
+                <p className="text-xs font-medium">Topics</p>
               </div>
             </div>
 
             {canContinue && (
-              <div className="pt-4 border-t animate-fade-in">
+              <div className="pt-3 border-t animate-fade-in flex-shrink-0">
                 <Button onClick={onNext} className="w-full">
-                  Continue to Bot Configuration
-                  <span className="ml-2 text-xs opacity-70">(Analysis continues in background)</span>
+                  <span className="hidden sm:inline">Continue to Bot Configuration</span>
+                  <span className="sm:hidden">Continue Setup</span>
+                  <span className="ml-2 text-xs opacity-70 hidden sm:inline">(Analysis continues)</span>
                 </Button>
               </div>
             )}
