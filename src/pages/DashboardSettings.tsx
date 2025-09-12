@@ -23,7 +23,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useTwitter } from "@/hooks/useTwitter";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 import { DeleteAccountModal } from "@/components/modals/DeleteAccountModal";
 import { exportUserData } from "@/services/accountService";
 

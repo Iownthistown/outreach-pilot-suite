@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from './useAuth';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Subscription {
   id: string;
@@ -36,7 +36,7 @@ export const useSubscription = () => {
           console.error('Error fetching subscription:', error);
         }
 
-        setSubscription(data || null);
+        setSubscription((data as any) || null);
       } catch (error) {
         console.error('Subscription fetch error:', error);
         setSubscription(null);
