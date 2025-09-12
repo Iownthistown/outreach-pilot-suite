@@ -12,11 +12,11 @@ const WelcomeStep = ({ onNext, loading = false }: WelcomeStepProps) => {
       {/* Header - Bigger and Better */}
       <div className="flex-shrink-0 h-28 sm:h-32 flex flex-col justify-center">
         <div className="flex justify-center mb-3">
-          <div className="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center bg-primary/10 rounded-full">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center bg-slate-800 rounded-full border border-border/20">
             <img 
               src="/lovable-uploads/1b627097-cca7-4da0-9dfb-92968194dc92.png" 
               alt="COSTRAS Logo" 
-              className="w-12 h-12 sm:w-16 sm:h-16 object-contain"
+              className="w-10 h-10 sm:w-12 sm:h-12 object-contain filter brightness-110"
             />
           </div>
         </div>
