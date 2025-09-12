@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 
 interface WelcomeStepProps {
   onNext: () => void;
@@ -30,16 +30,22 @@ const WelcomeStep = ({ onNext, loading = false }: WelcomeStepProps) => {
         
         <div className="space-y-3 text-left max-w-md mx-auto">
           <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
-            <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold text-sm">1</div>
-            <span className="text-sm text-muted-foreground">Create your account</span>
+            <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
+              <Check className="w-3 h-3 text-white" />
+            </div>
+            <span className="text-sm text-foreground">Create your account</span>
           </div>
           <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
             <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold text-sm">2</div>
-            <span className="text-sm text-muted-foreground">Install Chrome extension</span>
+            <span className="text-sm text-muted-foreground">Choose your plan</span>
           </div>
           <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
             <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold text-sm">3</div>
-            <span className="text-sm text-muted-foreground">Connect your Twitter/X account</span>
+            <span className="text-sm text-muted-foreground">Connect your account</span>
+          </div>
+          <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+            <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold text-sm">4</div>
+            <span className="text-sm text-muted-foreground">Analyze account</span>
           </div>
         </div>
       </div>
