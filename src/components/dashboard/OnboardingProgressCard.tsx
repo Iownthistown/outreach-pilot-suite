@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { Check, ArrowRight, CreditCard, Chrome, Twitter, BarChart3, Settings } from "lucide-react";
+import { Check, ArrowRight, CreditCard, Chrome, Twitter, BarChart3, Sparkles, CheckCircle2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { onboardingProgressService, OnboardingProgress } from "@/services/onboardingProgressService";
 import { useToast } from "@/hooks/use-toast";
@@ -22,7 +22,7 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
   {
     id: 'welcome_completed',
     title: 'Get Started',
-    icon: Check,
+    icon: Sparkles,
   },
   {
     id: 'plan_selected',
@@ -194,16 +194,16 @@ export default function OnboardingProgressCard() {
 
   if (loading) {
     return (
-      <Card className="w-full">
-        <CardHeader>
-          <div className="h-6 bg-muted rounded animate-pulse" />
+      <Card className="w-full max-w-2xl bg-gradient-card border-border/50 shadow-card">
+        <CardHeader className="pb-3">
+          <div className="h-5 bg-muted rounded animate-pulse" />
         </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="h-4 bg-muted rounded animate-pulse" />
-            <div className="space-y-3">
+        <CardContent className="pt-0">
+          <div className="space-y-3">
+            <div className="h-3 bg-muted rounded animate-pulse" />
+            <div className="space-y-2">
               {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="h-12 bg-muted rounded animate-pulse" />
+                <div key={i} className="h-8 bg-muted rounded animate-pulse" />
               ))}
             </div>
           </div>
@@ -214,10 +214,10 @@ export default function OnboardingProgressCard() {
 
   if (error) {
     return (
-      <Card className="w-full">
-        <CardContent className="pt-6">
+      <Card className="w-full max-w-2xl bg-gradient-card border-border/50 shadow-card">
+        <CardContent className="pt-4 pb-4">
           <div className="text-center text-muted-foreground">
-            <p>Progress tracking temporarily unavailable</p>
+            <p className="text-sm">Progress tracking temporarily unavailable</p>
             <p className="text-xs mt-1">Using local detection</p>
           </div>
         </CardContent>
@@ -228,23 +228,31 @@ export default function OnboardingProgressCard() {
   const nextStep = getNextActionableStep();
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <span>Complete Your Setup</span>
-          <span className="text-sm font-normal text-muted-foreground">
-            {completedSteps} of {ONBOARDING_STEPS.length} steps completed
+    <Card className="w-full max-w-2xl bg-gradient-card border-border/50 shadow-card animate-fade-in">
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-lg font-semibold flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-gradient-primary animate-pulse" />
+            Complete Your Setup
+          </CardTitle>
+          <span className="text-xs font-medium text-muted-foreground bg-muted/50 px-2 py-1 rounded-full">
+            {completedSteps}/{ONBOARDING_STEPS.length} steps
           </span>
-        </CardTitle>
-        <div className="space-y-2">
-          <Progress value={progress?.completion_percentage || 0} className="w-full" />
-          <p className="text-sm text-muted-foreground">
+        </div>
+        <div className="space-y-2 mt-3">
+          <div className="relative h-2 bg-muted/50 rounded-full overflow-hidden">
+            <div 
+              className="absolute top-0 left-0 h-full bg-gradient-primary rounded-full transition-all duration-700 ease-out"
+              style={{ width: `${progress?.completion_percentage || 0}%` }}
+            />
+          </div>
+          <p className="text-xs text-muted-foreground">
             {progress?.completion_percentage || 0}% complete
           </p>
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid gap-3">
+      <CardContent className="pt-0 space-y-3">
+        <div className="grid gap-2">
           {ONBOARDING_STEPS.map((step, index) => {
             const status = getStepStatus(step.id);
             const Icon = step.icon;
@@ -252,38 +260,38 @@ export default function OnboardingProgressCard() {
             return (
               <div
                 key={step.id}
-                className={`flex items-center gap-4 p-3 rounded-lg border transition-colors ${
+                className={`group flex items-center gap-3 p-2.5 rounded-lg border transition-all duration-300 hover:scale-[1.01] ${
                   status === 'completed'
-                    ? 'bg-green-50 border-green-200'
+                    ? 'bg-success/10 border-success/20 hover:bg-success/15'
                     : status === 'current'
-                    ? 'bg-primary/5 border-primary/20'
-                    : 'bg-muted/30 border-border/50'
+                    ? 'bg-primary/10 border-primary/30 hover:bg-primary/15 shadow-button/20'
+                    : 'bg-muted/20 border-border/30 hover:bg-muted/30'
                 }`}
               >
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+                  className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300 ${
                     status === 'completed'
-                      ? 'bg-green-500 text-white'
+                      ? 'bg-success text-success-foreground scale-110'
                       : status === 'current'
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted text-muted-foreground'
+                      ? 'bg-primary text-primary-foreground animate-glow'
+                      : 'bg-muted text-muted-foreground group-hover:bg-muted-foreground/20'
                   }`}
                 >
                   {status === 'completed' ? (
-                    <Check className="w-4 h-4" />
+                    <CheckCircle2 className="w-3.5 h-3.5" />
                   ) : (
-                    <Icon className="w-4 h-4" />
+                    <Icon className="w-3.5 h-3.5" />
                   )}
                 </div>
                 
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <p
-                    className={`font-medium ${
+                    className={`text-sm font-medium transition-colors ${
                       status === 'completed'
-                        ? 'text-green-700'
+                        ? 'text-success-foreground'
                         : status === 'current'
                         ? 'text-primary'
-                        : 'text-muted-foreground'
+                        : 'text-muted-foreground group-hover:text-foreground'
                     }`}
                   >
                     {step.title}
@@ -294,7 +302,7 @@ export default function OnboardingProgressCard() {
                   <Button
                     size="sm"
                     onClick={() => handleStepAction(step)}
-                    className="ml-auto"
+                    className="ml-auto h-7 px-3 text-xs shadow-button hover:shadow-glow transition-all duration-300"
                   >
                     Continue
                     <ArrowRight className="w-3 h-3 ml-1" />
@@ -306,10 +314,10 @@ export default function OnboardingProgressCard() {
         </div>
         
         {nextStep && nextStep.route && (
-          <div className="pt-4 border-t">
+          <div className="pt-2 mt-3 border-t border-border/50">
             <Button 
               onClick={() => handleStepAction(nextStep)}
-              className="w-full"
+              className="w-full h-9 bg-gradient-primary hover:shadow-glow transition-all duration-300 text-sm font-medium"
             >
               Continue Setup: {nextStep.title}
               <ArrowRight className="w-4 h-4 ml-2" />
