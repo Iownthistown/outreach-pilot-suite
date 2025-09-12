@@ -97,21 +97,21 @@ const ChromeExtensionStep = ({
       {/* Background Effects */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 pointer-events-none" />
       
-      {/* Header - Premium Design */}
-      <div className="flex-shrink-0 h-24 sm:h-28 flex flex-col justify-center relative z-10">
+      {/* Header - Compact Design */}
+      <div className="flex-shrink-0 h-20 sm:h-24 flex flex-col justify-center relative z-10 pt-2">
         {/* Phase 1: Extension Download */}
         {!showTwitterPhase && (
-          <div className="space-y-3 animate-fade-in">
+          <div className="space-y-2 animate-fade-in">
             <div className="flex justify-center">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center shadow-xl">
-                <Chrome className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center shadow-xl">
+                <Chrome className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
             </div>
             <div>
-              <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-foreground to-orange-600 bg-clip-text text-transparent">
+              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-foreground to-orange-600 bg-clip-text text-transparent">
                 Install Chrome Extension
               </h1>
-              <p className="text-base sm:text-lg text-muted-foreground mt-2">
+              <p className="text-sm sm:text-base text-muted-foreground mt-1">
                 Add COSTRAS to your browser in seconds
               </p>
             </div>
@@ -120,17 +120,17 @@ const ChromeExtensionStep = ({
 
         {/* Phase 2: Twitter Connection */}
         {showTwitterPhase && !isTwitterConnected && (
-          <div className="space-y-3 animate-fade-in">
+          <div className="space-y-2 animate-fade-in">
             <div className="flex justify-center">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-xl">
-                <Twitter className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-xl">
+                <Twitter className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
             </div>
             <div>
-              <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-foreground to-blue-600 bg-clip-text text-transparent">
+              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-foreground to-blue-600 bg-clip-text text-transparent">
                 Connect Your Twitter
               </h1>
-              <p className="text-base sm:text-lg text-muted-foreground mt-2">
+              <p className="text-sm sm:text-base text-muted-foreground mt-1">
                 Link your Twitter account for automation
               </p>
             </div>
@@ -139,14 +139,14 @@ const ChromeExtensionStep = ({
 
         {/* Phase 3: Success State */}
         {isTwitterConnected && twitterUser && (
-          <div className="space-y-3 animate-fade-in">
+          <div className="space-y-2 animate-fade-in">
             <div className="flex justify-center">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center shadow-xl">
-                <CheckCircle className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center shadow-xl">
+                <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
             </div>
             <div>
-              <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-foreground to-green-600 bg-clip-text text-transparent">
+              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-foreground to-green-600 bg-clip-text text-transparent">
                 Successfully Connected!
               </h1>
               <div className="flex items-center justify-center space-x-3 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 rounded-xl p-3 border border-green-200/50 dark:border-green-800/30 max-w-sm mx-auto mt-3">
