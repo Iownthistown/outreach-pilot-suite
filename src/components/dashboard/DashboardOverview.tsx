@@ -11,6 +11,7 @@ import SimpleStats from "./SimpleStats";
 import RecentActivity from "./RecentActivity";
 import ExtensionStatusCard from "./ExtensionStatusCard";
 import AccountAnalysisCard from "./AccountAnalysisCard";
+import OnboardingProgressCard from "./OnboardingProgressCard";
 import { ScrollAnimationWrapper } from "@/hooks/useScrollAnimation";
 import { useDashboard } from "@/hooks/useDashboard";
 import { useExtensionStatus } from "@/hooks/useExtensionStatus";
@@ -134,6 +135,9 @@ const DashboardOverview = () => {
 
   return (
     <div className="space-y-8">
+      {/* Onboarding Progress Card */}
+      <OnboardingProgressCard />
+      
       {/* Welcome Section */}
       <ScrollAnimationWrapper>
         <div className="text-center lg:text-left">

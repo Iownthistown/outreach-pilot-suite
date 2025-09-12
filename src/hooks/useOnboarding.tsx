@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { onboardingProgressService, OnboardingProgress } from '@/services/onboardingProgressService';
 
 interface OnboardingState {
   welcomeCompleted: boolean;
@@ -51,10 +52,55 @@ export const useOnboarding = () => {
     botConfig: null
   });
 
+  const [apiProgress, setApiProgress] = useState<OnboardingProgress | null>(null);
   const [extensionCheckInterval, setExtensionCheckInterval] = useState<NodeJS.Timeout | null>(null);
 
-  // Initialize onboarding state from localStorage
+  // Helper function to convert API step names to step numbers
+  const getCurrentStepNumber = (stepName: string): number => {
+    const stepMap: { [key: string]: number } = {
+      'welcome_completed': 0,
+      'plan_selected': 1,
+      'extension_installed': 2,
+      'twitter_connected': 2,
+      'account_analyzed': 3,
+      'setup_completed': 4,
+    };
+    return stepMap[stepName] || 0;
+  };
+
+  // Load progress from API and sync with local state
   useEffect(() => {
+    if (!user?.id) return;
+
+    const loadProgress = async () => {
+      try {
+        setState(prev => ({ ...prev, loading: true }));
+        const progress = await onboardingProgressService.getOnboardingProgress(user.id);
+        setApiProgress(progress);
+        
+        // Sync API progress with local state
+        setState(prev => ({
+          ...prev,
+          welcomeCompleted: progress.welcome_completed,
+          accountSetup: progress.plan_selected,
+          twitterConnected: progress.twitter_connected,
+          extensionInstalled: progress.extension_installed,
+          accountAnalyzed: progress.account_analyzed,
+          botConfigured: progress.setup_completed,
+          onboardingComplete: progress.is_completed,
+          currentStep: getCurrentStepNumber(progress.current_step),
+          loading: false,
+          error: null,
+        }));
+      } catch (error) {
+        console.error('Error loading onboarding progress:', error);
+        setState(prev => ({ ...prev, loading: false, error: 'Failed to load progress' }));
+      }
+    };
+
+    loadProgress();
+    
+    // Initialize onboarding state from localStorage as fallback
     const savedStep = localStorage.getItem('onboarding_step');
     const welcomeCompleted = localStorage.getItem('onboarding_welcome_completed') === 'true';
     const accountSetup = localStorage.getItem('onboarding_account_setup') === 'true';
@@ -81,7 +127,7 @@ export const useOnboarding = () => {
       analysisData: analysisData ? JSON.parse(analysisData) : null,
       botConfig: botConfig ? JSON.parse(botConfig) : null
     }));
-  }, []);
+  }, [user?.id]);
 
   // Store user ID in localStorage and window when user changes
   useEffect(() => {
@@ -228,6 +274,24 @@ export const useOnboarding = () => {
     if (!user?.id) return;
 
     try {
+      // Map step number to API step name
+      const stepMap: { [key: number]: string } = {
+        0: 'welcome_completed',
+        1: 'plan_selected',
+        2: 'extension_installed',
+        3: 'account_analyzed',
+        4: 'setup_completed',
+      };
+      
+      const stepName = stepMap[step];
+      if (stepName) {
+        await onboardingProgressService.completeOnboardingStep(user.id, stepName);
+        
+        // Refresh progress
+        const progress = await onboardingProgressService.getOnboardingProgress(user.id);
+        setApiProgress(progress);
+      }
+
       await fetch('https://api.costras.com/onboarding/track', {
         method: 'POST',
         headers: {
