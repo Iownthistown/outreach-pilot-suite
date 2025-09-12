@@ -23,27 +23,31 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
     id: 'welcome_completed',
     title: 'Get Started',
     icon: Sparkles,
+    route: '/onboarding?step=0',
   },
   {
     id: 'plan_selected',
     title: 'Choose Your Plan',
     icon: CreditCard,
-    route: '/dashboard/plan',
+    route: '/onboarding?step=1',
   },
   {
     id: 'extension_installed',
     title: 'Install Extension',
     icon: Chrome,
+    route: '/onboarding?step=2',
   },
   {
     id: 'twitter_connected',
     title: 'Connect Twitter',
     icon: Twitter,
+    route: '/onboarding?step=2',
   },
   {
     id: 'account_analyzed',
     title: 'Analyze Account',
     icon: BarChart3,
+    route: '/onboarding?step=3',
   },
 ];
 
@@ -298,13 +302,13 @@ export default function OnboardingProgressCard() {
                   </p>
                 </div>
                 
-                {status === 'current' && step.route && (
+                {(status === 'current' || status === 'pending') && step.route && (
                   <Button
                     size="sm"
                     onClick={() => handleStepAction(step)}
                     className="ml-auto h-7 px-3 text-xs shadow-button hover:shadow-glow transition-all duration-300"
                   >
-                    Continue
+                    {status === 'current' ? 'Continue' : 'Start'}
                     <ArrowRight className="w-3 h-3 ml-1" />
                   </Button>
                 )}
