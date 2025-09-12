@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 import type { Tables } from '@/integrations/supabase/types';
 
 type User = Tables<'users'>;
@@ -16,6 +17,7 @@ export interface ExtensionStatus {
 }
 
 export const useExtensionStatus = () => {
+  const { user, loading: authLoading } = useAuth();
   const [extensionStatus, setExtensionStatus] = useState<ExtensionStatus>({
     isConnected: false,
     lastConnected: null,
@@ -29,9 +31,9 @@ export const useExtensionStatus = () => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchExtensionStatus = useCallback(async () => {
+    if (!user) return;
+    
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
 
       // Fetch user extension status
       const { data: userData, error: userError } = await supabase
@@ -69,16 +71,16 @@ export const useExtensionStatus = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [user]);
 
   const updateExtensionStatus = useCallback(async (
     extensionVersion?: string,
     sessionToken?: string,
     browserInfo?: string
   ) => {
+    if (!user) throw new Error('User not authenticated');
+    
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
 
       const { data, error } = await supabase.rpc('update_extension_status', {
         p_user_id: user.id,
@@ -97,12 +99,12 @@ export const useExtensionStatus = () => {
       console.error('Failed to update extension status:', err);
       throw err;
     }
-  }, [fetchExtensionStatus]);
+  }, [fetchExtensionStatus, user]);
 
   const disconnectExtension = useCallback(async () => {
+    if (!user) throw new Error('User not authenticated');
+    
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
 
       const { data, error } = await supabase.rpc('disconnect_extension', {
         p_user_id: user.id,
@@ -118,14 +120,13 @@ export const useExtensionStatus = () => {
       console.error('Failed to disconnect extension:', err);
       throw err;
     }
-  }, [fetchExtensionStatus]);
+  }, [fetchExtensionStatus, user]);
 
   // Set up real-time subscription for user updates
   useEffect(() => {
+    if (authLoading || !user) return;
+    
     const setupSubscription = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
       fetchExtensionStatus();
 
       // Subscribe to user table changes
@@ -169,7 +170,7 @@ export const useExtensionStatus = () => {
     };
 
     setupSubscription();
-  }, [fetchExtensionStatus]);
+  }, [fetchExtensionStatus, user, authLoading]);
 
   // Listen for Chrome extension events
   useEffect(() => {
