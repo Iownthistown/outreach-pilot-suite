@@ -102,13 +102,13 @@ const ChromeExtensionStep = ({
         {/* Phase 1: Extension Download */}
         {!showTwitterPhase && (
           <div className="space-y-2 animate-fade-in">
-            <div className="flex justify-center">
+            <div className="flex justify-center pt-1">
               <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center shadow-xl">
                 <Chrome className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
             </div>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-foreground to-orange-600 bg-clip-text text-transparent">
+              <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-foreground to-orange-600 bg-clip-text text-transparent">
                 Install Chrome Extension
               </h1>
               <p className="text-sm sm:text-base text-muted-foreground mt-1">
