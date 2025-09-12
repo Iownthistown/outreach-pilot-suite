@@ -40,17 +40,20 @@ const PlanSelectionStep = ({
     icon: Crown,
     popular: false
   }];
-  return <div className="w-full max-w-5xl mx-auto space-y-4 sm:space-y-6 h-full flex flex-col">
-      <div className="text-center space-y-2 sm:space-y-3 flex-shrink-0">
-        <h1 className="text-xl sm:text-2xl font-bold">
+  return <div className="h-full flex flex-col overflow-hidden">
+      {/* Header - Fixed Height */}
+      <div className="flex-shrink-0 h-16 text-center flex flex-col justify-center">
+        <h1 className="text-lg sm:text-xl font-bold">
           {hasPlan ? `Your ${planName} Plan` : "Choose Your Plan"}
         </h1>
-        <p className="text-muted-foreground text-sm sm:text-base">
-          {hasPlan ? "Great! Continue with your setup." : "Select the plan that fits your needs."}
+        <p className="text-muted-foreground text-xs sm:text-sm">
+          {hasPlan ? "Continue with setup" : "Select the plan that fits your needs"}
         </p>
       </div>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 flex-1 overflow-auto">
+      {/* Plans Grid - Takes remaining space */}
+      <div className="flex-1 min-h-0 overflow-hidden">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 h-full">
         {plans.map(plan => {
         const Icon = plan.icon;
         const isPlanPurchased = hasPlan && planName?.toLowerCase() === plan.name.toLowerCase();
@@ -120,23 +123,21 @@ const PlanSelectionStep = ({
               </CardContent>
             </Card>;
       })}
+        </div>
       </div>
 
-      <div className="flex-shrink-0 space-y-3">
+      {/* Footer - Fixed Height */}
+      <div className="flex-shrink-0 h-16 flex items-center justify-center">
         {!hasPlan && (
-          <div className="text-center">
-            <Button variant="ghost" onClick={onNext} disabled={loading} size="sm" className="text-muted-foreground">
-              Skip for now
-            </Button>
-          </div>
+          <Button variant="ghost" onClick={onNext} disabled={loading} size="sm" className="text-muted-foreground text-xs">
+            Skip for now
+          </Button>
         )}
         
         {hasPlan && (
-          <div className="text-center">
-            <Button onClick={onNext} disabled={loading} className="w-full max-w-sm">
-              Continue Setup
-            </Button>
-          </div>
+          <Button onClick={onNext} disabled={loading} className="w-full max-w-sm" size="sm">
+            Continue Setup
+          </Button>
         )}
       </div>
     </div>;

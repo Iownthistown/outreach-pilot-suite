@@ -96,64 +96,61 @@ const FinalSuccessStep = ({ onComplete, analysisData, botConfig }: FinalSuccessS
   const quickStartGuide = getQuickStartGuide();
 
   return (
-    <div className="max-w-3xl mx-auto space-y-4 sm:space-y-6 h-full flex flex-col">
-      {/* Success Header */}
-      <div className="text-center space-y-3 flex-shrink-0">
-        <div className="flex justify-center mb-3">
+    <div className="h-full flex flex-col overflow-hidden">
+      {/* Success Header - Fixed Height */}
+      <div className="flex-shrink-0 h-24 text-center flex flex-col justify-center">
+        <div className="flex justify-center mb-2">
           <div className="relative">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center">
-              <CheckCircle className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
+            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center">
+              <CheckCircle className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
             </div>
-            <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500 absolute -top-1 -right-1 animate-bounce" />
+            <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-500 absolute -top-1 -right-1 animate-bounce" />
           </div>
         </div>
         
-        <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+        <h1 className="text-lg sm:text-xl font-bold text-foreground">
           🎉 Welcome to COSTRAS!
         </h1>
-        <p className="text-sm sm:text-base text-muted-foreground max-w-lg mx-auto">
-          Your AI-powered Twitter automation is ready. Everything is configured based on your {analysisData?.niche || 'general'} profile.
+        <p className="text-xs sm:text-sm text-muted-foreground max-w-md mx-auto">
+          Your AI-powered automation is ready based on your {analysisData?.niche || 'general'} profile.
         </p>
       </div>
 
-      {/* Main Content - Scrollable */}
-      <div className="flex-1 overflow-auto space-y-4">
-        {/* Analysis Summary */}
+      {/* Main Content - Fixed Height, No Scroll */}
+      <div className="flex-1 min-h-0 overflow-hidden flex flex-col justify-center">
+        {/* Analysis Summary - Compact */}
         {analysisData && (
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-lg">
+          <Card className="mb-3">
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 text-base">
                 <TrendingUp className="w-4 h-4 text-blue-500" />
                 Analysis Summary
               </CardTitle>
-              <CardDescription className="text-xs sm:text-sm">
-                What our AI discovered about your profile
-              </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="text-center p-3 rounded-lg border">
-                  <div className="text-xl sm:text-2xl mb-1">
+            <CardContent className="space-y-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <div className="text-center p-2 rounded border">
+                  <div className="text-lg mb-1">
                     {getNicheIcon(analysisData.niche)}
                   </div>
-                  <h4 className="font-medium text-sm">Account Type</h4>
-                  <Badge variant="secondary" className="mt-1 text-xs">
+                  <h4 className="font-medium text-xs">Type</h4>
+                  <Badge variant="secondary" className="text-xs">
                     {analysisData.niche?.charAt(0).toUpperCase() + analysisData.niche?.slice(1)}
                   </Badge>
                 </div>
                 
-                <div className="text-center p-3 rounded-lg border">
-                  <Users className="w-5 h-5 sm:w-6 sm:h-6 mx-auto mb-1 text-green-500" />
-                  <h4 className="font-medium text-sm">Engagement</h4>
-                  <p className="text-xs text-muted-foreground mt-1">
+                <div className="text-center p-2 rounded border">
+                  <Users className="w-4 h-4 mx-auto mb-1 text-green-500" />
+                  <h4 className="font-medium text-xs">Engagement</h4>
+                  <p className="text-xs text-muted-foreground">
                     {analysisData.engagement_style}
                   </p>
                 </div>
                 
-                <div className="text-center p-3 rounded-lg border">
-                  <MessageSquare className="w-5 h-5 sm:w-6 sm:h-6 mx-auto mb-1 text-purple-500" />
-                  <h4 className="font-medium text-sm">Tone</h4>
-                  <p className="text-xs text-muted-foreground mt-1">
+                <div className="text-center p-2 rounded border">
+                  <MessageSquare className="w-4 h-4 mx-auto mb-1 text-purple-500" />
+                  <h4 className="font-medium text-xs">Tone</h4>
+                  <p className="text-xs text-muted-foreground">
                     {analysisData.tone}
                   </p>
                 </div>
@@ -161,16 +158,16 @@ const FinalSuccessStep = ({ onComplete, analysisData, botConfig }: FinalSuccessS
 
               {analysisData.key_topics && analysisData.key_topics.length > 0 && (
                 <div>
-                  <h4 className="font-medium mb-2 text-sm">Key Topics</h4>
+                  <h4 className="font-medium mb-1 text-xs">Key Topics</h4>
                   <div className="flex flex-wrap gap-1">
-                    {analysisData.key_topics.slice(0, 6).map((topic: string, index: number) => (
+                    {analysisData.key_topics.slice(0, 4).map((topic: string, index: number) => (
                       <Badge key={index} variant="outline" className="text-xs">
                         {topic}
                       </Badge>
                     ))}
-                    {analysisData.key_topics.length > 6 && (
+                    {analysisData.key_topics.length > 4 && (
                       <Badge variant="outline" className="text-xs">
-                        +{analysisData.key_topics.length - 6} more
+                        +{analysisData.key_topics.length - 4} more
                       </Badge>
                     )}
                   </div>
@@ -335,22 +332,19 @@ const FinalSuccessStep = ({ onComplete, analysisData, botConfig }: FinalSuccessS
         </CardContent>
       </Card>
 
-        {/* What's Next - Compact */}
+        {/* What's Next - Ultra Compact */}
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg">What's Next?</CardTitle>
-            <CardDescription className="text-xs sm:text-sm">
-              Your bot is ready to start working
-            </CardDescription>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">What's Next?</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <Button variant="outline" size="sm" className="w-full">
-                <Settings className="w-4 h-4 mr-2" />
+            <div className="grid grid-cols-2 gap-2">
+              <Button variant="outline" size="sm" className="h-8">
+                <Settings className="w-3 h-3 mr-1" />
                 Dashboard
               </Button>
-              <Button variant="outline" size="sm" className="w-full">
-                <ExternalLink className="w-4 h-4 mr-2" />
+              <Button variant="outline" size="sm" className="h-8">
+                <ExternalLink className="w-3 h-3 mr-1" />
                 Extension
               </Button>
             </div>
@@ -359,14 +353,11 @@ const FinalSuccessStep = ({ onComplete, analysisData, botConfig }: FinalSuccessS
       </div>
 
       {/* Final CTA - Fixed at bottom */}
-      <div className="text-center space-y-3 flex-shrink-0">
-        <h3 className="text-lg sm:text-xl font-semibold">Ready to grow your Twitter presence?</h3>
-        <p className="text-xs sm:text-sm text-muted-foreground">
-          Your AI-powered automation is ready to engage with your audience.
-        </p>
-        <Button onClick={onComplete} size="lg" className="w-full max-w-sm">
+      <div className="flex-shrink-0 h-20 text-center flex flex-col justify-center">
+        <h3 className="text-sm sm:text-base font-semibold mb-1">Ready to grow your Twitter presence?</h3>
+        <Button onClick={onComplete} size="sm" className="w-full max-w-xs mx-auto">
           Enter Dashboard
-          <ArrowRight className="w-4 h-4 ml-2" />
+          <ArrowRight className="w-3 h-3 ml-1" />
         </Button>
       </div>
     </div>
