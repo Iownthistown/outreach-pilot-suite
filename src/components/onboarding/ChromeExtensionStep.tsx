@@ -103,15 +103,15 @@ const ChromeExtensionStep = ({
         {!showTwitterPhase && (
           <div className="space-y-3 animate-fade-in">
             <div className="flex justify-center">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center shadow-xl">
-                <Chrome className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
+              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center shadow-xl">
+                <Chrome className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
               </div>
             </div>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-foreground to-orange-600 bg-clip-text text-transparent">
+              <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-foreground to-orange-600 bg-clip-text text-transparent">
                 Install Chrome Extension
               </h1>
-              <p className="text-sm sm:text-base text-muted-foreground mt-1">
+              <p className="text-base sm:text-lg text-muted-foreground mt-2">
                 Add COSTRAS to your browser in seconds
               </p>
             </div>
@@ -122,15 +122,15 @@ const ChromeExtensionStep = ({
         {showTwitterPhase && !isTwitterConnected && (
           <div className="space-y-3 animate-fade-in">
             <div className="flex justify-center">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-xl">
-                <Twitter className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
+              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-xl">
+                <Twitter className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
               </div>
             </div>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-foreground to-blue-600 bg-clip-text text-transparent">
+              <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-foreground to-blue-600 bg-clip-text text-transparent">
                 Connect Your Twitter
               </h1>
-              <p className="text-sm sm:text-base text-muted-foreground mt-1">
+              <p className="text-base sm:text-lg text-muted-foreground mt-2">
                 Link your Twitter account for automation
               </p>
             </div>
@@ -141,12 +141,12 @@ const ChromeExtensionStep = ({
         {isTwitterConnected && twitterUser && (
           <div className="space-y-3 animate-fade-in">
             <div className="flex justify-center">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center shadow-xl">
-                <CheckCircle className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
+              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center shadow-xl">
+                <CheckCircle className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
               </div>
             </div>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-foreground to-green-600 bg-clip-text text-transparent">
+              <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-foreground to-green-600 bg-clip-text text-transparent">
                 Successfully Connected!
               </h1>
               <div className="flex items-center justify-center space-x-3 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 rounded-xl p-3 border border-green-200/50 dark:border-green-800/30 max-w-sm mx-auto mt-3">
