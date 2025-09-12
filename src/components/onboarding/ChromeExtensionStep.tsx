@@ -98,11 +98,11 @@ const ChromeExtensionStep = ({
       <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 pointer-events-none" />
       
       {/* Header - Compact Design */}
-      <div className="flex-shrink-0 h-20 sm:h-24 flex flex-col justify-center relative z-10 pt-2">
+      <div className="flex-shrink-0 h-20 sm:h-24 flex flex-col justify-center relative z-10 pt-4">
         {/* Phase 1: Extension Download */}
         {!showTwitterPhase && (
           <div className="space-y-2 animate-fade-in">
-            <div className="flex justify-center pt-2">
+            <div className="flex justify-center pt-3">
               <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center shadow-xl">
                 <Chrome className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
