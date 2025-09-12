@@ -7,6 +7,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { onboardingProgressService, OnboardingProgress } from "@/services/onboardingProgressService";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useSubscription } from "@/hooks/useSubscription";
 
 interface OnboardingStep {
   id: string;
@@ -49,9 +51,65 @@ export default function OnboardingProgressCard() {
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { subscription } = useSubscription();
   const [progress, setProgress] = useState<OnboardingProgress | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Fallback function to detect progress from Supabase data
+  const detectProgressFromSupabase = async (): Promise<OnboardingProgress> => {
+    try {
+      // Get user data
+      const { data: userData } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      // Check for account analysis
+      const { data: analysisData } = await (supabase as any)
+        .from('account_analyses')
+        .select('*')
+        .eq('user_id', user.id)
+        .limit(1);
+
+      // Determine progress based on available data
+      const welcome_completed = true; // Always true if user reached dashboard
+      const plan_selected = !!userData?.stripe_customer_id || !!subscription;
+      const extension_installed = !!userData?.extension_connected;
+      const twitter_connected = !!userData?.twitter_handle;
+      const account_analyzed = analysisData && analysisData.length > 0;
+      const setup_completed = plan_selected && extension_installed && twitter_connected && account_analyzed;
+
+      // Calculate completion percentage
+      const steps = [welcome_completed, plan_selected, extension_installed, twitter_connected, account_analyzed];
+      const completedSteps = steps.filter(Boolean).length;
+      const completion_percentage = Math.round((completedSteps / 5) * 100);
+
+      // Determine current step
+      let current_step = 'setup_completed';
+      if (!welcome_completed) current_step = 'welcome_completed';
+      else if (!plan_selected) current_step = 'plan_selected';
+      else if (!extension_installed) current_step = 'extension_installed';
+      else if (!twitter_connected) current_step = 'twitter_connected';
+      else if (!account_analyzed) current_step = 'account_analyzed';
+
+      return {
+        welcome_completed,
+        plan_selected,
+        extension_installed,
+        twitter_connected,
+        account_analyzed,
+        setup_completed,
+        completion_percentage,
+        current_step,
+        is_completed: setup_completed,
+      };
+    } catch (error) {
+      console.error('Error detecting progress from Supabase:', error);
+      throw error;
+    }
+  };
 
   useEffect(() => {
     if (!user?.id) return;
@@ -59,11 +117,21 @@ export default function OnboardingProgressCard() {
     const fetchProgress = async () => {
       try {
         setLoading(true);
-        const progressData = await onboardingProgressService.getOnboardingProgress(user.id);
-        setProgress(progressData);
         setError(null);
+        
+        // First try the API
+        try {
+          const progressData = await onboardingProgressService.getOnboardingProgress(user.id);
+          setProgress(progressData);
+        } catch (apiError) {
+          console.log('API unavailable, falling back to Supabase detection:', apiError);
+          
+          // Fallback to Supabase detection
+          const fallbackProgress = await detectProgressFromSupabase();
+          setProgress(fallbackProgress);
+        }
       } catch (error) {
-        console.error('Error fetching onboarding progress:', error);
+        console.error('Error loading onboarding progress:', error);
         setError('Failed to load progress');
       } finally {
         setLoading(false);
@@ -75,7 +143,7 @@ export default function OnboardingProgressCard() {
     // Poll for updates every 30 seconds
     const interval = setInterval(fetchProgress, 30000);
     return () => clearInterval(interval);
-  }, [user?.id]);
+  }, [user?.id, subscription]);
 
   const handleStepAction = (step: OnboardingStep) => {
     if (step.route) {
@@ -149,7 +217,8 @@ export default function OnboardingProgressCard() {
       <Card className="w-full">
         <CardContent className="pt-6">
           <div className="text-center text-muted-foreground">
-            <p>Unable to load progress. Please refresh the page.</p>
+            <p>Progress tracking temporarily unavailable</p>
+            <p className="text-xs mt-1">Using local detection</p>
           </div>
         </CardContent>
       </Card>
