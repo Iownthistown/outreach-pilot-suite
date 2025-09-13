@@ -72,19 +72,19 @@ const WelcomeStep = ({ onNext, loading = false }: WelcomeStepProps) => {
         </div>
       </div>
 
-      {/* CTA Button - Compact */}
-      <div className="flex-shrink-0 h-20 flex items-center justify-center relative z-10">
+      {/* CTA Button - More spaced and smaller */}
+      <div className="flex-shrink-0 h-24 flex items-end justify-center relative z-10 pb-4">
         <Button 
           onClick={onNext}
           disabled={loading}
-          size="lg"
-          className="w-full max-w-sm mx-auto h-12 text-base font-semibold bg-gradient-to-r from-primary via-primary to-purple-600 hover:from-primary/90 hover:via-primary/90 hover:to-purple-600/90 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 border-0 rounded-xl group"
+          size="default"
+          className="w-full max-w-xs mx-auto h-10 text-sm font-semibold bg-gradient-to-r from-primary via-primary to-purple-600 hover:from-primary/90 hover:via-primary/90 hover:to-purple-600/90 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 border-0 rounded-xl group"
         >
           {loading ? (
-            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
           ) : (
             <>
-              <ArrowRight className="w-5 h-5 mr-2 transition-transform group-hover:translate-x-1" />
+              <ArrowRight className="w-4 h-4 mr-2 transition-transform group-hover:translate-x-1" />
               <span>Get Started</span>
             </>
           )}
