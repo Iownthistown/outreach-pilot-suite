@@ -15,18 +15,11 @@ const WelcomeStep = ({ onNext, loading = false }: WelcomeStepProps) => {
       {/* Header - Logo and Title */}
       <div className="flex-shrink-0 relative z-10 mb-8">
         <div className="flex justify-center mb-6">
-          <div className="relative group">
-            <div className="w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-border/20 shadow-xl transition-all duration-300 group-hover:scale-105">
-              <img 
-                src="/lovable-uploads/1b627097-cca7-4da0-9dfb-92968194dc92.png" 
-                alt="COSTRAS Logo" 
-                className="w-12 h-12 sm:w-14 sm:h-14 object-contain filter brightness-110"
-              />
-            </div>
-            <div className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-r from-primary to-purple-600 rounded-full flex items-center justify-center animate-pulse">
-              <Sparkles className="w-2.5 h-2.5 text-white" />
-            </div>
-          </div>
+          <img 
+            src="/lovable-uploads/1b627097-cca7-4da0-9dfb-92968194dc92.png" 
+            alt="COSTRAS Logo" 
+            className="w-16 h-16 sm:w-20 sm:h-20 object-contain filter brightness-110"
+          />
         </div>
         
         <div className="space-y-3">
@@ -34,7 +27,7 @@ const WelcomeStep = ({ onNext, loading = false }: WelcomeStepProps) => {
             Welcome to COSTRAS
           </h1>
           <p className="text-sm text-muted-foreground">
-            Set up your account in a few simple steps
+            Let's get you set up in just a few simple steps
           </p>
         </div>
       </div>
