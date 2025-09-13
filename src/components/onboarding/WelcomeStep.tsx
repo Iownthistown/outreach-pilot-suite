@@ -13,27 +13,27 @@ const WelcomeStep = ({ onNext, loading = false }: WelcomeStepProps) => {
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-purple-500/5 pointer-events-none" />
       
       {/* Header - Compact and Elegant */}
-      <div className="flex-shrink-0 h-24 sm:h-28 flex flex-col justify-center relative z-10">
-        <div className="flex justify-center mb-3">
+      <div className="flex-shrink-0 h-20 sm:h-24 flex flex-col justify-center relative z-10 pt-3">
+        <div className="flex justify-center mb-2">
           <div className="relative group">
-            <div className="w-16 h-16 sm:w-18 sm:h-18 flex items-center justify-center bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-border/20 shadow-xl transition-all duration-300 group-hover:scale-105">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-border/20 shadow-xl transition-all duration-300 group-hover:scale-105">
               <img 
                 src="/lovable-uploads/1b627097-cca7-4da0-9dfb-92968194dc92.png" 
                 alt="COSTRAS Logo" 
-                className="w-10 h-10 sm:w-11 sm:h-11 object-contain filter brightness-110"
+                className="w-8 h-8 sm:w-9 sm:h-9 object-contain filter brightness-110"
               />
             </div>
-            <div className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-r from-primary to-purple-600 rounded-full flex items-center justify-center animate-pulse">
-              <Sparkles className="w-2.5 h-2.5 text-white" />
+            <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-primary to-purple-600 rounded-full flex items-center justify-center animate-pulse">
+              <Sparkles className="w-2 h-2 text-white" />
             </div>
           </div>
         </div>
         
         <div className="space-y-1">
-          <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-foreground via-foreground to-primary bg-clip-text text-transparent">
+          <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-foreground via-foreground to-primary bg-clip-text text-transparent">
             Welcome to COSTRAS
           </h1>
-          <p className="text-sm sm:text-base text-muted-foreground">
+          <p className="text-xs sm:text-sm text-muted-foreground">
             AI-powered Twitter automation platform
           </p>
         </div>
