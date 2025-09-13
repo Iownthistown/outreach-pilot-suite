@@ -8,13 +8,13 @@ interface WelcomeStepProps {
 
 const WelcomeStep = ({ onNext, loading = false }: WelcomeStepProps) => {
   return (
-    <div className="h-full flex flex-col text-center overflow-hidden relative">
+    <div className="h-full flex flex-col text-center relative px-4 py-6">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-purple-500/5 pointer-events-none" />
       
       {/* Header - Compact and Elegant */}
-      <div className="flex-shrink-0 h-20 sm:h-24 flex flex-col justify-center relative z-10 pt-3">
-        <div className="flex justify-center mb-2">
+      <div className="flex-shrink-0 relative z-10 mb-6">
+        <div className="flex justify-center mb-4">
           <div className="relative group">
             <div className="w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-border/20 shadow-xl transition-all duration-300 group-hover:scale-105">
               <img 
@@ -29,13 +29,10 @@ const WelcomeStep = ({ onNext, loading = false }: WelcomeStepProps) => {
           </div>
         </div>
         
-        <div className="space-y-1">
+        <div className="space-y-2">
           <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-foreground via-foreground to-primary bg-clip-text text-transparent">
             Welcome to COSTRAS
           </h1>
-          <p className="text-xs sm:text-sm text-muted-foreground">
-            AI-powered Twitter automation platform
-          </p>
         </div>
       </div>
 
