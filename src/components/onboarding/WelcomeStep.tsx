@@ -39,63 +39,47 @@ const WelcomeStep = ({ onNext, loading = false }: WelcomeStepProps) => {
         </div>
       </div>
 
-      {/* Main Content - Compact Status Steps */}
-      <div className="flex-1 min-h-0 flex flex-col justify-center overflow-hidden relative z-10">
-        <div className="max-w-sm mx-auto px-4">
-          <div className="space-y-3">
-            {/* Account Created - Completed */}
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 border border-green-200/50 dark:border-green-800/30 shadow-sm">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center shadow-lg">
-                <Check className="w-4 h-4 text-white" />
-              </div>
-              <div className="flex-1 text-left">
-                <span className="text-sm font-semibold text-green-900 dark:text-green-100">Account created</span>
-                <p className="text-xs text-green-700 dark:text-green-300">✓ Ready to proceed</p>
-              </div>
-            </div>
-            
-            {/* Choose Plan - Next */}
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-950/20 dark:to-cyan-950/20 border border-blue-200/50 dark:border-blue-800/30 shadow-sm transition-all duration-300 hover:shadow-md">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center text-white font-bold text-sm shadow-lg">
-                2
-              </div>
-              <div className="flex-1 text-left">
-                <span className="text-sm font-medium text-blue-900 dark:text-blue-100">Choose your plan</span>
-                <p className="text-xs text-blue-700 dark:text-blue-300">Select pricing tier</p>
-              </div>
-            </div>
-            
-            {/* Install Extension & Connect - Combined */}
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-950/20 dark:to-indigo-950/20 border border-purple-200/50 dark:border-purple-800/30 shadow-sm transition-all duration-300 hover:shadow-md">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 flex items-center justify-center shadow-lg">
-                <div className="flex">
-                  <Chrome className="w-2 h-2 text-white" />
-                  <Twitter className="w-2 h-2 text-white ml-0.5" />
-                </div>
-              </div>
-              <div className="flex-1 text-left">
-                <span className="text-sm font-medium text-purple-900 dark:text-purple-100">Install & connect</span>
-                <p className="text-xs text-purple-700 dark:text-purple-300">Extension + Twitter setup</p>
-              </div>
-            </div>
-            
-            {/* Account Analysis */}
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/20 dark:to-amber-950/20 border border-orange-200/50 dark:border-orange-800/30 shadow-sm transition-all duration-300 hover:shadow-md">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 flex items-center justify-center text-white font-bold text-sm shadow-lg">
-                <BarChart3 className="w-3.5 h-3.5" />
-              </div>
-              <div className="flex-1 text-left">
-                <span className="text-sm font-medium text-orange-900 dark:text-orange-100">AI account analysis</span>
-                <p className="text-xs text-orange-700 dark:text-orange-300">Optimize automation settings</p>
-              </div>
-            </div>
+      {/* Main Content - Elegant Step List */}
+      <div className="flex-1 min-h-0 flex flex-col justify-center relative z-10">
+        <div className="max-w-md mx-auto px-6">
+          <div className="text-center mb-8">
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              The ultimate Twitter/X automation platform. Let's get<br />
+              you set up in just a few simple steps.
+            </p>
           </div>
           
-          {/* Progress Indicator */}
-          <div className="mt-4 text-center">
-            <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-              <Zap className="w-3 h-3 text-primary" />
-              <span>4 simple steps • Step 1 of 4 complete</span>
+          <div className="space-y-4">
+            {/* Step 1 - Account Created (Completed) */}
+            <div className="flex items-center gap-4 p-4 rounded-lg bg-background/50 border border-border/30 backdrop-blur-sm">
+              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                <Check className="w-4 h-4 text-primary" />
+              </div>
+              <span className="text-sm text-foreground">Create your account</span>
+            </div>
+            
+            {/* Step 2 - Choose Plan */}
+            <div className="flex items-center gap-4 p-4 rounded-lg bg-background/30 border border-border/20 backdrop-blur-sm">
+              <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                <span className="text-sm font-medium text-muted-foreground">2</span>
+              </div>
+              <span className="text-sm text-muted-foreground">Choose your plan</span>
+            </div>
+            
+            {/* Step 3 - Install Extension */}
+            <div className="flex items-center gap-4 p-4 rounded-lg bg-background/30 border border-border/20 backdrop-blur-sm">
+              <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                <span className="text-sm font-medium text-muted-foreground">3</span>
+              </div>
+              <span className="text-sm text-muted-foreground">Install Chrome extension</span>
+            </div>
+            
+            {/* Step 4 - Connect Twitter */}
+            <div className="flex items-center gap-4 p-4 rounded-lg bg-background/30 border border-border/20 backdrop-blur-sm">
+              <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                <span className="text-sm font-medium text-muted-foreground">4</span>
+              </div>
+              <span className="text-sm text-muted-foreground">Connect your Twitter/X account</span>
             </div>
           </div>
         </div>
