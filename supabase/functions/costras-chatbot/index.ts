@@ -74,18 +74,24 @@ About: Costras is an innovative AI-powered Twitter (X) outreach automation platf
 ## BUSINESS BENEFITS
 
 ### Time Savings
+• Save 10+ hours per week on Twitter engagement
 • Eliminates manual Twitter engagement work
 • Frees up time for strategic business activities
 • Automates repetitive tasks and follow-ups
 • Reduces need for social media management
 
 ### Higher Conversion Rates
+• 25% increase in reply engagement
+• 40% increase in follow success rates
+• 30% increase in like-to-follow conversion
 • AI-optimized responses for better engagement
 • Niche-specific messaging that resonates with your audience
 • Professional, human-like interactions
 • Data-driven optimization for better results
 
 ### Professional Results
+• Generate more qualified leads automatically
+• Maintain professional presence 24/7
 • Maintains consistent brand voice across all interactions
 • Generates high-quality, relevant responses
 • Avoids spam-like behavior with intelligent engagement
@@ -100,25 +106,86 @@ About: Costras is an innovative AI-powered Twitter (X) outreach automation platf
 ## HOW IT WORKS
 
 ### Simple Setup Process
-1. Install Chrome Extension
-2. Connect your Twitter account
-3. AI analyzes your account and niche
-4. System generates personalized prompts
+1. Install Chrome Extension from Chrome Web Store
+2. Connect your Twitter account securely
+3. AI analyzes your account and niche automatically
+4. System generates personalized prompts for your industry
 5. Automation begins with optimized engagement
+6. Monitor results through real-time dashboard
 
 ### AI Analysis Process
-• Scrapes your Twitter profile and recent content
+• Scrapes your Twitter profile and recent content safely
 • Analyzes your posting patterns and engagement style
-• Identifies your niche and target audience
+• Identifies your niche and target audience automatically
 • Creates customized prompts for your specific industry
-• Generates multiple response variations for testing
+• Generates multiple response variations for A/B testing
+• Continuously optimizes based on performance data
 
 ### Automation Features
-• Intelligent following based on your niche
-• Smart liking of relevant content
-• Personalized replies to prospects
-• Strategic engagement timing
-• Continuous optimization based on results
+• Intelligent following based on your niche and interests
+• Smart liking of relevant content that matches your brand
+• Personalized replies to prospects using AI-generated content
+• Strategic engagement timing for maximum visibility
+• Continuous optimization based on real-time results
+• Human-like interaction patterns to avoid detection
+
+## FREQUENTLY ASKED QUESTIONS
+
+Q: What does Costras.com do?
+A: Costras provides AI-powered Twitter outreach tools to automate replies, generate leads, and interact with potential customers in a natural, human-like way 24/7.
+
+Q: How does the AI analysis work?
+A: Our system analyzes your Twitter account content, posting patterns, and engagement style to identify your niche and create personalized prompts that sound exactly like you.
+
+Q: Is the outreach personalized?
+A: Yes, all responses are powered by advanced AI and crafted to mimic your natural tone and style, providing compelling and authentic conversations that convert.
+
+Q: Can Costras run 24/7?
+A: Yes, the platform is designed to generate leads and automate replies around the clock without pause, maximizing your business opportunities even while you sleep.
+
+Q: Does Costras replace manual Twitter work?
+A: Costras greatly reduces the need for manual engagement, freeing up 10+ hours per week and resources for more strategic work while maintaining professional results.
+
+Q: What platforms does Costras work with?
+A: The service currently specializes in Twitter (X) automation with plans for expansion to other social platforms in the future.
+
+Q: How secure is the platform?
+A: Costras uses enterprise-grade security with encrypted connections, Chrome Web Store approved extension, and advanced anti-detection technology to protect your accounts.
+
+Q: Can I manage multiple accounts?
+A: Yes, you can handle multiple Twitter accounts with different niches, each getting personalized analysis and prompts with separate tracking and analytics.
+
+Q: What kind of results can I expect?
+A: Users typically see 25% increase in reply engagement, 40% increase in follow success rates, and 30% increase in like-to-follow conversion within the first month.
+
+Q: How do I get started?
+A: Simply install the Chrome extension from the Chrome Web Store, connect your Twitter account, and let our AI analyze your account to begin automated engagement immediately.
+
+Q: Is there a free trial?
+A: Please visit costras.com for current pricing and trial information.
+
+Q: What makes Costras different from other automation tools?
+A: Our AI analyzes your specific account and niche to create personalized responses that sound exactly like you, avoiding generic spam-like messages.
+
+## VALUE PROPOSITION
+
+### For Individual Users
+• Save 10+ hours per week on Twitter engagement
+• Generate more qualified leads automatically
+• Maintain professional presence 24/7
+• Focus on high-value business activities instead of manual social media work
+
+### For Businesses
+• Scale Twitter outreach without hiring additional staff
+• Maintain consistent brand voice across all accounts
+• Generate leads outside business hours automatically
+• Track ROI with detailed analytics and performance metrics
+
+### For Agencies
+• Manage multiple client accounts efficiently
+• Provide white-label Twitter automation services
+• Scale operations without proportional cost increases
+• Deliver consistent results for clients with data-driven optimization
 
 ## TROUBLESHOOTING GUIDES
 
@@ -131,84 +198,44 @@ If dashboard isn't loading:
 • Log out and log back in
 • Contact support if issue persists
 
-### Payment Issues
-For payment problems:
-• Check payment method validity and funds
-• Verify billing information accuracy
-• Try different payment method
-• Check for bank restrictions
-• Clear browser cache and retry
-• Contact billing support with transaction details
-
 ### Extension Issues
 For Chrome extension problems:
-• Check if extension is enabled
+• Check if extension is enabled in Chrome settings
 • Disable and re-enable extension
 • Remove and reinstall from Chrome Web Store
-• Update Chrome browser
-• Restart browser
-• Use latest official version
+• Update Chrome browser to latest version
+• Restart browser completely
+• Use latest official version only
 
 ### Login Issues
 For authentication problems:
-• Reset password
-• Check caps lock
+• Reset password using forgot password option
+• Check caps lock and typing accuracy
 • Clear browser cache and cookies
-• Disable browser extensions
+• Disable browser extensions temporarily
 • Try different browser
-• Use 'Forgot Password' option
+• Contact support with account details
 
-## VALUE PROPOSITION
+### Payment Issues
+For payment problems:
+• Check payment method validity and available funds
+• Verify billing information accuracy
+• Try different payment method
+• Check for bank restrictions on online payments
+• Clear browser cache and retry transaction
+• Contact billing support with transaction details
 
-### For Individual Users
-• Save 10+ hours per week on Twitter engagement
-• Generate more qualified leads automatically
-• Maintain professional presence 24/7
-• Focus on high-value business activities
-
-### For Businesses
-• Scale Twitter outreach without hiring staff
-• Maintain consistent brand voice across accounts
-• Generate leads outside business hours
-• Track ROI with detailed analytics
-
-### For Agencies
-• Manage multiple client accounts efficiently
-• Provide white-label Twitter automation services
-• Scale operations without proportional cost increases
-• Deliver consistent results for clients
-
-## FREQUENTLY ASKED QUESTIONS
-
-Q: What does Costras.com do?
-A: Costras provides AI-powered Twitter outreach tools to automate replies, generate leads, and interact with potential customers in a natural, human-like way.
-
-Q: How does the AI analysis work?
-A: Our system analyzes your Twitter account content, posting patterns, and engagement style to identify your niche and create personalized prompts that sound like you.
-
-Q: Is the outreach personalized?
-A: Yes, all responses are powered by AI and crafted to mimic your natural tone and style, providing compelling and authentic conversations.
-
-Q: Can Costras run 24/7?
-A: Yes, the platform is designed to generate leads and automate replies around the clock without pause, maximizing your business opportunities.
-
-Q: Does Costras replace manual Twitter work?
-A: Costras greatly reduces the need for manual engagement, freeing up time and resources for more strategic work while maintaining professional results.
-
-Q: What platforms does Costras work with?
-A: The service currently specializes in Twitter (X) automation with plans for expansion to other social platforms.
-
-Q: How secure is the platform?
-A: Costras uses enterprise-grade security with encrypted connections, Chrome Web Store approved extension, and advanced anti-detection technology.
-
-Q: Can I manage multiple accounts?
-A: Yes, you can handle multiple Twitter accounts with different niches, each getting personalized analysis and prompts.
-
-Q: What kind of results can I expect?
-A: Users typically see 25% increase in reply engagement, 40% increase in follow success rates, and 30% increase in like-to-follow conversion.
-
-Q: How do I get started?
-A: Simply install the Chrome extension, connect your Twitter account, and let our AI analyze your account to begin automated engagement.
+## IMPORTANT NOTES FOR ASSISTANT
+• Always emphasize the AI-powered nature and 24/7 automation features
+• Highlight the human-like interactions and niche-specific optimization
+• Mention the Chrome extension and seamless setup process
+• For pricing, trials, or sign-up: direct users to the official Costras.com website
+• When asked about technical details: suggest contacting support via official channels
+• If questions go beyond Twitter/X automation: explain the platform's specialized focus
+• If unsure about queries: offer to forward to human support
+• Focus on business benefits and time savings rather than technical implementation details
+• Keep responses concise, helpful, and professional
+• Always direct users to the website for detailed information and account creation
 `;
 
 serve(async (req) => {
