@@ -237,7 +237,7 @@ serve(async (req) => {
         'X-Title': 'Costras Chatbot'
       },
       body: JSON.stringify({
-        model: 'deepseek/deepseek-v3',
+        model: 'microsoft/phi-3-mini-128k-instruct:free',
         messages: [
           {
             role: 'system',
@@ -263,7 +263,6 @@ Instructions:
             content: message
           }
         ],
-        temperature: 0.7,
         max_tokens: 1000
       }),
     });
