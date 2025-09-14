@@ -237,7 +237,7 @@ serve(async (req) => {
         'X-Title': 'Costras Chatbot'
       },
       body: JSON.stringify({
-        model: 'microsoft/phi-3-mini-128k-instruct:free',
+        model: 'google/gemma-2-9b-it:free',
         messages: [
           {
             role: 'system',
