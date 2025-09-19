@@ -48,7 +48,7 @@ export const useDashboard = () => {
           reply_content: action.reply_content,
           status: action.status,
           icon: action.icon,
-          ai_service: action.ai_service,
+          // Remove ai_service from display
         })),
         twitter_connected: true, // Assume connected if we get data
         plan: 'Pro', // Default plan
@@ -180,63 +180,23 @@ export const useDashboard = () => {
   };
 };
 
-// Fallback data for when API is not available
+// Empty state data for when API is not available or bot is stopped
 const getFallbackData = (): DashboardStatus => ({
   bot_status: 'stopped',
-  last_action: '2 minutes ago',
-  uptime: 7200,
+  last_action: 'Never',
+  uptime: '0%',
   stats: {
-    actions_today: 24,
-    new_followers: 12,
-    engagement_rate: 78,
+    actions_today: 0,
+    new_followers: 0,
+    engagement_rate: 0,
     errors: 0,
-    actions_trend: '+8 from yesterday',
-    followers_trend: '+5 from yesterday',
-    engagement_trend: '+3% from yesterday',
+    actions_trend: '',
+    followers_trend: '',
+    engagement_trend: '',
   },
-  recent_activity: [
-    {
-      id: 1,
-      type: 'like' as const,
-      message: 'Bot liked tweet from @johndoe',
-      time: '2 minutes ago',
-      user: '@johndoe',
-      timestamp: new Date().toISOString(),
-      target: '@johndoe',
-      tweet_content: 'Amazing thread about AI automation tools! This is exactly what I needed for my startup...',
-      status: 'success' as const,
-      icon: 'heart',
-      ai_service: 'llama3_70b',
-    },
-    {
-      id: 2,
-      type: 'follow' as const,
-      message: 'Bot followed @sarahtech',
-      time: '5 minutes ago',
-      user: '@sarahtech',
-      timestamp: new Date().toISOString(),
-      target: '@sarahtech',
-      tweet_content: 'Tech entrepreneur sharing insights about SaaS growth and marketing strategies...',
-      status: 'success' as const,
-      icon: 'user-plus',
-    },
-    {
-      id: 3,
-      type: 'reply' as const,
-      message: 'Bot replied to @techstartup',
-      time: '15 minutes ago',
-      user: '@techstartup',
-      timestamp: new Date().toISOString(),
-      target: '@techstartup',
-      tweet_content: 'Looking for feedback on our new product launch. What features matter most to you?',
-      reply_content: 'Great question! I think user experience and seamless integration are key factors.',
-      status: 'pending' as const,
-      icon: 'message-circle',
-      ai_service: 'qwen2',
-    },
-  ],
-  twitter_connected: true,
-  plan: 'Pro',
-  daily_limit: 70,
-  actions_used: 34,
+  recent_activity: [],
+  twitter_connected: false,
+  plan: 'Free',
+  daily_limit: 10,
+  actions_used: 0,
 });

@@ -22,7 +22,6 @@ interface ActivityItem {
   reply_content?: string;
   status: 'success' | 'failed' | 'pending';
   icon?: string;
-  ai_service?: string;
 }
 
 interface RecentActivityProps {
@@ -114,12 +113,6 @@ const RecentActivity = ({ activities = [], loading = false }: RecentActivityProp
                       <span className="font-medium">{activity.target}</span>
                     </>
                   )}
-                  {activity.ai_service && (
-                    <>
-                      <span>•</span>
-                      <span className="text-primary">{activity.ai_service}</span>
-                    </>
-                  )}
                 </div>
               </div>
             </div>
@@ -128,7 +121,7 @@ const RecentActivity = ({ activities = [], loading = false }: RecentActivityProp
           <div className="text-center py-8 text-muted-foreground">
             <Clock className="w-8 h-8 mx-auto mb-2 opacity-50" />
             <p>No recent activity</p>
-            <p className="text-sm">Your bot activity will appear here</p>
+            <p className="text-sm">Start your bot to see activity here</p>
           </div>
         )}
       </div>
