@@ -19,34 +19,14 @@ import {
   RefreshCw,
   CheckCircle,
   X,
-  Loader2
+  Loader2,
+  BotOff
 } from "lucide-react";
-import { apiService, handleApiError } from "@/lib/apiService";
+import { apiService, handleApiError, type AnalyticsData } from "@/lib/apiService";
 import { useToast } from "@/hooks/use-toast";
 
-interface PerformanceMetrics {
-  total_actions: number;
-  success_rate: string;
-  avg_response_time: string;
-  errors: number;
-  uptime: string;
-  best_performing_hour: string;
-}
-
-interface ActivityData {
-  id: number;
-  action: 'like' | 'follow' | 'reply' | 'view';
-  target: string;
-  tweet_content: string;
-  reply_content?: string;
-  timestamp: string;
-  status: 'success' | 'failed' | 'pending';
-  ai_service?: string;
-}
-
 const DashboardAnalytics = () => {
-  const [performanceData, setPerformanceData] = useState<PerformanceMetrics | null>(null);
-  const [activityData, setActivityData] = useState<ActivityData[]>([]);
+  const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -59,13 +39,8 @@ const DashboardAnalytics = () => {
     setError(null);
 
     try {
-      const [performance, activities] = await Promise.all([
-        apiService.getPerformanceMetrics(),
-        apiService.getRecentActions()
-      ]);
-
-      setPerformanceData(performance);
-      setActivityData(activities);
+      const data = await apiService.getAnalyticsData();
+      setAnalyticsData(data);
     } catch (err: any) {
       const errorMessage = handleApiError(err);
       setError(errorMessage);
@@ -76,45 +51,34 @@ const DashboardAnalytics = () => {
         variant: "destructive",
       });
 
-      // Set fallback data
-      setPerformanceData({
-        total_actions: 156,
-        success_rate: "92%",
-        avg_response_time: "2.3s",
-        errors: 3,
-        uptime: "98.5%",
-        best_performing_hour: "14:00 (100% success rate)"
-      });
-
-      setActivityData([
-        {
-          id: 1,
-          action: 'like',
-          target: '@johndoe',
-          tweet_content: 'Amazing thread about AI automation tools! This is exactly what I needed for my startup...',
-          timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-          status: 'success',
-          ai_service: 'llama3_70b'
+      // Set empty state data for stopped bot
+      setAnalyticsData({
+        bot_performance: {
+          status: 'stopped',
+          uptime: '0%',
+          actions_today: 0,
+          success_rate: '0%',
+          avg_response_time: '0s',
+          errors: 0
         },
-        {
-          id: 2,
-          action: 'follow',
-          target: '@sarahtech',
-          tweet_content: 'Tech entrepreneur sharing insights about SaaS growth and marketing strategies...',
-          timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
-          status: 'success'
+        engagement_metrics: {
+          engagement_rate: '0%',
+          follower_growth: 0,
+          follower_growth_rate: '0%',
+          actions_trend: 'neutral',
+          engagement_trend: 'neutral'
         },
-        {
-          id: 3,
-          action: 'reply',
-          target: '@techstartup',
-          tweet_content: 'Looking for feedback on our new product launch. What features matter most to you?',
-          reply_content: 'Great question! I think user experience and seamless integration are key factors.',
-          timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
-          status: 'pending',
-          ai_service: 'qwen2'
+        recent_actions: [],
+        trends: {
+          actions_trend: 'neutral',
+          success_rate_trend: 'neutral',
+          best_hour: 'N/A'
+        },
+        insights: {
+          recommendation: 'Connect your Twitter account and start the bot to see analytics data.',
+          warning: 'Bot is not currently running'
         }
-      ]);
+      });
     } finally {
       if (showLoading) setLoading(false);
       setRefreshing(false);
@@ -160,9 +124,9 @@ const DashboardAnalytics = () => {
     }
   };
 
-  const filteredActivities = activityData.filter(activity => 
+  const filteredActivities = analyticsData?.recent_actions?.filter(activity => 
     selectedFilter === 'all' || activity.action === selectedFilter
-  );
+  ) || [];
 
   if (loading) {
     return (
@@ -213,14 +177,27 @@ const DashboardAnalytics = () => {
           </TabsList>
 
           <TabsContent value="performance" className="space-y-6">
+            {/* Bot Status Card */}
+            {analyticsData?.bot_performance.status === 'stopped' && (
+              <Card className="p-6 border-warning bg-warning/5">
+                <div className="flex items-center gap-4">
+                  <BotOff className="w-8 h-8 text-warning" />
+                  <div>
+                    <h3 className="font-semibold text-warning">Bot Not Running</h3>
+                    <p className="text-sm text-muted-foreground">Connect your Twitter account and start the bot to see performance metrics.</p>
+                  </div>
+                </div>
+              </Card>
+            )}
+
             {/* Performance Metrics */}
-            {performanceData && (
+            {analyticsData && (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <Card className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-muted-foreground">Total Actions</p>
-                      <p className="text-2xl font-bold">{performanceData.total_actions}</p>
+                      <p className="text-sm text-muted-foreground">Actions Today</p>
+                      <p className="text-2xl font-bold">{analyticsData.bot_performance.actions_today}</p>
                     </div>
                     <Zap className="w-8 h-8 text-primary" />
                   </div>
@@ -230,7 +207,7 @@ const DashboardAnalytics = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-muted-foreground">Success Rate</p>
-                      <p className="text-2xl font-bold text-success">{performanceData.success_rate}</p>
+                      <p className="text-2xl font-bold text-success">{analyticsData.bot_performance.success_rate}</p>
                     </div>
                     <TrendingUp className="w-8 h-8 text-success" />
                   </div>
@@ -240,7 +217,7 @@ const DashboardAnalytics = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-muted-foreground">Avg Response Time</p>
-                      <p className="text-2xl font-bold">{performanceData.avg_response_time}</p>
+                      <p className="text-2xl font-bold">{analyticsData.bot_performance.avg_response_time}</p>
                     </div>
                     <Clock className="w-8 h-8 text-blue-500" />
                   </div>
@@ -250,7 +227,7 @@ const DashboardAnalytics = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-muted-foreground">Errors</p>
-                      <p className="text-2xl font-bold text-destructive">{performanceData.errors}</p>
+                      <p className="text-2xl font-bold text-destructive">{analyticsData.bot_performance.errors}</p>
                     </div>
                     <AlertTriangle className="w-8 h-8 text-destructive" />
                   </div>
@@ -260,7 +237,7 @@ const DashboardAnalytics = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-muted-foreground">Uptime</p>
-                      <p className="text-2xl font-bold text-success">{performanceData.uptime}</p>
+                      <p className="text-2xl font-bold text-success">{analyticsData.bot_performance.uptime}</p>
                     </div>
                     <Activity className="w-8 h-8 text-success" />
                   </div>
@@ -270,7 +247,7 @@ const DashboardAnalytics = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-muted-foreground">Best Hour</p>
-                      <p className="text-lg font-semibold">{performanceData.best_performing_hour}</p>
+                      <p className="text-lg font-semibold">{analyticsData.trends.best_hour}</p>
                     </div>
                     <Clock className="w-8 h-8 text-primary" />
                   </div>
@@ -299,47 +276,52 @@ const DashboardAnalytics = () => {
             <Card className="p-6">
               <h3 className="text-lg font-semibold mb-4">Recent Activity</h3>
               <div className="space-y-4 max-h-96 overflow-y-auto">
-                {filteredActivities.map((activity) => (
-                  <div key={activity.id} className="flex items-start gap-4 p-4 border border-muted/20 rounded-lg">
-                    <div className="p-2 bg-muted/20 rounded-full">
-                      {getActionIcon(activity.action)}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between mb-2">
-                        <p className="font-medium">
-                          Bot {activity.action}d {activity.target}
+                {filteredActivities.length === 0 ? (
+                  <div className="text-center py-8">
+                    <BotOff className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                    <p className="text-muted-foreground">
+                      {analyticsData?.bot_performance.status === 'stopped' 
+                        ? 'No recent activity. Start the bot to see analytics.' 
+                        : 'No recent activity matching the selected filter.'}
+                    </p>
+                  </div>
+                ) : (
+                  filteredActivities.map((activity, index) => (
+                    <div key={index} className="flex items-start gap-4 p-4 border border-muted/20 rounded-lg">
+                      <div className="p-2 bg-muted/20 rounded-full">
+                        {getActionIcon(activity.action)}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between mb-2">
+                          <p className="font-medium">
+                            Bot {activity.action}d {activity.target}
+                          </p>
+                          <div className="flex items-center gap-2">
+                            {getStatusIcon(activity.status)}
+                            <Badge variant={
+                              activity.status === 'success' ? 'default' :
+                              activity.status === 'failed' ? 'destructive' : 'secondary'
+                            }>
+                              {activity.status}
+                            </Badge>
+                          </div>
+                        </div>
+                        <p className="text-sm text-muted-foreground mb-2 italic">
+                          "{activity.tweet_content.substring(0, 100)}..."
                         </p>
-                        <div className="flex items-center gap-2">
-                          {getStatusIcon(activity.status)}
-                          <Badge variant={
-                            activity.status === 'success' ? 'default' :
-                            activity.status === 'failed' ? 'destructive' : 'secondary'
-                          }>
-                            {activity.status}
-                          </Badge>
+                        {activity.reply_content && (
+                          <p className="text-sm text-foreground mb-2 bg-muted/20 p-2 rounded">
+                            Reply: "{activity.reply_content}"
+                          </p>
+                        )}
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <Clock className="w-3 h-3" />
+                          <span>{formatTimeAgo(activity.timestamp)}</span>
                         </div>
                       </div>
-                      <p className="text-sm text-muted-foreground mb-2 italic">
-                        "{activity.tweet_content.substring(0, 100)}..."
-                      </p>
-                      {activity.reply_content && (
-                        <p className="text-sm text-foreground mb-2 bg-muted/20 p-2 rounded">
-                          Reply: "{activity.reply_content}"
-                        </p>
-                      )}
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <Clock className="w-3 h-3" />
-                        <span>{formatTimeAgo(activity.timestamp)}</span>
-                        {activity.ai_service && (
-                          <>
-                            <span>•</span>
-                            <span className="text-primary">{activity.ai_service}</span>
-                          </>
-                        )}
-                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </Card>
           </TabsContent>
@@ -349,15 +331,17 @@ const DashboardAnalytics = () => {
               <Card className="p-6">
                 <h3 className="text-lg font-semibold mb-4 text-success">Recommendations</h3>
                 <p className="text-muted-foreground">
-                  Bot performing well. Consider increasing action frequency during 14:00-16:00 hours for optimal engagement.
+                  {analyticsData?.insights.recommendation || 'No recommendations available.'}
                 </p>
               </Card>
-              <Card className="p-6">
-                <h3 className="text-lg font-semibold mb-4 text-warning">Warnings</h3>
-                <p className="text-muted-foreground">
-                  Qwen2 AI service has lower success rate. Consider adjusting fallback strategy.
-                </p>
-              </Card>
+              {analyticsData?.insights.warning && (
+                <Card className="p-6">
+                  <h3 className="text-lg font-semibold mb-4 text-warning">Warnings</h3>
+                  <p className="text-muted-foreground">
+                    {analyticsData.insights.warning}
+                  </p>
+                </Card>
+              )}
             </div>
           </TabsContent>
         </Tabs>
