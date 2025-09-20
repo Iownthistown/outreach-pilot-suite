@@ -31,13 +31,15 @@ class BotManager {
   private baseUrl = 'https://api.costras.com';
 
   private async getAuthHeaders() {
-    const { data: { user }, error } = await supabase.auth.getUser();
-    if (error || !user) {
+    const { data: { session }, error } = await supabase.auth.getSession();
+    if (error || !session?.user?.id) {
       throw new Error('User not authenticated');
     }
+    const token = session.access_token || session.user.id;
     return {
-      'Authorization': `Bearer ${user.id}`,
-      'Content-Type': 'application/json'
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
     };
   }
 

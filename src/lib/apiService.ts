@@ -111,6 +111,7 @@ class ApiService {
     const headers = {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
+      'Accept': 'application/json',
       ...options.headers,
     };
 
@@ -121,7 +122,8 @@ class ApiService {
       });
 
       if (!response.ok) {
-        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+        const errorText = await response.text().catch(() => '');
+        throw new Error(`API Error: ${response.status} ${response.statusText} ${errorText}`);
       }
 
       return await response.json();
