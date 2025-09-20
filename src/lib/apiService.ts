@@ -156,7 +156,11 @@ class ApiService {
     return this.makeRequest<BotStartResponse>('/bots/start', {
       method: 'POST',
       body: JSON.stringify({
-        config: { user_id: userId }
+        config: { 
+          user_id: userId,
+          max_actions_per_hour: 15,
+          follow_limit: 5
+        }
       }),
     });
   }
@@ -166,7 +170,7 @@ class ApiService {
     return this.makeRequest<BotStartResponse>('/bots/stop', {
       method: 'POST',
       body: JSON.stringify({
-        config: { user_id: userId }
+        user_id: userId
       }),
     });
   }
