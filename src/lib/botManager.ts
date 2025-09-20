@@ -9,8 +9,9 @@ export interface BotStatus {
 export interface BotConfig {
   maxActionsPerHour: number;
   followLimit: number;
-  aiApiKey: string;
-  customPrompt: string;
+  aiApiKey?: string;
+  customPrompt?: string;
+  twitterCookie?: string;
 }
 
 export interface BotLog {
@@ -43,10 +44,21 @@ class BotManager {
   async startBot(config: BotConfig): Promise<{ success: boolean; message?: string }> {
     try {
       const headers = await this.getAuthHeaders();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
       const response = await fetch(`${this.baseUrl}/bots/start`, {
         method: 'POST',
         headers,
-        body: JSON.stringify(config)
+        body: JSON.stringify({
+          config: {
+            user_id: user.id,
+            max_actions_per_hour: config.maxActionsPerHour,
+            follow_limit: config.followLimit,
+            ...(config.aiApiKey ? { ai_api_key: config.aiApiKey } : {}),
+            ...(config.customPrompt ? { custom_prompt: config.customPrompt } : {}),
+            ...(config.twitterCookie ? { twitter_cookie: config.twitterCookie } : {})
+          }
+        })
       });
 
       if (!response.ok) {
@@ -64,9 +76,12 @@ class BotManager {
   async stopBot(): Promise<{ success: boolean; message?: string }> {
     try {
       const headers = await this.getAuthHeaders();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
       const response = await fetch(`${this.baseUrl}/bots/stop`, {
         method: 'POST',
-        headers
+        headers,
+        body: JSON.stringify({ user_id: user.id })
       });
 
       if (!response.ok) {
