@@ -98,7 +98,7 @@ class ApiService {
 
   private async getAuthToken(): Promise<string> {
     const { data: { session } } = await supabase.auth.getSession();
-    return session?.access_token || session?.user?.id || '';
+    return session?.access_token || '';
   }
 
   private async makeRequest<T>(

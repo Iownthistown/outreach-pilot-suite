@@ -32,12 +32,11 @@ class BotManager {
 
   private async getAuthHeaders() {
     const { data: { session }, error } = await supabase.auth.getSession();
-    if (error || !session?.user?.id) {
+    if (error || !session?.access_token) {
       throw new Error('User not authenticated');
     }
-    const token = session.access_token || session.user.id;
     return {
-      'Authorization': `Bearer ${token}`,
+      'Authorization': `Bearer ${session.access_token}`,
       'Content-Type': 'application/json',
       'Accept': 'application/json'
     };
