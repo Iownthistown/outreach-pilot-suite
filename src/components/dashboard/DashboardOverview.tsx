@@ -9,7 +9,7 @@ import {
 import BotStatusCard from "./BotStatusCard";
 import SimpleStats from "./SimpleStats";
 import RecentActivity from "./RecentActivity";
-import ExtensionStatusCard from "./ExtensionStatusCard";
+import TwitterExtensionCard from "./TwitterExtensionCard";
 import AccountAnalysisCard from "./AccountAnalysisCard";
 import OnboardingManager from "./OnboardingManager";
 import { ScrollAnimationWrapper } from "@/hooks/useScrollAnimation";
@@ -177,9 +177,9 @@ const DashboardOverview = () => {
       {/* Daily Limit Warning */}
       {renderDailyLimitStatus()}
 
-      {/* Extension Status Card */}
+      {/* Twitter & Extension Status Card */}
       <ScrollAnimationWrapper delay={100}>
-        <ExtensionStatusCard
+        <TwitterExtensionCard
           extensionStatus={extensionStatus}
           loading={extensionLoading}
           onDisconnect={disconnectExtension}
