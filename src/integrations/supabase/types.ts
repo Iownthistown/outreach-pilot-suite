@@ -7,13 +7,117 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
   }
   public: {
     Tables: {
+      account_analyses: {
+        Row: {
+          analysis_data: Json | null
+          confidence_score: number | null
+          content_patterns: string | null
+          created_at: string | null
+          engagement_style: string | null
+          id: string
+          key_topics: string | null
+          model_used: string | null
+          niche: string | null
+          short_summary: string | null
+          tone: string | null
+          twitter_handle: string
+          updated_at: string | null
+          user_email: string | null
+          user_id: string | null
+        }
+        Insert: {
+          analysis_data?: Json | null
+          confidence_score?: number | null
+          content_patterns?: string | null
+          created_at?: string | null
+          engagement_style?: string | null
+          id?: string
+          key_topics?: string | null
+          model_used?: string | null
+          niche?: string | null
+          short_summary?: string | null
+          tone?: string | null
+          twitter_handle: string
+          updated_at?: string | null
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          analysis_data?: Json | null
+          confidence_score?: number | null
+          content_patterns?: string | null
+          created_at?: string | null
+          engagement_style?: string | null
+          id?: string
+          key_topics?: string | null
+          model_used?: string | null
+          niche?: string | null
+          short_summary?: string | null
+          tone?: string | null
+          twitter_handle?: string
+          updated_at?: string | null
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      account_prompts: {
+        Row: {
+          account_id: string | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          niche: string | null
+          prompt_content: string
+          prompt_type: string
+          twitter_handle: string | null
+          updated_at: string | null
+          user_email: string | null
+          user_id: string | null
+        }
+        Insert: {
+          account_id?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          niche?: string | null
+          prompt_content: string
+          prompt_type: string
+          twitter_handle?: string | null
+          updated_at?: string | null
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          account_id?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          niche?: string | null
+          prompt_content?: string
+          prompt_type?: string
+          twitter_handle?: string | null
+          updated_at?: string | null
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "account_prompts_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "account_analyses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       billing_history: {
         Row: {
           amount: number | null
@@ -179,12 +283,52 @@ export type Database = {
           },
         ]
       }
+      user_onboarding_progress: {
+        Row: {
+          account_analyzed: boolean | null
+          completion_percentage: number | null
+          current_step: string | null
+          extension_installed: boolean | null
+          id: string
+          last_updated: string | null
+          plan_selected: boolean | null
+          twitter_connected: boolean | null
+          user_id: string | null
+          welcome_completed: boolean | null
+        }
+        Insert: {
+          account_analyzed?: boolean | null
+          completion_percentage?: number | null
+          current_step?: string | null
+          extension_installed?: boolean | null
+          id?: string
+          last_updated?: string | null
+          plan_selected?: boolean | null
+          twitter_connected?: boolean | null
+          user_id?: string | null
+          welcome_completed?: boolean | null
+        }
+        Update: {
+          account_analyzed?: boolean | null
+          completion_percentage?: number | null
+          current_step?: string | null
+          extension_installed?: boolean | null
+          id?: string
+          last_updated?: string | null
+          plan_selected?: boolean | null
+          twitter_connected?: boolean | null
+          user_id?: string | null
+          welcome_completed?: boolean | null
+        }
+        Relationships: []
+      }
       users: {
         Row: {
           auto_login_enabled: boolean | null
           connection_method: string | null
           created_at: string | null
           email: string
+          email_preferences: Json | null
           extension_connected: boolean | null
           extension_last_connected: string | null
           extension_version: string | null
@@ -208,6 +352,7 @@ export type Database = {
           connection_method?: string | null
           created_at?: string | null
           email: string
+          email_preferences?: Json | null
           extension_connected?: boolean | null
           extension_last_connected?: string | null
           extension_version?: string | null
@@ -231,6 +376,7 @@ export type Database = {
           connection_method?: string | null
           created_at?: string | null
           email?: string
+          email_preferences?: Json | null
           extension_connected?: boolean | null
           extension_last_connected?: string | null
           extension_version?: string | null
@@ -256,16 +402,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      disconnect_extension: {
-        Args: { p_user_id: string }
-        Returns: Json
-      }
+      disconnect_extension: { Args: { p_user_id: string }; Returns: Json }
       update_extension_status: {
         Args: {
-          p_user_id: string
+          p_browser_info?: string
           p_extension_version?: string
           p_session_token?: string
-          p_browser_info?: string
+          p_user_id: string
         }
         Returns: Json
       }
