@@ -25,7 +25,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
-  const { planName } = useSubscription();
+  const { planType, isTrial } = useSubscription();
 
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: BarChart3 },
@@ -122,9 +122,9 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 <p className="text-xs text-muted-foreground truncate">
                   {user?.email || 'user@example.com'}
                 </p>
-                {planName && (
+                {planType && (
                   <p className="text-xs text-primary truncate">
-                    {planName} Plan
+                    {planType} Plan{isTrial && ' (Trial)'}
                   </p>
                 )}
               </div>

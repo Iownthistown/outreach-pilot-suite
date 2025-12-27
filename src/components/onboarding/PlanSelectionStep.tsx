@@ -12,8 +12,9 @@ const PlanSelectionStep = ({
 }: PlanSelectionStepProps) => {
   const {
     subscription,
-    planName,
-    hasPlan
+    planType,
+    hasPlan,
+    isTrial
   } = useSubscription();
   const plans = [{
     name: "Starter",
@@ -44,7 +45,7 @@ const PlanSelectionStep = ({
       {/* Header - Fixed Height */}
       <div className="flex-shrink-0 h-16 text-center flex flex-col justify-center">
         <h1 className="text-lg sm:text-xl font-bold">
-          {hasPlan ? `Your ${planName} Plan` : "Choose Your Plan"}
+          {hasPlan ? `Your ${planType} Plan${isTrial ? ' (Trial)' : ''}` : "Choose Your Plan"}
         </h1>
         <p className="text-muted-foreground text-xs sm:text-sm">
           {hasPlan ? "Continue with setup" : "Select the plan that fits your needs"}
@@ -56,7 +57,7 @@ const PlanSelectionStep = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 h-full">
         {plans.map(plan => {
         const Icon = plan.icon;
-        const isPlanPurchased = hasPlan && planName?.toLowerCase() === plan.name.toLowerCase();
+        const isPlanPurchased = hasPlan && planType?.toLowerCase() === plan.name.toLowerCase();
         const isDisabled = hasPlan && !isPlanPurchased;
         return <Card key={plan.name} className={`relative h-full ${isPlanPurchased ? 'border-green-500 ring-2 ring-green-500/20 bg-green-50/50' : plan.popular ? 'border-primary ring-2 ring-primary/20' : ''} ${isDisabled ? 'opacity-50' : ''}`}>
               {isPlanPurchased && <div className="absolute -top-2 left-1/2 transform -translate-x-1/2">

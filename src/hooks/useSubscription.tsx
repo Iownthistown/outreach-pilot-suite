@@ -5,8 +5,11 @@ import { supabase } from '@/integrations/supabase/client';
 interface Subscription {
   id: string;
   user_id: string;
-  plan_name: string;
+  plan_type: string;
   status: string;
+  trial_end: string | null;
+  current_period_start: string | null;
+  current_period_end: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -29,10 +32,10 @@ export const useSubscription = () => {
           .from('subscriptions')
           .select('*')
           .eq('user_id', user.id)
-          .eq('status', 'active')
-          .single();
+          .in('status', ['active', 'trialing'])
+          .maybeSingle();
 
-        if (error && error.code !== 'PGRST116') {
+        if (error) {
           console.error('Error fetching subscription:', error);
         }
 
@@ -52,6 +55,8 @@ export const useSubscription = () => {
     subscription,
     loading,
     hasPlan: !!subscription,
-    planName: subscription?.plan_name || null
+    planType: subscription?.plan_type || null,
+    isTrial: subscription?.status === 'trialing',
+    isActive: subscription?.status === 'active'
   };
 };
