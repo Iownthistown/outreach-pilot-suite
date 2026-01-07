@@ -208,8 +208,8 @@ const DashboardPlan = () => {
       case "pro":
         planName = "Pro";
         price = "$99/month";
-        features = ["1 account", "70 replies per day", "Auto likes", "Priority support"];
-        actionsLimit = 70;
+        features = ["1 account", "100 replies per day", "Auto likes", "Priority support"];
+        actionsLimit = 100;
         break;
       default:
         planName = "Free Plan";
@@ -271,7 +271,7 @@ const DashboardPlan = () => {
       description: "Most popular choice",
       features: [
         "1 account",
-        "70 replies per day",
+        "100 replies per day",
         "Auto likes",
         "Priority support"
       ],

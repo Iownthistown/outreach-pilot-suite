@@ -27,7 +27,7 @@ const PricingSection = () => {
       description: "Most popular choice",
       features: [
         "1 account",
-        "70 replies per day",
+        "100 replies per day",
         "Auto likes",
         "Priority support"
       ],

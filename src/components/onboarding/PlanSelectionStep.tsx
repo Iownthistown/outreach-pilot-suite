@@ -29,7 +29,7 @@ const PlanSelectionStep = ({
     price: "$99",
     period: "/month",
     description: "Most popular choice",
-    features: ["1 account", "70 replies per day", "Auto likes", "Priority support"],
+    features: ["1 account", "100 replies per day", "Auto likes", "Priority support"],
     icon: Star,
     popular: true
   }, {
