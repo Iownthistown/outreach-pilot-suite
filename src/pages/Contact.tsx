@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mail, MessageSquare, Phone } from "lucide-react";
+import { Mail, Send } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
@@ -20,12 +20,13 @@ const Contact = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission here
+    // Open mailto link with form data
+    const mailtoLink = `mailto:ls23yim@gmail.com?subject=${encodeURIComponent(formData.subject)}&body=${encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`)}`;
+    window.location.href = mailtoLink;
     toast({
-      title: "Message sent!",
-      description: "We'll get back to you as soon as possible.",
+      title: "Opening email client...",
+      description: "Your default email app will open to send the message.",
     });
-    setFormData({ name: "", email: "", subject: "", message: "" });
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -127,47 +128,31 @@ const Contact = () => {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-foreground mb-2">Email Support</h3>
-                      <p className="text-muted-foreground mb-2">
+                      <p className="text-muted-foreground">
                         Get help with your account, technical issues, or general questions.
                       </p>
-                      <a href="mailto:support@costras.com" className="text-primary hover:underline">
-                        support@costras.com
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-card border border-primary/20 rounded-2xl p-6 shadow-card backdrop-blur-sm">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 bg-[#0088cc] rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Send className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-foreground mb-2">Telegram Support</h3>
+                      <p className="text-muted-foreground mb-2">
+                        Join our community for quick help and updates.
+                      </p>
+                      <a 
+                        href="https://t.me/CostrasAI" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-[#0088cc] hover:underline font-medium"
+                      >
+                        Join @CostrasAI
                       </a>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-card border border-primary/20 rounded-2xl p-6 shadow-card backdrop-blur-sm">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center flex-shrink-0">
-                      <MessageSquare className="w-6 h-6 text-primary-foreground" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-foreground mb-2">Live Chat</h3>
-                      <p className="text-muted-foreground mb-2">
-                        Chat with our support team for immediate assistance.
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        Available Monday-Friday, 9 AM - 6 PM EST
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-card border border-primary/20 rounded-2xl p-6 shadow-card backdrop-blur-sm">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center flex-shrink-0">
-                      <Phone className="w-6 h-6 text-primary-foreground" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-foreground mb-2">Phone Support</h3>
-                      <p className="text-muted-foreground mb-2">
-                        Speak directly with our support team for urgent matters.
-                      </p>
-                      <p className="text-primary font-medium">+1 (555) 123-4567</p>
-                      <p className="text-sm text-muted-foreground">
-                        Monday-Friday, 9 AM - 6 PM EST
-                      </p>
                     </div>
                   </div>
                 </div>
