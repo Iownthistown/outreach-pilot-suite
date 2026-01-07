@@ -202,13 +202,13 @@ const DashboardPlan = () => {
       case "starter":
         planName = "Starter";
         price = "$29/month";
-        features = ["1 account", "30 replies per day", "Auto likes", "Basic analytics", "Email support"];
+        features = ["1 account", "30 replies per day", "Auto likes", "Support"];
         actionsLimit = 30;
         break;
       case "pro":
         planName = "Pro";
         price = "$99/month";
-        features = ["1 account", "70 replies per day", "Auto likes", "Advanced analytics", "Priority support"];
+        features = ["1 account", "70 replies per day", "Auto likes", "Priority support"];
         actionsLimit = 70;
         break;
       default:
@@ -260,8 +260,7 @@ const DashboardPlan = () => {
         "1 account",
         "30 replies per day",
         "Auto likes",
-        "Basic analytics",
-        "Email support"
+        "Support"
       ],
       popular: false
     },
@@ -274,7 +273,6 @@ const DashboardPlan = () => {
         "1 account",
         "70 replies per day",
         "Auto likes",
-        "Advanced analytics",
         "Priority support"
       ],
       popular: true

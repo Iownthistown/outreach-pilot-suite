@@ -20,16 +20,16 @@ const PlanSelectionStep = ({
     name: "Starter",
     price: "$29",
     period: "/month",
-    description: "Perfect for individuals getting started",
-    features: ["Up to 100 automated actions per day", "Basic Twitter automation", "Email support", "Chrome extension access"],
+    description: "Perfect for getting started",
+    features: ["1 account", "30 replies per day", "Auto likes", "Support"],
     icon: Zap,
     popular: false
   }, {
     name: "Pro",
     price: "$99",
     period: "/month",
-    description: "Best for growing businesses and creators",
-    features: ["Up to 500 automated actions per day", "Advanced automation features", "Priority support", "Analytics and insights", "Custom automation rules"],
+    description: "Most popular choice",
+    features: ["1 account", "70 replies per day", "Auto likes", "Priority support"],
     icon: Star,
     popular: true
   }, {
