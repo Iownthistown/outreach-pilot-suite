@@ -15,8 +15,7 @@ const PricingSection = () => {
         "1 account",
         "30 replies per day",
         "Auto likes",
-        "Basic analytics",
-        "Email support"
+        "Support"
       ],
       additionalCredits: "",
       popular: false
@@ -30,7 +29,6 @@ const PricingSection = () => {
         "1 account",
         "70 replies per day",
         "Auto likes",
-        "Advanced analytics",
         "Priority support"
       ],
       additionalCredits: "",
