@@ -28,12 +28,12 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const { planType, isTrial } = useSubscription();
 
   const navigation = [
-    { name: "Dashboard", href: "/dashboard", icon: BarChart3 },
-    { name: "Analytics", href: "/dashboard/analytics", icon: TrendingUp },
-    { name: "Activity", href: "/dashboard/activity", icon: MessageSquare },
-    { name: "Plan", href: "/dashboard/plan", icon: CreditCard },
-    { name: "Support", href: "/dashboard/support", icon: Users },
-    { name: "Settings", href: "/dashboard/settings", icon: Settings },
+    { name: "Dashboard", href: "/dashboard", icon: BarChart3, hidden: false },
+    { name: "Analytics", href: "/dashboard/analytics", icon: TrendingUp, hidden: true }, // Hidden for now
+    { name: "Activity", href: "/dashboard/activity", icon: MessageSquare, hidden: true }, // Hidden for now
+    { name: "Plan", href: "/dashboard/plan", icon: CreditCard, hidden: false },
+    { name: "Support", href: "/dashboard/support", icon: Users, hidden: false },
+    { name: "Settings", href: "/dashboard/settings", icon: Settings, hidden: false },
   ];
 
   const handleLogout = async () => {
@@ -86,7 +86,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           {/* Navigation */}
           <nav className="p-4 flex-1">
             <ul className="space-y-2">
-              {navigation.map((item) => {
+              {navigation.filter(item => !item.hidden).map((item) => {
                 const isActive = location.pathname === item.href;
                 return (
                   <li key={item.name}>
