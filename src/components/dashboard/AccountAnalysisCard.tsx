@@ -221,29 +221,8 @@ const AccountAnalysisCard = ({ userId, twitterHandle }: AccountAnalysisCardProps
         onComplete: (result: any) => {
           setProgress(100);
           setProgressMessage("Analysis completed successfully!");
+          setAnalysisStatus(result);
           setIsPolling(false);
-          
-          // Transform backend response to match AnalysisStatus structure
-          if (result && result.analysis) {
-            const transformedStatus: AnalysisStatus = {
-              status: 'complete',
-              twitter_handle: result.twitter_handle || result.analysis.twitter_handle || effectiveTwitterHandle,
-              niche: result.analysis.niche,
-              confidence_score: result.analysis.confidence_score,
-              custom_prompts: result.custom_prompt
-            };
-            setAnalysisStatus(transformedStatus);
-            setSupabaseAnalysis(result.analysis);
-          } else {
-            // Fallback if structure is different (direct analysis data)
-            setAnalysisStatus({
-              status: 'complete',
-              twitter_handle: result.twitter_handle || effectiveTwitterHandle,
-              niche: result.niche,
-              confidence_score: result.confidence_score,
-              custom_prompts: result.custom_prompts || result.custom_prompt
-            });
-          }
           
           // Store completion status
           localStorage.setItem('analysis_complete', 'true');

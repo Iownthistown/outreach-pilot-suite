@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
+  MessageCircle,
   Mail,
   HelpCircle,
   CheckCircle,
@@ -13,8 +14,7 @@ import {
   ChevronUp,
   Zap,
   Shield,
-  Settings,
-  Send
+  Settings
 } from "lucide-react";
 import {
   Collapsible,
@@ -156,6 +156,27 @@ const DashboardSupport = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card className="p-6 hover:shadow-lg transition-shadow">
             <div className="flex items-center gap-4 mb-4">
+              <div className="p-3 bg-primary/20 rounded-full">
+                <MessageCircle className="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-foreground">Live Chat</h3>
+                <p className="text-sm text-muted-foreground">Get instant help from our team</p>
+              </div>
+            </div>
+            <p className="text-sm text-muted-foreground mb-4">
+              Available 24/7 • Average response time: 2 minutes
+            </p>
+            <Button 
+              className="w-full"
+              onClick={() => window.location.href = '/contact'}
+            >
+              Start Chat
+            </Button>
+          </Card>
+
+          <Card className="p-6 hover:shadow-lg transition-shadow">
+            <div className="flex items-center gap-4 mb-4">
               <div className="p-3 bg-blue-500/20 rounded-full">
                 <Mail className="w-6 h-6 text-blue-500" />
               </div>
@@ -168,32 +189,11 @@ const DashboardSupport = () => {
               We respond within 2 hours during business hours
             </p>
             <Button 
+              variant="outline" 
               className="w-full"
               onClick={() => window.location.href = '/contact'}
             >
               Send Email
-            </Button>
-          </Card>
-
-          <Card className="p-6 hover:shadow-lg transition-shadow">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="p-3 bg-[#0088cc]/20 rounded-full">
-                <Send className="w-6 h-6 text-[#0088cc]" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-foreground">Telegram Support</h3>
-                <p className="text-sm text-muted-foreground">Join our community for quick help</p>
-              </div>
-            </div>
-            <p className="text-sm text-muted-foreground mb-4">
-              Get instant answers from our team and community
-            </p>
-            <Button 
-              variant="outline" 
-              className="w-full"
-              onClick={() => window.open('https://t.me/CostrasAI', '_blank')}
-            >
-              Join Telegram
             </Button>
           </Card>
         </div>

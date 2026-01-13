@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Check, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -16,11 +15,11 @@ const PricingSection = () => {
         "1 account",
         "30 replies per day",
         "Auto likes",
-        "Support"
+        "Basic analytics",
+        "Email support"
       ],
       additionalCredits: "",
-      popular: false,
-      hasFreeTrial: true
+      popular: false
     },
     {
       name: "Pro",
@@ -29,13 +28,13 @@ const PricingSection = () => {
       description: "Most popular choice",
       features: [
         "1 account",
-        "100 replies per day",
+        "70 replies per day",
         "Auto likes",
+        "Advanced analytics",
         "Priority support"
       ],
       additionalCredits: "",
-      popular: true,
-      hasFreeTrial: true
+      popular: true
     },
     {
       name: "Custom",
@@ -50,8 +49,7 @@ const PricingSection = () => {
         "Custom integrations"
       ],
       additionalCredits: "",
-      popular: false,
-      hasFreeTrial: false
+      popular: false
     }
   ];
 
@@ -100,13 +98,6 @@ const PricingSection = () => {
                 </div>
                 <p className="text-muted-foreground">{plan.description}</p>
                 {plan.additionalCredits && <p className="text-sm text-muted-foreground mt-2">Additional Credits: {plan.additionalCredits}</p>}
-                
-                {/* Free Trial Badge */}
-                {plan.hasFreeTrial && (
-                  <Badge variant="secondary" className="mt-3 bg-success/10 text-success border-success/20">
-                    Free Trial Available
-                  </Badge>
-                )}
               </div>
 
               <ul className="space-y-3 mb-8">
@@ -124,7 +115,7 @@ const PricingSection = () => {
                 onClick={() => handleGetStarted(plan.name)}
                 disabled={plan.name === "Custom"}
               >
-                {plan.name === "Custom" ? "Coming Soon" : plan.hasFreeTrial ? "Start Free Trial" : "Get Started"}
+                {plan.name === "Custom" ? "Coming Soon" : "Get Started"}
               </Button>
             </div>
           ))}
@@ -133,12 +124,12 @@ const PricingSection = () => {
 
         {/* Free Trial CTA */}
         <div className="text-center bg-card border border-primary/20 rounded-2xl p-8 shadow-card backdrop-blur-sm max-w-2xl mx-auto transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-primary/40 cursor-pointer">
-          <h3 className="text-2xl font-bold text-foreground mb-4">Start Your Free Trial</h3>
+          <h3 className="text-2xl font-bold text-foreground mb-4">Start Your Journey</h3>
           <p className="text-muted-foreground mb-6">
-            Experience how COSTRAS can revolutionize your Twitter/X strategy with a free trial.
+            Experience how COSTRAS can revolutionize your Twitter/X strategy with our starter plan.
           </p>
           <Button variant="hero" size="lg" onClick={() => handleGetStarted("Starter")}>
-            Start Free Trial
+            Begin with Starter Plan
           </Button>
         </div>
       </div>

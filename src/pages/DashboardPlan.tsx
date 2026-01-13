@@ -22,16 +22,13 @@ import {
 
 const DashboardPlan = () => {
   const { user } = useAuth();
-  const { subscription, loading: subscriptionLoading, isTrial } = useSubscription();
+  const { subscription, loading: subscriptionLoading } = useSubscription();
   const { toast } = useToast();
   const [isManagingBilling, setIsManagingBilling] = useState(false);
   const [isUpgrading, setIsUpgrading] = useState<string | null>(null);
   const [billingHistory, setBillingHistory] = useState([]);
   const [paymentInfo, setPaymentInfo] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  // Check if user should see "Free Trial" text (only if they haven't taken a trial yet)
-  const showFreeTrial = !isTrial && !subscription;
 
   // Load real billing data
   useEffect(() => {
@@ -205,14 +202,14 @@ const DashboardPlan = () => {
       case "starter":
         planName = "Starter";
         price = "$29/month";
-        features = ["1 account", "30 replies per day", "Auto likes", "Support"];
+        features = ["1 account", "30 replies per day", "Auto likes", "Basic analytics", "Email support"];
         actionsLimit = 30;
         break;
       case "pro":
         planName = "Pro";
         price = "$99/month";
-        features = ["1 account", "100 replies per day", "Auto likes", "Priority support"];
-        actionsLimit = 100;
+        features = ["1 account", "70 replies per day", "Auto likes", "Advanced analytics", "Priority support"];
+        actionsLimit = 70;
         break;
       default:
         planName = "Free Plan";
@@ -263,10 +260,10 @@ const DashboardPlan = () => {
         "1 account",
         "30 replies per day",
         "Auto likes",
-        "Support"
+        "Basic analytics",
+        "Email support"
       ],
-      popular: false,
-      hasFreeTrial: true
+      popular: false
     },
     {
       name: "Pro",
@@ -275,12 +272,12 @@ const DashboardPlan = () => {
       description: "Most popular choice",
       features: [
         "1 account",
-        "100 replies per day",
+        "70 replies per day",
         "Auto likes",
+        "Advanced analytics",
         "Priority support"
       ],
-      popular: true,
-      hasFreeTrial: true
+      popular: true
     },
     {
       name: "Custom",
@@ -294,8 +291,7 @@ const DashboardPlan = () => {
         "Dedicated support",
         "Custom integrations"
       ],
-      popular: false,
-      hasFreeTrial: false
+      popular: false
     }
   ];
 
@@ -394,13 +390,6 @@ const DashboardPlan = () => {
                     <span className="text-muted-foreground">{plan.period}</span>
                   </div>
                   <p className="text-sm text-muted-foreground">{plan.description}</p>
-                  
-                  {/* Free Trial Badge - only show if user hasn't taken a trial */}
-                  {plan.hasFreeTrial && showFreeTrial && (
-                    <Badge variant="secondary" className="mt-3 bg-success/10 text-success border-success/20">
-                      Free Trial Available
-                    </Badge>
-                  )}
                 </div>
 
                 <ul className="space-y-3 mb-6">
@@ -425,8 +414,7 @@ const DashboardPlan = () => {
                   {plan.name === "Custom" ? "Coming Soon" : 
                    isCurrentPlan(plan.name) ? "Current Plan" : 
                    isUpgrading === plan.name.toLowerCase() ? "Processing..." :
-                   shouldShowDowngrade(plan.name) ? "Downgrade" : 
-                   showFreeTrial && plan.hasFreeTrial ? "Start Free Trial" : "Upgrade"}
+                   shouldShowDowngrade(plan.name) ? "Downgrade" : "Upgrade"}
                   {plan.name !== "Custom" && !isCurrentPlan(plan.name) && isUpgrading !== plan.name.toLowerCase() && <ArrowRight className="w-4 h-4 ml-2" />}
                 </Button>
               </Card>

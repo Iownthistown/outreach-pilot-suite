@@ -1,34 +1,42 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Instagram, Mail } from "lucide-react";
+import { X, Instagram, Mail } from "lucide-react";
+
 const Footer = () => {
   const navigate = useNavigate();
+  
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
       behavior: 'smooth'
     });
   };
+
   const scrollToFAQ = () => {
     // Navigate to homepage first, then scroll to FAQ
     navigate("/");
     setTimeout(() => {
       const faqElement = document.getElementById('faq');
       if (faqElement) {
-        faqElement.scrollIntoView({
+        faqElement.scrollIntoView({ 
           behavior: 'smooth',
           block: 'start'
         });
       }
     }, 100);
   };
-  return <footer className="bg-card border-t border-primary/20">
+  return (
+    <footer className="bg-card border-t border-primary/20">
       <div className="container mx-auto px-4 py-12">
         <div className="grid md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="space-y-4">
             <Link to="/" className="flex items-center gap-2">
               <div className="w-6 h-6 flex items-center justify-center">
-                <img src="/lovable-uploads/1b627097-cca7-4da0-9dfb-92968194dc92.png" alt="COSTRAS Logo" className="w-6 h-6 object-contain" />
+                <img 
+                  src="/lovable-uploads/1b627097-cca7-4da0-9dfb-92968194dc92.png" 
+                  alt="COSTRAS Logo" 
+                  className="w-6 h-6 object-contain"
+                />
               </div>
               <span className="text-xl font-bold text-foreground">COSTRAS</span>
             </Link>
@@ -37,7 +45,7 @@ const Footer = () => {
             </p>
             <div className="flex items-center gap-4">
               <a href="https://x.com/CostrasAI" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
-                
+                <X className="w-5 h-5" />
               </a>
               <a href="https://www.instagram.com/costras.ai/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
                 <Instagram className="w-5 h-5" />
@@ -107,7 +115,10 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <button onClick={scrollToFAQ} className="text-muted-foreground hover:text-foreground transition-colors text-left">
+                <button 
+                  onClick={scrollToFAQ} 
+                  className="text-muted-foreground hover:text-foreground transition-colors text-left"
+                >
                   FAQ
                 </button>
               </li>
@@ -126,6 +137,8 @@ const Footer = () => {
           </p>
         </div>
       </div>
-    </footer>;
+    </footer>
+  );
 };
+
 export default Footer;
