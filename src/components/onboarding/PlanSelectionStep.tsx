@@ -1,11 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Check, Zap, Star, Crown, CheckCircle } from "lucide-react";
 import { useSubscription } from "@/hooks/useSubscription";
+
 interface PlanSelectionStepProps {
   onNext: () => void;
   loading?: boolean;
 }
+
 const PlanSelectionStep = ({
   onNext,
   loading = false
@@ -16,6 +19,7 @@ const PlanSelectionStep = ({
     hasPlan,
     isTrial
   } = useSubscription();
+
   const plans = [{
     name: "Starter",
     price: "$29",
@@ -23,7 +27,8 @@ const PlanSelectionStep = ({
     description: "Perfect for getting started",
     features: ["1 account", "30 replies per day", "Auto likes", "Support"],
     icon: Zap,
-    popular: false
+    popular: false,
+    hasFreeTrial: true
   }, {
     name: "Pro",
     price: "$99",
@@ -31,7 +36,8 @@ const PlanSelectionStep = ({
     description: "Most popular choice",
     features: ["1 account", "100 replies per day", "Auto likes", "Priority support"],
     icon: Star,
-    popular: true
+    popular: true,
+    hasFreeTrial: true
   }, {
     name: "Custom",
     price: "Coming Soon",
@@ -39,8 +45,25 @@ const PlanSelectionStep = ({
     description: "Enterprise solutions for large teams",
     features: ["Unlimited automated actions", "White-label solution", "Dedicated account manager", "Custom integrations", "Advanced analytics", "Team management"],
     icon: Crown,
-    popular: false
+    popular: false,
+    hasFreeTrial: false
   }];
+
+  const paymentLinks = {
+    Starter: "https://buy.stripe.com/28E7sMgAoaRJ6rAczd8AE00",
+    Pro: "https://buy.stripe.com/28EdRa4RG8JB2bk6aP8AE01"
+  };
+
+  const handlePlanSelect = (planName: string) => {
+    const paymentLink = paymentLinks[planName as keyof typeof paymentLinks];
+    if (paymentLink) {
+      window.open(paymentLink, '_blank');
+    }
+  };
+
+  // Check if user should see "Free Trial" text (only if they haven't taken a trial yet)
+  const showFreeTrial = !isTrial && !hasPlan;
+
   return <div className="h-full flex flex-col overflow-hidden">
       {/* Header - Fixed Height */}
       <div className="flex-shrink-0 h-16 text-center flex flex-col justify-center">
@@ -84,6 +107,13 @@ const PlanSelectionStep = ({
                   </span>
                 </div>
                 <CardDescription className="text-xs sm:text-sm">{plan.description}</CardDescription>
+                
+                {/* Free Trial Badge - only show if user hasn't taken a trial */}
+                {plan.hasFreeTrial && showFreeTrial && (
+                  <Badge variant="secondary" className="mt-2 bg-success/10 text-success border-success/20">
+                    Free Trial Available
+                  </Badge>
+                )}
               </CardHeader>
               
               <CardContent className="space-y-3 flex flex-col h-full">
@@ -108,18 +138,11 @@ const PlanSelectionStep = ({
                       onNext();
                       return;
                     }
-                    const paymentLinks = {
-                      Starter: "https://buy.stripe.com/28E7sMgAoaRJ6rAczd8AE00",
-                      Pro: "https://buy.stripe.com/28EdRa4RG8JB2bk6aP8AE01"
-                    };
-                    const paymentLink = paymentLinks[plan.name as keyof typeof paymentLinks];
-                    if (paymentLink) {
-                      window.open(paymentLink, '_blank');
-                    }
+                    handlePlanSelect(plan.name);
                   }} 
                   disabled={loading || plan.name === "Custom" || isDisabled}
                 >
-                  {isPlanPurchased ? "Continue" : plan.name === "Custom" ? "Coming Soon" : "Get Started"}
+                  {isPlanPurchased ? "Continue" : plan.name === "Custom" ? "Coming Soon" : showFreeTrial && plan.hasFreeTrial ? "Start Free Trial" : "Get Started"}
                 </Button>
               </CardContent>
             </Card>;
@@ -143,4 +166,5 @@ const PlanSelectionStep = ({
       </div>
     </div>;
 };
+
 export default PlanSelectionStep;
