@@ -35,7 +35,7 @@ const Index = () => {
         <FAQSection />
       </ScrollAnimationWrapper>
       <Footer />
-      <CustomChatbot />
+      {/* <CustomChatbot /> Hidden for now */}
     </div>
   );
 };

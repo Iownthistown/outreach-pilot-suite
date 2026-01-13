@@ -18,7 +18,7 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
   const { user, loading: authLoading, signOut } = useAuth();
-  const { subscription, planName } = useSubscription();
+  const { subscription, planType, isTrial } = useSubscription();
 
   const handleLogin = () => {
     navigate("/login");
@@ -97,9 +97,9 @@ const Header = () => {
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
                       <p className="text-sm font-medium leading-none">{user.email}</p>
-                      {planName && (
+                      {planType && (
                         <p className="text-xs leading-none text-muted-foreground">
-                          {planName} Plan
+                          {planType} Plan{isTrial && ' (Trial)'}
                         </p>
                       )}
                     </div>
@@ -167,7 +167,7 @@ const Header = () => {
                   <>
                     <div className="text-sm text-foreground mb-2">
                       Welcome, {user.email}
-                      {planName && <span className="block text-xs text-muted-foreground">{planName} Plan</span>}
+                      {planType && <span className="block text-xs text-muted-foreground">{planType} Plan{isTrial && ' (Trial)'}</span>}
                     </div>
                     <Button variant="ghost" onClick={() => navigate("/dashboard")}>
                       Dashboard
