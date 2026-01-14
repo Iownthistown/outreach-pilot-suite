@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState, useRef } from 'react'
 import { User } from '@supabase/supabase-js'
 import { supabase } from '@/integrations/supabase/client'
 
@@ -13,9 +13,33 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
+// Helper function to send signup notification
+async function sendSignupNotification(user: User, provider: string) {
+  try {
+    const response = await supabase.functions.invoke('notify-new-signup', {
+      body: {
+        id: user.id,
+        email: user.email,
+        created_at: user.created_at,
+        full_name: user.user_metadata?.full_name || user.user_metadata?.name,
+        provider: provider
+      }
+    });
+    
+    if (response.error) {
+      console.error('Failed to send signup notification:', response.error);
+    } else {
+      console.log('Signup notification sent successfully');
+    }
+  } catch (error) {
+    console.error('Error sending signup notification:', error);
+  }
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
+  const notifiedUsers = useRef<Set<string>>(new Set())
 
   useEffect(() => {
     let mounted = true;
@@ -44,12 +68,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
         console.log('Auth state change:', event, !!session);
         
         if (mounted) {
           setUser(session?.user ?? null);
           setLoading(false);
+          
+          // Send notification for new signups (SIGNED_IN after OAuth or after email verification)
+          if (event === 'SIGNED_IN' && session?.user) {
+            const userId = session.user.id;
+            const createdAt = new Date(session.user.created_at);
+            const now = new Date();
+            const isNewUser = (now.getTime() - createdAt.getTime()) < 60000; // Created within last 60 seconds
+            
+            // Only notify if user is new and we haven't already notified for this user
+            if (isNewUser && !notifiedUsers.current.has(userId)) {
+              notifiedUsers.current.add(userId);
+              const provider = session.user.app_metadata?.provider || 'email';
+              await sendSignupNotification(session.user, provider);
+            }
+          }
         }
       }
     );
@@ -89,7 +128,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signUpWithEmail = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -97,6 +136,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     })
     if (error) throw error
+    
+    // Send notification immediately after signup (before email verification)
+    if (data.user) {
+      await sendSignupNotification(data.user, 'email');
+    }
   }
 
   const signOut = async () => {
